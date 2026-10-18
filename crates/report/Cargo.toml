@@ -1,0 +1,12 @@
+[package]
+name = "report"
+description = "Assessment report model rendered to PDF and Word (.docx) without external tools"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+
+[lints]
+workspace = true

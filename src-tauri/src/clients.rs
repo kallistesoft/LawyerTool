@@ -124,11 +124,11 @@ pub fn client_delete(s: State<'_, Arc<Session>>, id: i64) -> Result<bool, Comman
 
 #[derive(Serialize)]
 pub struct Assessment {
-    on: String,
-    grid_id: Option<String>,
+    pub on: String,
+    pub grid_id: Option<String>,
     /// The CRS score, or why it could not be computed.
-    crs: Result<CrsResult, String>,
-    eligibility: Result<Vec<ProgramResult>, String>,
+    pub crs: Result<CrsResult, String>,
+    pub eligibility: Result<Vec<ProgramResult>, String>,
 }
 
 /// Assesses a saved client on `on` (YYYY-MM-DD, default today).
@@ -141,7 +141,7 @@ pub fn assess(
     assess_inner(&s, id, on)
 }
 
-fn assess_inner(s: &Session, id: i64, on: Option<String>) -> Result<Assessment, CommandError> {
+pub fn assess_inner(s: &Session, id: i64, on: Option<String>) -> Result<Assessment, CommandError> {
     let on = match on {
         Some(d) => {
             IsoDate::parse(&d).ok_or_else(|| err("invalid_date", "Date invalide (AAAA-MM-JJ)."))?
@@ -227,6 +227,15 @@ pub fn deid_preview(
         payload,
         redactions: d.redactions,
     })
+}
+
+/// The shipped grids, for other modules' tests.
+#[cfg(test)]
+pub fn tests_grids() -> &'static [Grid] {
+    grids()
+        .as_ref()
+        .map(Vec::as_slice)
+        .unwrap_or_else(|e| panic!("{e}"))
 }
 
 #[cfg(test)]
