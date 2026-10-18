@@ -299,3 +299,16 @@ fn expired_test_is_flagged() {
         which: "first language"
     }));
 }
+
+#[test]
+fn d004_french_first_with_pte_english() {
+    let mut a = base();
+    a.first_language = Some(lt(TestKind::TefCanada, [470, 440, 440, 450])); // NCLC 7
+    a.second_language = Some(lt(TestKind::PteCore, [51, 39, 42, 51])); // CLB 5
+    let r = score(&load(V0), &a, &d(TODAY)).unwrap();
+    assert_eq!(r.additional.line("French language skills"), Some(50));
+    assert!(
+        r.flags
+            .contains(&Flag::KnownDivergence { id: "D-004".into() })
+    );
+}

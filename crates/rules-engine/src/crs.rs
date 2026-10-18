@@ -359,6 +359,14 @@ pub fn score(grid: &Grid, a: &Applicant, assessed_on: &IsoDate) -> Result<CrsRes
             &x.french_weak_english
         };
         additional.push("French language skills", r.points, vec![r.cite.clone()]);
+        // D-004: the calculator gives 25 here when the English test is PTE Core.
+        let pte_second = a
+            .second_language
+            .as_ref()
+            .is_some_and(|t| t.test == TestKind::PteCore);
+        if strong && fol_test.test.language() == OfficialLanguage::French && pte_second {
+            flags.push(Flag::KnownDivergence { id: "D-004".into() });
+        }
     }
     let additional = additional.close(Some(x.max.value));
 

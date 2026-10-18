@@ -70,3 +70,21 @@ the case is flagged for manual review.
 - **Source for all conversions:** `equivalences-aip-en.html` (one named
   table per test). Its CELPIP, IELTS, PTE Core and TCF Canada values match
   the Express Entry calculator; a test checks this.
+
+## D-004: French bonus with PTE Core as the English second language
+
+- **Status:** PENDING ruling
+- **Found:** 2026-10-18, by the differential fuzz (shrunk profile seed in
+  `crates/oracle-tests/tests/differential.proptest-regressions`), then confirmed in the source.
+- **Criteria page** (additional points): "NCLC 7 ou plus en français pour les
+  quatre aptitudes et ... niveau 5 ou plus des CLB en anglais pour les quatre
+  aptitudes" → 50. Any approved English test counts; PTE Core is approved.
+- **Calculator** (`scg-outil-udit.js`, French bonus, French first language):
+  checks `q5iii_answer == "A" || q5iii_answer == "B"` (CELPIP, IELTS). PTE Core
+  is option `E` on that list, so it always falls through to 25.
+- **Impact:** French-first applicant, PTE Core English result at CLB 5+ on all
+  skills: the calculator gives 25 instead of 50 (−25 points).
+- **Proposed ruling:** follow the criteria page (50). The calculator code
+  simply predates PTE Core being added to the list.
+- **Engine until ruled:** gives 50 and flags `D-004`. The oracle harness
+  corrects the calculator's result by +25 (capped at 600) for this pattern.
