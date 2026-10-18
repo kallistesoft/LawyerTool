@@ -68,3 +68,8 @@ export const clientSave = (id: number | null, identity: Identity, profile: Appli
   invoke<{ id: number; problems: string[] }>('client_save', { request: { id, identity, profile } })
 export const clientDelete = (id: number) => invoke<boolean>('client_delete', { id })
 export const assess = (id: number, on: string | null) => invoke<Assessment>('assess', { id, on })
+
+export interface Redaction { path: string; kind: string; placeholder: string }
+/** The exact (de-identified) JSON that would be sent to Claude. Sends nothing. */
+export const deidPreview = (id: number, on: string | null) =>
+  invoke<{ payload: string; bytes: number; redactions: Redaction[] }>('deid_preview', { id, on })
