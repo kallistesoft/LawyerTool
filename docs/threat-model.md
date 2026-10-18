@@ -55,7 +55,9 @@ independent security review (M3).
 - Copying `lawyertool.db` + `lawyertool.keys` to another machine is useless
   without the 24-word recovery phrase (tested: `backup_restores_on_a_new_computer`).
 - Auto-lock after 5 min idle: the DB is closed and the key wiped from memory
-  (`Zeroize`); `cipher_memory_security` is on.
+  (`Zeroize`). SQLCipher's `cipher_memory_security` (page locking) is off: on
+  Windows it recursed until stack overflow when `VirtualLock` hit its quota;
+  swapped memory is covered by the required full-disk encryption.
 - **Residual:** if the laptop is stolen *unlocked and awake*, data is
   exposed until auto-lock. Locking on OS sleep / screen lock is not wired yet
   (Tauri does not expose it): follow-up.
@@ -139,8 +141,8 @@ independent security review (M3).
 
 - No client data, keys, passphrases or request/response bodies in logs,
   crash reports or temp files (brief rule 9).
-- SQLCipher may print memory-locking warnings to stderr on Windows
-  (`VirtualLock` quota); these contain no data. Review in M3.
+- SQLCipher memory locking is disabled (see T1), so it no longer prints
+  `VirtualLock` warnings on Windows.
 
 ## 6. Open items
 

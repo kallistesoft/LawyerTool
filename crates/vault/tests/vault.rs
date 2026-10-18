@@ -153,7 +153,7 @@ fn recovery_after_keychain_loss() {
 #[test]
 fn backup_restores_on_a_new_computer() {
     let (dir, paths, store) = setup();
-    let (mut v, phrase) = Vault::create(&paths, &store, PASS, KDF).unwrap();
+    let (v, phrase) = Vault::create(&paths, &store, PASS, KDF).unwrap();
     write_marker(&v);
     let dest = dir.path().join("backup.db");
     v.backup(&dest).unwrap();
