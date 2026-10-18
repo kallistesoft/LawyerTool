@@ -39,6 +39,8 @@ pub struct Session {
     paths: Paths,
     vault: Mutex<Option<Vault>>,
     idle: Mutex<Idle>,
+    /// Dev build with the automatic test vault (see `dev.rs`): no auto-lock.
+    dev: bool,
 }
 
 impl Session {
@@ -47,7 +49,21 @@ impl Session {
             paths: Paths::new(db),
             vault: Mutex::new(None),
             idle: Mutex::new(Idle::new(timeout, Instant::now())),
+            dev: false,
         }
+    }
+
+    /// Dev session: the given (already unlocked) dev vault, never auto-locked.
+    #[cfg(debug_assertions)]
+    pub fn dev(db: PathBuf, v: Vault) -> Self {
+        let s = Self {
+            dev: true,
+            ..Self::new(db, DEFAULT_IDLE)
+        };
+        if let Ok(mut slot) = s.vault.lock() {
+            *slot = Some(v);
+        }
+        s
     }
 
     fn touch(&self) {
@@ -144,6 +160,8 @@ pub struct Status {
     exists: bool,
     unlocked: bool,
     idle_minutes: u64,
+    /// Dev build with the automatic test vault.
+    dev: bool,
 }
 
 #[tauri::command]
@@ -153,6 +171,7 @@ pub fn vault_status(s: State<'_, Arc<Session>>) -> Status {
         exists: s.paths.exists(),
         unlocked: s.is_unlocked(),
         idle_minutes,
+        dev: s.dev,
     }
 }
 
@@ -227,6 +246,9 @@ pub fn spawn_idle_watch(app: AppHandle) {
         loop {
             std::thread::sleep(Duration::from_secs(5));
             let s = app.state::<Arc<Session>>();
+            if s.dev {
+                continue;
+            }
             let expired = s
                 .idle
                 .lock()

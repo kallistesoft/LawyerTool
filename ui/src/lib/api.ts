@@ -12,6 +12,8 @@ export interface VaultStatus {
   exists: boolean
   unlocked: boolean
   idle_minutes: number
+  /** Dev build with the automatic test vault (no passphrase, no auto-lock). */
+  dev: boolean
 }
 
 /** Error shape returned by every command. */

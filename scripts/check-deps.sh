@@ -34,6 +34,12 @@ if grep -rnE '\b(println|eprintln|print|eprint|dbg)!|\b(log|tracing)::' crates/n
   fail=1
 fi
 
+# The dev test vault (no passphrase) must never reach a release build.
+if ! grep -B1 '^mod dev;' src-tauri/src/lib.rs | grep -q 'cfg(debug_assertions)'; then
+  echo "::error::src-tauri dev module must be gated by #[cfg(debug_assertions)]"
+  fail=1
+fi
+
 if cargo metadata --no-deps --format-version 1 | grep -q '"name":"rules-watcher"'; then
   forbid rules-watcher vault deid
 fi
