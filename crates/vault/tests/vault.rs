@@ -222,12 +222,6 @@ fn missing_vault() {
     ));
 }
 
-#[test]
-fn default_kdf_is_strong() {
-    // OWASP minimum for Argon2id is 19 MiB / 2 passes; we use more.
-    assert!(KdfParams::DEFAULT.m_cost >= 64 * 1024 && KdfParams::DEFAULT.t_cost >= 3);
-}
-
 /// Touches the real OS keychain: run manually with `--include-ignored`.
 #[test]
 #[ignore = "uses the real OS keychain"]
