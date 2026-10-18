@@ -191,13 +191,17 @@ mod tests {
             include_str!("../tests/fixtures/ui-new-applicant.json"),
             include_str!("../tests/fixtures/ui-full-applicant.json"),
         ] {
-            let a: applicant::Applicant = serde_json::from_str(json).unwrap_or_else(|e| panic!("UI profile rejected: {e}"));
+            let a: applicant::Applicant =
+                serde_json::from_str(json).unwrap_or_else(|e| panic!("UI profile rejected: {e}"));
             assert_eq!(a.validate(), Ok(()));
             let on = applicant::IsoDate::parse("2026-10-18").unwrap_or_else(|| unreachable!());
             let g = in_force(grids, &on).unwrap_or_else(|| unreachable!());
             let r = rules_engine::crs::score(g, &a, &on).unwrap_or_else(|e| panic!("{e}"));
             assert!(r.total > 0);
-            assert_eq!(rules_engine::eligibility::assess(g, &a, &on).map(|v| v.len()), Ok(3));
+            assert_eq!(
+                rules_engine::eligibility::assess(g, &a, &on).map(|v| v.len()),
+                Ok(3)
+            );
             // The result must serialize for the UI.
             assert!(serde_json::to_string(&r).is_ok());
         }
