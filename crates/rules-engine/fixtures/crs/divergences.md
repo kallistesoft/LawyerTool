@@ -1,8 +1,11 @@
 # Known divergences between official sources
 
 Each entry: what differs, sources, status. The engine follows the lawyer's
-ruling; until a ruling exists the entry is **PENDING** and any client hitting
-the case is flagged for manual review.
+ruling. **Every divergence requires lawyer review** (project owner,
+2026-10-18): whenever a score relies on one, the result carries
+`KnownDivergence(id)` and a blocking `ManualReview(id, reason)` flag, and the
+note cannot be approved until the lawyer has reviewed it. An entry without
+a ruling yet is marked **PENDING**.
 
 ## D-001: TCF Canada at NCLC 4, first official language
 

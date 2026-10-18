@@ -35,6 +35,7 @@ pub enum Flag {
     /// A language result is not valid on the assessment date.
     ExpiredLanguageTest { which: &'static str },
     /// A value comes from a ruling on a divergence between official sources.
+    /// Always accompanied by a `ManualReview` flag with the same id.
     KnownDivergence { id: String },
     /// The lawyer must review this point before the note can be approved.
     ManualReview { id: String, reason: &'static str },
@@ -155,10 +156,60 @@ fn foreign_row(t: &TierTable<Range>, years: u8) -> Option<&TierRow<Range>> {
     t.rows.iter().find(|r| r.key.contains(years))
 }
 
-fn clb(grid: &Grid, which: &'static str, t: &LanguageTest) -> Result<Clb, CrsError> {
-    to_clb(grid, t)
-        .map(|(c, _)| c)
-        .map_err(|e| CrsError::Language(which, e))
+/// Why the lawyer must review a value that rests on a ruling
+/// (`fixtures/crs/divergences.md`).
+fn review_reason(id: &str) -> &'static str {
+    match id {
+        "D-001" => {
+            "TCF Canada at NCLC 4 (first language): 6 points per skill awarded per the \
+                    criteria page; the official calculator gives 0. Confirm before relying on this score."
+        }
+        "D-002" => {
+            "Second official language at NCLC 4: 0 points by ruling; the criteria page \
+                    has no row for NCLC 4. Confirm before relying on this score."
+        }
+        "D-003" => {
+            "TEF Canada result converted with the table for its test date (IRCC Atlantic \
+                    Immigration page); the Express Entry pages list only the pre-2019 scale. \
+                    Confirm the NCLC levels before relying on this score."
+        }
+        "D-004" => {
+            "French bonus: 50 points awarded per the criteria page (French NCLC 7+, \
+                    English PTE Core CLB 5+); the official calculator shows 25 for PTE Core. \
+                    Confirm before relying on this score."
+        }
+        _ => {
+            "This value relies on a ruling on a divergence between official sources \
+              (see divergences.md). Confirm before relying on this score."
+        }
+    }
+}
+
+/// Every divergence a result relies on is flagged and needs lawyer review.
+fn divergence(flags: &mut Vec<Flag>, id: &str) {
+    let known = Flag::KnownDivergence { id: id.to_owned() };
+    if !flags.contains(&known) {
+        flags.push(known);
+        flags.push(Flag::ManualReview {
+            id: id.to_owned(),
+            reason: review_reason(id),
+        });
+    }
+}
+
+/// Converts a result; flags D-003 when a TEF result used a table other than
+/// the one on the Express Entry pages (before 2019-09-30).
+fn clb(
+    grid: &Grid,
+    which: &'static str,
+    t: &LanguageTest,
+    flags: &mut Vec<Flag>,
+) -> Result<Clb, CrsError> {
+    let (c, table) = to_clb(grid, t).map_err(|e| CrsError::Language(which, e))?;
+    if t.test == TestKind::TefCanada && table.taken_from.is_some() {
+        divergence(flags, "D-003");
+    }
+    Ok(c)
 }
 
 /// Scores `a` against `grid` (already selected for `assessed_on` and with
@@ -174,11 +225,11 @@ pub fn score(grid: &Grid, a: &Applicant, assessed_on: &IsoDate) -> Result<CrsRes
     let mut flags = Vec::new();
 
     let fol_test = a.first_language.as_ref().ok_or(CrsError::NoFirstLanguage)?;
-    let fol = clb(grid, "first language", fol_test)?;
+    let fol = clb(grid, "first language", fol_test, &mut flags)?;
     let sol = a
         .second_language
         .as_ref()
-        .map(|t| clb(grid, "second language", t))
+        .map(|t| clb(grid, "second language", t, &mut flags))
         .transpose()?;
     for (which, t) in [
         ("first language", Some(fol_test)),
@@ -190,7 +241,7 @@ pub fn score(grid: &Grid, a: &Applicant, assessed_on: &IsoDate) -> Result<CrsRes
     }
     // D-001: the calculator gives 0 for TCF at NCLC 4; we follow the page.
     if fol_test.test == TestKind::TcfCanada && Skill::ALL.iter().any(|s| fol.get(*s) == 4) {
-        flags.push(Flag::KnownDivergence { id: "D-001".into() });
+        divergence(&mut flags, "D-001");
     }
 
     // A. Core / human capital.
@@ -255,7 +306,7 @@ pub fn score(grid: &Grid, a: &Applicant, assessed_on: &IsoDate) -> Result<CrsRes
                     which: "spouse language",
                 });
             }
-            let levels = clb(grid, "spouse language", t)?;
+            let levels = clb(grid, "spouse language", t, &mut flags)?;
             let mut points = 0;
             let mut cites = Vec::new();
             for sk in Skill::ALL {
@@ -375,13 +426,7 @@ pub fn score(grid: &Grid, a: &Applicant, assessed_on: &IsoDate) -> Result<CrsRes
             .as_ref()
             .is_some_and(|t| t.test == TestKind::PteCore);
         if strong && fol_test.test.language() == OfficialLanguage::French && pte_second {
-            flags.push(Flag::KnownDivergence { id: "D-004".into() });
-            flags.push(Flag::ManualReview {
-                id: "D-004".into(),
-                reason: "French bonus: 50 points awarded per the criteria page (French NCLC 7+, \
-                         English PTE Core CLB 5+); the official calculator shows 25 for PTE Core. \
-                         Confirm before relying on this score.",
-            });
+            divergence(&mut flags, "D-004");
         }
     }
     let additional = additional.close(Some(x.max.value));
@@ -472,10 +517,7 @@ pub fn score(grid: &Grid, a: &Applicant, assessed_on: &IsoDate) -> Result<CrsRes
         for l in &s.lines {
             for cite in &l.cites {
                 if let Some(id) = cite.source.strip_prefix("ruling:") {
-                    let f = Flag::KnownDivergence { id: id.to_owned() };
-                    if !flags.contains(&f) {
-                        flags.push(f);
-                    }
+                    divergence(&mut flags, id);
                 }
             }
         }

@@ -312,3 +312,61 @@ fn d004_french_first_with_pte_english() {
             .contains(&Flag::KnownDivergence { id: "D-004".into() })
     );
 }
+
+/// Every divergence a score relies on comes with a blocking review flag.
+#[test]
+fn every_divergence_requires_review() {
+    let ids = |r: &rules_engine::crs::CrsResult| -> (Vec<String>, Vec<String>) {
+        let mut known = vec![];
+        let mut review = vec![];
+        for f in &r.flags {
+            match f {
+                Flag::KnownDivergence { id } => known.push(id.clone()),
+                Flag::ManualReview { id, reason } => {
+                    assert!(!reason.is_empty());
+                    review.push(id.clone());
+                }
+                _ => {}
+            }
+        }
+        (known, review)
+    };
+    let g = load(V0);
+
+    // D-001 (TCF NCLC 4) and D-003 never apply to TCF.
+    let mut a = base();
+    a.first_language = Some(lt(TestKind::TcfCanada, [12, 340, 500, 12]));
+    let (k, r) = ids(&score(&g, &a, &d(TODAY)).unwrap());
+    assert_eq!((k, r), (vec!["D-001".to_owned()], vec!["D-001".to_owned()]));
+
+    // D-002 (second language NCLC 4) + D-003 (TEF on the post-2023 scale).
+    let mut a = base();
+    a.second_language = Some(lt(TestKind::TefCanada, [330, 310, 310, 270]));
+    let (mut k, mut r) = ids(&score(&g, &a, &d(TODAY)).unwrap());
+    k.sort();
+    r.sort();
+    assert_eq!(k, vec!["D-002", "D-003"]);
+    assert_eq!(r, k);
+
+    // TEF on the pre-2019 scale matches the Express Entry pages: no D-003.
+    let mut a = base();
+    a.second_language = Some(LanguageTest {
+        test_date: d("2019-01-15"),
+        ..lt(TestKind::TefCanada, [350, 290, 240, 350])
+    });
+    let res = score(&g, &a, &d(TODAY)).unwrap();
+    assert!(
+        !res.flags
+            .iter()
+            .any(|f| matches!(f, Flag::KnownDivergence { id } if id == "D-003"))
+    );
+
+    // No divergence: no review flag at all.
+    assert!(
+        !score(&g, &base(), &d(TODAY))
+            .unwrap()
+            .flags
+            .iter()
+            .any(Flag::blocks_approval)
+    );
+}
