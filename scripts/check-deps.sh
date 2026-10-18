@@ -23,6 +23,17 @@ forbid applicant "${IO[@]}"
 forbid rules-engine "${IO[@]}"
 forbid grid-parser "${IO[@]}"
 
+# Network and audit code never depend on client-data storage.
+forbid net vault rusqlite libsqlite3-sys deid
+forbid audit vault rusqlite libsqlite3-sys reqwest
+
+# No printing or logging in crates that handle keys, client data or traffic
+# (brief rule 9: no sensitive data in logs).
+if grep -rnE '\b(println|eprintln|print|eprint|dbg)!|\b(log|tracing)::' crates/net/src crates/vault/src crates/audit/src; then
+  echo "::error::net, vault and audit must not print or log"
+  fail=1
+fi
+
 if cargo metadata --no-deps --format-version 1 | grep -q '"name":"rules-watcher"'; then
   forbid rules-watcher vault deid
 fi

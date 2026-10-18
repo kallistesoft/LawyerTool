@@ -236,3 +236,28 @@ fn os_keychain_roundtrip() {
     store.delete(&account).unwrap();
     assert_eq!(store.get(&account).unwrap(), None);
 }
+
+#[test]
+fn audit_log_roundtrip_is_encrypted() {
+    let (_d, paths, store) = setup();
+    let (v, _) = Vault::create(&paths, &store, PASS, KDF).unwrap();
+    let rec = audit::AuditRecord {
+        at: "2026-10-18T17:39:05Z".into(),
+        method: "POST".into(),
+        host: "api.anthropic.com".into(),
+        category: audit::DataCategory::DeidentifiedClientData,
+        source_file: Some("Formulaire-Tremblay-7731.xlsx".into()),
+        outcome: audit::Outcome::Completed,
+        status: Some(200),
+        bytes_sent: 1234,
+        bytes_received: 5678,
+        reason: None,
+    };
+    v.audit_record(&rec).unwrap();
+    assert_eq!(v.audit_list(10).unwrap(), vec![rec]);
+    v.lock();
+    assert!(
+        !contains(&paths.db, b"Tremblay-7731"),
+        "audit log is inside the encrypted DB"
+    );
+}

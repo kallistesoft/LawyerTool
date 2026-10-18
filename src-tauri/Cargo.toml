@@ -18,6 +18,8 @@ tauri = { version = "=2.12.4", features = [] }
 serde.workspace = true
 serde_json.workspace = true
 vault = { path = "../crates/vault" }
+audit = { path = "../crates/audit" }
+net = { path = "../crates/net" }
 zeroize = "=1.9.1"
 
 [lints]

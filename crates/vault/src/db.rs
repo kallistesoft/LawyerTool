@@ -11,6 +11,21 @@ use crate::crypto::Secret;
 pub const MIGRATIONS: &[&str] = &[
     // v1: key/value metadata.
     "CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) STRICT;",
+    // v2: outbound-call audit log (metadata only, never content).
+    "CREATE TABLE audit_log (
+        id INTEGER PRIMARY KEY,
+        at TEXT NOT NULL,
+        method TEXT NOT NULL,
+        host TEXT NOT NULL,
+        category TEXT NOT NULL,
+        source_file TEXT,
+        outcome TEXT NOT NULL,
+        status INTEGER,
+        bytes_sent INTEGER NOT NULL,
+        bytes_received INTEGER NOT NULL,
+        reason TEXT
+    ) STRICT;
+    CREATE INDEX audit_log_at ON audit_log (at);",
 ];
 
 pub fn schema_version() -> u32 {

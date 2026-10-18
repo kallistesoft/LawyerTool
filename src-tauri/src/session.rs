@@ -75,6 +75,23 @@ impl Session {
     }
 }
 
+/// Audit records go into the unlocked vault. While locked, recording fails,
+/// so `net` refuses to report success for any call (no unaudited traffic).
+impl audit::AuditSink for Session {
+    fn record(&self, r: &audit::AuditRecord) -> Result<(), String> {
+        let guard = self
+            .vault
+            .lock()
+            .map_err(|_| "session poisoned".to_owned())?;
+        let v = guard.as_ref().ok_or_else(|| "vault is locked".to_owned())?;
+        v.audit_record(r).map_err(|e| e.to_string())
+    }
+}
+
+/// Exact hosts the app may contact (brief: Claude API, official immigration
+/// sites, update host). Configurable later; the update host is added in M1 step 7.
+pub const ALLOWED_HOSTS: &[&str] = &["api.anthropic.com", "www.canada.ca", "ircc.canada.ca"];
+
 /// Error sent to the frontend: a stable code and a user-facing message.
 /// Never contains passphrases, keys or client data.
 #[derive(Debug, Serialize)]
@@ -235,5 +252,31 @@ mod tests {
         i.touch(t0 + Duration::from_secs(200));
         assert!(!i.expired(t0 + Duration::from_secs(499)));
         assert!(i.expired(t0 + Duration::from_secs(500)));
+    }
+}
+
+#[cfg(test)]
+mod audit_tests {
+    use audit::AuditSink;
+
+    use super::*;
+
+    #[test]
+    fn audit_refused_while_locked() {
+        let dir = std::env::temp_dir().join(format!("lt-session-{}", std::process::id()));
+        let s = Session::new(dir.join("x.db"), DEFAULT_IDLE);
+        let r = audit::AuditRecord {
+            at: audit::now_rfc3339(),
+            method: "GET".into(),
+            host: "www.canada.ca".into(),
+            category: audit::DataCategory::PublicRulesFetch,
+            source_file: None,
+            outcome: audit::Outcome::Completed,
+            status: Some(200),
+            bytes_sent: 0,
+            bytes_received: 1,
+            reason: None,
+        };
+        assert_eq!(s.record(&r), Err("vault is locked".to_owned()));
     }
 }

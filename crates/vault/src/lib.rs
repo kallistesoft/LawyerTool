@@ -122,6 +122,10 @@ fn parse_phrase(phrase: &str) -> Result<Secret, Error> {
     Secret::from_bytes(&entropy[..len])
 }
 
+fn enum_of<T: serde::de::DeserializeOwned>(s: String) -> Result<T, serde_json::Error> {
+    serde_json::from_value(serde_json::Value::String(s))
+}
+
 fn check_passphrase(p: &str) -> Result<(), Error> {
     if p.chars().count() < MIN_PASSPHRASE_CHARS {
         Err(Error::WeakPassphrase)
@@ -294,6 +298,77 @@ impl Vault {
         Ok(self
             .conn
             .query_row("PRAGMA user_version", [], |r| r.get(0))?)
+    }
+
+    /// Appends an audit record (see the `audit` crate: metadata only).
+    pub fn audit_record(&self, r: &audit::AuditRecord) -> Result<(), Error> {
+        let tag = |v: serde_json::Value| {
+            v.as_str()
+                .map(str::to_owned)
+                .ok_or(Error::Corrupt("audit enum"))
+        };
+        let category =
+            tag(serde_json::to_value(r.category).map_err(|_| Error::Corrupt("audit enum"))?)?;
+        let outcome =
+            tag(serde_json::to_value(r.outcome).map_err(|_| Error::Corrupt("audit enum"))?)?;
+        self.conn.execute(
+            "INSERT INTO audit_log (at, method, host, category, source_file, outcome, status, bytes_sent, bytes_received, reason)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)",
+            rusqlite::params![
+                r.at,
+                r.method,
+                r.host,
+                category,
+                r.source_file,
+                outcome,
+                r.status,
+                i64::try_from(r.bytes_sent).unwrap_or(i64::MAX),
+                i64::try_from(r.bytes_received).unwrap_or(i64::MAX),
+                r.reason
+            ],
+        )?;
+        Ok(())
+    }
+
+    /// Most recent audit records first.
+    pub fn audit_list(&self, limit: u32) -> Result<Vec<audit::AuditRecord>, Error> {
+        let mut st = self.conn.prepare(
+            "SELECT at, method, host, category, source_file, outcome, status, bytes_sent, bytes_received, reason
+             FROM audit_log ORDER BY id DESC LIMIT ?1",
+        )?;
+        let rows = st.query_map([limit], |row| {
+            Ok((
+                row.get::<_, String>(0)?,
+                row.get::<_, String>(1)?,
+                row.get::<_, String>(2)?,
+                row.get::<_, String>(3)?,
+                row.get::<_, Option<String>>(4)?,
+                row.get::<_, String>(5)?,
+                row.get::<_, Option<u16>>(6)?,
+                row.get::<_, i64>(7)?,
+                row.get::<_, i64>(8)?,
+                row.get::<_, Option<String>>(9)?,
+            ))
+        })?;
+        rows.map(|r| {
+            let (at, method, host, category, source_file, outcome, status, sent, received, reason) =
+                r?;
+            Ok(audit::AuditRecord {
+                at,
+                method,
+                host,
+                category: enum_of::<audit::DataCategory>(category)
+                    .map_err(|_| Error::Corrupt("audit category"))?,
+                source_file,
+                outcome: enum_of::<audit::Outcome>(outcome)
+                    .map_err(|_| Error::Corrupt("audit outcome"))?,
+                status,
+                bytes_sent: u64::try_from(sent).unwrap_or(0),
+                bytes_received: u64::try_from(received).unwrap_or(0),
+                reason,
+            })
+        })
+        .collect()
     }
 
     /// Closes the database and wipes the key from memory.
