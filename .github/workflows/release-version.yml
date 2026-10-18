@@ -1,0 +1,51 @@
+name: Release version
+
+# Every merge into main bumps the app version, commits it and tags it.
+# Default: patch. Label the PR "release:minor" or "release:major" for more.
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: release-version
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    # Skip the bump commit itself.
+    if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+      - name: Choose bump from the merged PR's labels
+        id: part
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          labels=$(gh api "repos/${{ github.repository }}/commits/${{ github.sha }}/pulls" --jq '.[0].labels[].name' 2>/dev/null || true)
+          part=patch
+          grep -qx 'release:minor' <<<"$labels" && part=minor
+          grep -qx 'release:major' <<<"$labels" && part=major
+          echo "part=$part" >> "$GITHUB_OUTPUT"
+      - name: Bump
+        id: bump
+        run: |
+          out=$(./scripts/bump-version.sh "${{ steps.part.outputs.part }}")
+          echo "$out"
+          echo "version=${out##* }" >> "$GITHUB_OUTPUT"
+      - name: Commit and tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore(release): v${{ steps.bump.outputs.version }} [skip ci]"
+          git tag -a "v${{ steps.bump.outputs.version }}" -m "LawyerTool v${{ steps.bump.outputs.version }}"
+          git push origin HEAD:main --follow-tags
