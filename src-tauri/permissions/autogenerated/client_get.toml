@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-client-get"
+description = "Enables the client_get command without any pre-configured scope."
+commands.allow = ["client_get"]
+
+[[permission]]
+identifier = "deny-client-get"
+description = "Denies the client_get command without any pre-configured scope."
+commands.deny = ["client_get"]

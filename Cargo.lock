@@ -2160,8 +2160,10 @@ dependencies = [
 name = "lawyertool"
 version = "0.1.5"
 dependencies = [
+ "applicant",
  "audit",
  "net",
+ "rules-engine",
  "semver",
  "serde",
  "serde_json",

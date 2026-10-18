@@ -89,6 +89,19 @@ impl Session {
             .ok()
     }
 
+    /// Runs `f` with the unlocked vault (counts as activity).
+    pub fn with_vault<T>(
+        &self,
+        f: impl FnOnce(&Vault) -> Result<T, CommandError>,
+    ) -> Result<T, CommandError> {
+        let guard = self.vault.lock().map_err(|_| CommandError::internal())?;
+        let v = guard
+            .as_ref()
+            .ok_or_else(|| CommandError::new("locked", "Le coffre est verrouillé."))?;
+        self.touch();
+        f(v)
+    }
+
     fn is_unlocked(&self) -> bool {
         self.vault.lock().map(|v| v.is_some()).unwrap_or(false)
     }
@@ -126,7 +139,14 @@ pub struct CommandError {
 }
 
 impl CommandError {
-    fn internal() -> Self {
+    pub fn new(code: &'static str, message: impl Into<String>) -> Self {
+        Self {
+            code,
+            message: message.into(),
+        }
+    }
+
+    pub fn internal() -> Self {
         Self {
             code: "internal",
             message: "Erreur interne.".into(),
@@ -145,6 +165,7 @@ impl From<vault::Error> for CommandError {
             NotFound(_) => ("not_found", "Aucun coffre n'existe encore.".into()),
             AlreadyExists(_) => ("already_exists", "Un coffre existe déjà.".into()),
             NewerSchema { .. } => ("newer_schema", e.to_string()),
+            Invalid(what) => ("invalid", format!("Donnée invalide : {what}.")),
             _ => ("vault_error", "Le coffre n'a pas pu être ouvert.".into()),
         };
         Self { code, message }

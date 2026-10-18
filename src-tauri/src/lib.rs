@@ -1,5 +1,6 @@
 //! Tauri shell. Commands are thin: validation and logic live in the crates.
 
+mod clients;
 #[cfg(debug_assertions)]
 mod dev;
 mod session;
@@ -79,6 +80,11 @@ pub fn run() {
             session::vault_recover,
             session::vault_lock,
             session::activity,
+            clients::client_list,
+            clients::client_get,
+            clients::client_save,
+            clients::client_delete,
+            clients::assess,
             updates::update_check,
             updates::update_install,
         ])
