@@ -45,24 +45,6 @@ pub fn schema_version() -> u32 {
     u32::try_from(MIGRATIONS.len()).unwrap_or(u32::MAX)
 }
 
-/// Stack for SQLCipher work. `sqlcipher_export` and migrations recurse deeply
-/// in SQLite; with MSVC debug builds that overflowed the default 2 MiB thread
-/// stack on Windows (CI, 2026-10-18). Run them on a thread with room to spare.
-const SQLITE_STACK: usize = 16 * 1024 * 1024;
-
-/// Runs `f` on a scoped thread with [`SQLITE_STACK`] and waits for it.
-pub fn big_stack<T: Send>(f: impl FnOnce() -> Result<T, Error> + Send) -> Result<T, Error> {
-    std::thread::scope(|s| {
-        let handle = std::thread::Builder::new()
-            .name("sqlcipher".into())
-            .stack_size(SQLITE_STACK)
-            .spawn_scoped(s, f)?;
-        handle
-            .join()
-            .unwrap_or_else(|panic| std::panic::resume_unwind(panic))
-    })
-}
-
 /// Opens `path` with `dek`. A wrong key surfaces as `Error::WrongKey`.
 pub fn open(path: &Path, dek: &Secret) -> Result<Connection, Error> {
     let conn = Connection::open(path)?;
@@ -77,9 +59,12 @@ pub fn open(path: &Path, dek: &Secret) -> Result<Connection, Error> {
     {
         return Err(Error::WrongKey);
     }
-    conn.execute_batch(
-        "PRAGMA cipher_memory_security = ON; PRAGMA foreign_keys = ON; PRAGMA secure_delete = ON;",
-    )?;
+    // cipher_memory_security stays OFF (SQLCipher's default). With it ON, on
+    // Windows VirtualLock fails (quota, error 1453) and SQLCipher's warning
+    // path allocates again, recursing until the stack overflows (CI,
+    // 2026-10-18). Keys are wiped by Zeroize; swap is covered by the required
+    // full-disk encryption.
+    conn.execute_batch("PRAGMA foreign_keys = ON; PRAGMA secure_delete = ON;")?;
     Ok(conn)
 }
 
@@ -92,11 +77,7 @@ fn sql_string(s: &str) -> String {
 }
 
 /// Encrypted copy of the open database (same key) at `dest`.
-pub fn export(conn: &mut Connection, dest: &Path, dek: &Secret) -> Result<(), Error> {
-    big_stack(move || export_inner(conn, dest, dek))
-}
-
-fn export_inner(conn: &Connection, dest: &Path, dek: &Secret) -> Result<(), Error> {
+pub fn export(conn: &Connection, dest: &Path, dek: &Secret) -> Result<(), Error> {
     if dest.exists() {
         return Err(Error::AlreadyExists(dest.to_path_buf()));
     }
@@ -218,29 +199,6 @@ mod tests {
         assert_ne!(second, backup);
     }
 
-    /// The SQLCipher work must not depend on the caller's stack size.
-    #[test]
-    fn export_runs_on_its_own_large_stack() {
-        let r = std::thread::Builder::new()
-            .stack_size(256 * 1024)
-            .spawn(|| {
-                let dir = tempfile::tempdir().unwrap();
-                let path = dir.path().join("t.db");
-                let dek = Secret::random().unwrap();
-                let mut conn = open(&path, &dek).unwrap();
-                migrate(&mut conn, &path, &dek).unwrap();
-                export(&mut conn, &dir.path().join("b.db"), &dek).unwrap();
-                std::thread::current().name().map(str::to_owned)
-            })
-            .unwrap()
-            .join()
-            .unwrap();
-        assert_eq!(
-            r, None,
-            "caller thread is unnamed; the work ran on the sqlcipher thread"
-        );
-    }
-
     #[test]
     fn refuses_newer_schema() {
         let dir = tempfile::tempdir().unwrap();
@@ -252,5 +210,22 @@ mod tests {
             migrate(&mut conn, &path, &dek),
             Err(Error::NewerSchema { found: 99, .. })
         ));
+    }
+}
+
+#[cfg(test)]
+mod memory_security {
+    #![allow(clippy::unwrap_used)]
+
+    /// Regression guard: memory security must stay off (see `open`).
+    #[test]
+    fn cipher_memory_security_is_off() {
+        let dir = tempfile::tempdir().unwrap();
+        let conn =
+            super::open(&dir.path().join("t.db"), &super::Secret::random().unwrap()).unwrap();
+        let v: String = conn
+            .query_row("PRAGMA cipher_memory_security", [], |r| r.get(0))
+            .unwrap();
+        assert_eq!(v, "0");
     }
 }

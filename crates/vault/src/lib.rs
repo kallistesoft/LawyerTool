@@ -254,11 +254,8 @@ impl Vault {
     }
 
     fn open_with(paths: &Paths, dek: Secret, vault_id: String) -> Result<Self, Error> {
-        let (conn, migration_backup) = db::big_stack(|| {
-            let mut conn = db::open(&paths.db, &dek)?;
-            let backup = db::migrate(&mut conn, &paths.db, &dek)?;
-            Ok((conn, backup))
-        })?;
+        let mut conn = db::open(&paths.db, &dek)?;
+        let migration_backup = db::migrate(&mut conn, &paths.db, &dek)?;
         if let Some(b) = &migration_backup {
             std::fs::copy(paths.keys(), b.with_extension("keys"))?;
         }
@@ -283,12 +280,12 @@ impl Vault {
 
     /// Encrypted backup: `<dest>` (database, same key) and `<dest>.keys`.
     /// Restoring needs both files and the recovery phrase.
-    pub fn backup(&mut self, dest: &Path) -> Result<(), Error> {
+    pub fn backup(&self, dest: &Path) -> Result<(), Error> {
         let keys = dest.with_extension("keys");
         if keys.exists() {
             return Err(Error::AlreadyExists(keys));
         }
-        db::export(&mut self.conn, dest, &self.dek)?;
+        db::export(&self.conn, dest, &self.dek)?;
         std::fs::copy(self.paths.keys(), keys)?;
         Ok(())
     }
