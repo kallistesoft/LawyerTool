@@ -1,0 +1,125 @@
+{
+  "applicant": {
+    "age": 29,
+    "canadian_education": null,
+    "canadian_work_by_noc": [],
+    "canadian_work_years": 1,
+    "certificate_of_qualification": false,
+    "education": "bachelor_or_three_year",
+    "eligibility": {
+      "authorized_to_work_in_canada": null,
+      "canadian_study_two_years": null,
+      "credential": null,
+      "family_size": null,
+      "fsw_arranged_employment": null,
+      "intends_to_live_in_quebec": null,
+      "relative_in_canada": null,
+      "settlement_funds_cad": null,
+      "spouse_canadian_study_two_years": null,
+      "spouse_canadian_work_one_year": null,
+      "work_history": []
+    },
+    "first_language": {
+      "listening": 440,
+      "reading": 440,
+      "speaking": 470,
+      "test": "tef_canada",
+      "test_date": "2025-06-01",
+      "writing": 450
+    },
+    "foreign_work_years": 3,
+    "job_offer": null,
+    "marital_status": "never_married",
+    "provincial_nomination": false,
+    "second_language": null,
+    "sibling_in_canada": false,
+    "spouse": null
+  },
+  "calculator": {
+    "core": 338,
+    "spouse": 0,
+    "skill": 76,
+    "bonus": 25,
+    "total": 439
+  },
+  "description": "French NCLC 7 first, no English: French bonus 25",
+  "form": [
+    [
+      "q1",
+      "F"
+    ],
+    [
+      "q3",
+      "M"
+    ],
+    [
+      "q4",
+      "E"
+    ],
+    [
+      "q4b",
+      "A"
+    ],
+    [
+      "q5i",
+      "A"
+    ],
+    [
+      "q5i-a",
+      "C"
+    ],
+    [
+      "q5i-b-speaking",
+      "E"
+    ],
+    [
+      "q5i-b-listening",
+      "E"
+    ],
+    [
+      "q5i-b-reading",
+      "E"
+    ],
+    [
+      "q5i-b-writing",
+      "E"
+    ],
+    [
+      "q5ii",
+      "C"
+    ],
+    [
+      "q6i",
+      "B"
+    ],
+    [
+      "q6ii",
+      "D"
+    ],
+    [
+      "q7",
+      "A"
+    ],
+    [
+      "q8",
+      "A"
+    ],
+    [
+      "q9",
+      "A"
+    ],
+    [
+      "q10i",
+      "A"
+    ]
+  ],
+  "grid": "crs-2026-10-16",
+  "id": "18-french-first-no-english",
+  "recorded": {
+    "on": "2026-10-18",
+    "by": "live calculator, Chrome (claude-in-chrome)",
+    "url": "https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/verifier-note.html",
+    "calculator_js_sha256": "61392e6266be6d976735305982eeb72ce30296f086ebf1b5dc802a305639a65a"
+  },
+  "adjustments": []
+}

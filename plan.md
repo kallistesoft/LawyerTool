@@ -101,7 +101,7 @@ IRCC changes the CRS grid on 2026-11-03, so M0 has to support two grid versions 
    - FSW 67-point grid.
    - Minimums for FSW, CEC and FST: language, experience, funds, job offer/certificate for FST.
    - The result lists, per program, `eligible` / `not eligible (reasons)` / `needs lawyer input (missing data)`. It never guesses.
-6. **Golden profiles** (`fixtures/crs/`, about 25 synthetic profiles):
+6. **Golden profiles** (`fixtures/crs/golden/`, 29 synthetic profiles; recorded 2026-10-18, all match):
    - Coverage:
      - marital status (single, spouse accompanying, Canadian/not-accompanying spouse scored as single);
      - age 17/18/20/29/30/35/44/45+;
@@ -224,7 +224,7 @@ IRCC changes the CRS grid on 2026-11-03, so M0 has to support two grid versions 
 
 **Flow:**
 0. **Schedule:** the app runs the check after unlock if the last check was more than 24h ago, then every 24h while open, plus a "Check now" button in Settings.
-1. Fetch through `net` (5 MB cap, HTML/JSON/JS/PDF content types only, audited) and skip unchanged hashes.
+1. Fetch through `net` (5 MB cap, HTML/JSON/JS/PDF content types only, audited) and skip unchanged hashes. **Hash the normalized `<main>` content, not the raw response:** canada.ca pages embed an Akamai beacon script with per-request tokens, so the raw bytes differ on every fetch even when nothing changed (observed 2026-10-18).
 2. Store the raw response and its hash encrypted. These are evidence and future test fixtures.
 3. Parse with scripts.
 4. Validation:
