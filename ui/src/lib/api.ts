@@ -45,3 +45,18 @@ export function reportActivity() {
 }
 
 export const onLocked = (f: () => void): Promise<UnlistenFn> => listen('vault-locked', f)
+
+export interface UpdateInfo {
+  configured: boolean
+  available: boolean
+  current: string
+  version: string | null
+  notes: string | null
+  /** Current version is below the release's min_version. */
+  mandatory: boolean
+  channel: 'stable' | 'beta'
+}
+
+export const updateCheck = () => invoke<UpdateInfo>('update_check')
+/** Downloads, verifies and installs, then restarts the app. */
+export const updateInstall = () => invoke<void>('update_install')

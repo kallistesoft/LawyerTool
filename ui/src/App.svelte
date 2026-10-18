@@ -5,6 +5,7 @@
   import RecoveryShow from './lib/RecoveryShow.svelte'
   import Setup from './lib/Setup.svelte'
   import Unlock from './lib/Unlock.svelte'
+  import UpdateBanner from './lib/UpdateBanner.svelte'
 
   type Screen = 'loading' | 'setup' | 'recovery-show' | 'unlock' | 'recover' | 'home'
   let screen: Screen = $state('loading')
@@ -54,6 +55,7 @@
   {:else if screen === 'recover'}
     <Recover onRecovered={() => (screen = 'home')} onCancel={() => (screen = 'unlock')} />
   {:else if screen === 'home'}
+    <UpdateBanner />
     <section>
       <h2>Coffre déverrouillé</h2>
       {#if dev}

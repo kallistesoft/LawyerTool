@@ -1,0 +1,97 @@
+name: Release
+
+# Builds installers for a tag and attaches them to a draft GitHub release.
+# With the TAURI_SIGNING_PRIVATE_KEY secret, also signs the update bundles and
+# uploads latest.json (with min_version from release/min-version).
+# Runs automatically for minor/major bumps (from release-version.yml), or on
+# demand: Actions -> Release -> Run workflow -> tag.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag to build (vX.Y.Z)
+        required: true
+  workflow_call:
+    inputs:
+      tag:
+        type: string
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Installers (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            args: --target universal-apple-darwin --bundles app,dmg
+            targets: aarch64-apple-darwin x86_64-apple-darwin
+          - os: windows-latest
+            args: --bundles msi
+            targets: x86_64-pc-windows-msvc
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.tag }}
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+      - uses: Swatinem/rust-cache@63fed3e2fecf6f7b51dc6f043341b79ef82a9ae7 # v2.9.2
+      - name: Rust targets
+        shell: bash
+        run: rustup target add ${{ matrix.targets }}
+      - run: npm ci --prefix ui --ignore-scripts --no-fund
+      - name: Updater signing available?
+        id: sign
+        shell: bash
+        env:
+          KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+        run: |
+          if [ -n "$KEY" ]; then
+            echo "args=--config src-tauri/tauri.updater.conf.json" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::No TAURI_SIGNING_PRIVATE_KEY secret: installers are built without updater signatures."
+          fi
+      - uses: tauri-apps/tauri-action@2d793bf2c8c505b9b76211601b09aab48922225d # action-v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          # Apple notarization / Windows code signing: see docs/releasing.md.
+        with:
+          tagName: ${{ inputs.tag }}
+          releaseName: LawyerTool ${{ inputs.tag }}
+          releaseBody: See the commits since the previous tag.
+          releaseDraft: true
+          projectPath: .
+          tauriScript: node ui/node_modules/@tauri-apps/cli/tauri.js
+          args: ${{ matrix.args }} ${{ steps.sign.outputs.args }}
+          uploadUpdaterJson: true
+
+  min-version:
+    name: Add min_version to latest.json
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.tag }}
+      - name: Patch latest.json
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          if ! gh release download "$TAG" --pattern latest.json --dir /tmp/rel 2>/dev/null; then
+            echo "::notice::No latest.json on $TAG (no signing key yet): nothing to patch."
+            exit 0
+          fi
+          min=$(tr -d '[:space:]' < release/min-version)
+          jq --arg m "$min" '. + {min_version: $m}' /tmp/rel/latest.json > /tmp/rel/latest.patched.json
+          mv /tmp/rel/latest.patched.json /tmp/rel/latest.json
+          gh release upload "$TAG" /tmp/rel/latest.json --clobber
+          echo "latest.json min_version = $min"
