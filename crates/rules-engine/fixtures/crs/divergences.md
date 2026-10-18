@@ -61,7 +61,9 @@ the case is flagged for manual review.
   CRS points are then looked up by NCLC, which is how the calculator works
   anyway (its options are NCLC rows), so CRS points are unaffected. Record the
   test date on every language result.
-- **Gaps on 2019-09-30 → 2019-10-01 and on 2023-12-10 itself:** a test dated
-  exactly 2023-12-10 matches two tables. Proposed: treat 2023-12-10 as the
-  older scale ("between October 1, 2019 and December 10, 2023"), and refuse
-  dates in the one-day gap (2019-09-30 is "before"; nothing for none).
+- **Edge dates:** a test dated 2019-09-30 is in neither table ("before
+  September 30, 2019" / "between October 1, 2019 and ..."), and one dated
+  2023-12-10 is in two ("between ... and December 10, 2023" / "after
+  December 10, 2023"). Proposed: 2023-12-10 uses the 2019–2023 scale; a test
+  dated 2019-09-30 is refused and flagged for manual review. Both dates are
+  long past the 2-year validity, so this only matters for old files.
