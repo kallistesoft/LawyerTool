@@ -42,7 +42,7 @@ the case is flagged for manual review.
 
 ## D-003: TEF Canada score scale depends on the test date
 
-- **Status:** PENDING ruling
+- **Status:** RULED 2026-10-18: convert TEF by test date (three tables)
 - **Found:** 2026-10-18
 - **Express Entry pages** (`examen-linguistique.html` and the calculator
   `scg-outil-udit.js`): one TEF table only, e.g. NCLC 7 = speaking 310–348,
@@ -57,13 +57,16 @@ the case is flagged for manual review.
 - **Impact:** Express Entry results are valid for 2 years, so every valid TEF
   result today is on the post-2023 scale. Converting a real current TEF score
   with the Express Entry table would give a wrong NCLC (or an impossible score).
-- **Proposed ruling:** convert TEF by test date using the three tables. The
+- **Ruling** (project owner, 2026-10-18; re-confirm in M4): convert TEF by test date using the three tables. The
   CRS points are then looked up by NCLC, which is how the calculator works
   anyway (its options are NCLC rows), so CRS points are unaffected. Record the
   test date on every language result.
-- **Edge dates:** a test dated 2019-09-30 is in neither table ("before
+- **Edge dates (ruled with the above):** a test dated 2019-09-30 is in neither table ("before
   September 30, 2019" / "between October 1, 2019 and ..."), and one dated
   2023-12-10 is in two ("between ... and December 10, 2023" / "after
-  December 10, 2023"). Proposed: 2023-12-10 uses the 2019–2023 scale; a test
+  December 10, 2023"). 2023-12-10 uses the 2019–2023 scale; a test
   dated 2019-09-30 is refused and flagged for manual review. Both dates are
   long past the 2-year validity, so this only matters for old files.
+- **Source for all conversions:** `equivalences-aip-en.html` (one named
+  table per test). Its CELPIP, IELTS, PTE Core and TCF Canada values match
+  the Express Entry calculator; a test checks this.
