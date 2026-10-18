@@ -261,3 +261,73 @@ fn audit_log_roundtrip_is_encrypted() {
         "audit log is inside the encrypted DB"
     );
 }
+
+#[test]
+fn clients_crud_and_encrypted() {
+    let (_d, paths, store) = setup();
+    let (v, _) = Vault::create(&paths, &store, PASS, KDF).unwrap();
+    let who = vault::Identity {
+        full_name: "Marie Tremblay-7731".into(),
+        email: Some("marie@example.com".into()),
+        phone: None,
+        file_reference: Some("2026-041".into()),
+    };
+    let id = v
+        .client_save(None, &who, r#"{"age":29}"#, "2026-10-18T10:00:00Z")
+        .unwrap();
+    let id2 = v
+        .client_save(
+            None,
+            &vault::Identity {
+                full_name: "Jean Roy".into(),
+                email: None,
+                phone: None,
+                file_reference: None,
+            },
+            "{}",
+            "2026-10-18T11:00:00Z",
+        )
+        .unwrap();
+    assert_eq!(
+        v.client_list()
+            .unwrap()
+            .iter()
+            .map(|c| c.id)
+            .collect::<Vec<_>>(),
+        vec![id2, id],
+        "most recent first"
+    );
+
+    let mut who2 = who.clone();
+    who2.phone = Some("514-555-0100".into());
+    v.client_save(Some(id), &who2, r#"{"age":30}"#, "2026-10-18T12:00:00Z")
+        .unwrap();
+    let rec = v.client_get(id).unwrap().unwrap();
+    assert_eq!(
+        (rec.identity, rec.profile.as_str(), rec.created_at.as_str()),
+        (who2, r#"{"age":30}"#, "2026-10-18T10:00:00Z")
+    );
+
+    assert!(matches!(
+        v.client_save(Some(999), &who, "{}", "x"),
+        Err(Error::Invalid(_))
+    ));
+    let blank = vault::Identity {
+        full_name: "  ".into(),
+        email: None,
+        phone: None,
+        file_reference: None,
+    };
+    assert!(matches!(
+        v.client_save(None, &blank, "{}", "x"),
+        Err(Error::Invalid(_))
+    ));
+
+    assert!(v.client_delete(id2).unwrap());
+    assert!(!v.client_delete(id2).unwrap());
+    v.lock();
+    assert!(
+        !contains(&paths.db, b"Tremblay-7731"),
+        "client identity is encrypted"
+    );
+}

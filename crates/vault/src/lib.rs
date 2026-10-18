@@ -10,6 +10,7 @@
 //! recovery phrase. Copying the files alone, or knowing the passphrase alone,
 //! is not enough.
 
+mod clients;
 mod crypto;
 mod db;
 mod keystore;
@@ -20,6 +21,7 @@ use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
 use zeroize::Zeroizing;
 
+pub use clients::{ClientRecord, ClientSummary, Identity};
 pub use crypto::KdfParams;
 use crypto::{PassphraseSlot, Secret, Wrapped};
 pub use db::schema_version;
@@ -48,6 +50,8 @@ pub enum Error {
         "database schema v{found} is newer than this app supports (v{supported}): update the app"
     )]
     NewerSchema { found: u32, supported: u32 },
+    #[error("invalid input: {0}")]
+    Invalid(&'static str),
     #[error("vault files are damaged: {0}")]
     Corrupt(&'static str),
     #[error("keychain error: {0}")]

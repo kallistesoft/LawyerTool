@@ -13,6 +13,14 @@
     "allow-vault-recover",
     "allow-vault-lock",
     "allow-activity",
+    "allow-update-check",
+    "allow-update-install",
+    "allow-client-list",
+    "allow-client-get",
+    "allow-client-save",
+    "allow-client-delete",
+    "allow-assess",
+    "allow-deid-preview",
     "core:event:allow-listen",
     "core:event:allow-unlisten"
   ]

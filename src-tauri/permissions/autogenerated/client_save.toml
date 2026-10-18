@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-client-save"
+description = "Enables the client_save command without any pre-configured scope."
+commands.allow = ["client_save"]
+
+[[permission]]
+identifier = "deny-client-save"
+description = "Denies the client_save command without any pre-configured scope."
+commands.deny = ["client_save"]

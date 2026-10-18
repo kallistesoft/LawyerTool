@@ -251,6 +251,15 @@ IRCC changes the CRS grid on 2026-11-03, so M0 has to support two grid versions 
 
 ---
 
+## Development phase (decided 2026-10-18)
+Work happens in **dev-only mode**: debug builds with the automatic test vault, plus the installed "LawyerTool Dev" app that is rebuilt after each change (README).
+
+**Very last step, before any real release:**
+- switch on the updater: signing key, GitHub secrets, update host, `plugins.updater` config (docs/releasing.md);
+- Apple notarization and Windows code signing.
+
+The updater code is merged but dormant until then.
+
 ## Open questions (not blocking M0)
 Client form export format (a sample with fake data), API key ownership, update host location.
 

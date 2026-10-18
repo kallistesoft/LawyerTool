@@ -10,6 +10,14 @@ fn main() {
             "vault_recover",
             "vault_lock",
             "activity",
+            "client_list",
+            "client_get",
+            "client_save",
+            "client_delete",
+            "assess",
+            "deid_preview",
+            "update_check",
+            "update_install",
         ]),
     ))
     .unwrap_or_else(|e| panic!("tauri build: {e}"));

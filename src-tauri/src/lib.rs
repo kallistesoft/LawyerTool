@@ -1,8 +1,10 @@
 //! Tauri shell. Commands are thin: validation and logic live in the crates.
 
+mod clients;
 #[cfg(debug_assertions)]
 mod dev;
 mod session;
+mod updates;
 
 use std::sync::Arc;
 
@@ -48,7 +50,14 @@ fn new_session(dir: &std::path::Path) -> Result<session::Session, Box<dyn std::e
 }
 
 pub fn run() {
-    let result = tauri::Builder::default()
+    let context = tauri::generate_context!();
+    let mut builder = tauri::Builder::default();
+    // Registered only once the public key and endpoint are configured
+    // (see docs/releasing.md); the plugin refuses to start without them.
+    if updates::configured(&context.config().plugins) {
+        builder = builder.plugin(tauri_plugin_updater::Builder::new().build());
+    }
+    let result = builder
         .setup(|app| {
             let dir = app.path().app_data_dir()?;
             std::fs::create_dir_all(&dir)?;
@@ -71,8 +80,16 @@ pub fn run() {
             session::vault_recover,
             session::vault_lock,
             session::activity,
+            clients::client_list,
+            clients::client_get,
+            clients::client_save,
+            clients::client_delete,
+            clients::assess,
+            clients::deid_preview,
+            updates::update_check,
+            updates::update_install,
         ])
-        .run(tauri::generate_context!());
+        .run(context);
     if let Err(e) = result {
         // No sensitive data reaches this point; the message is the error kind.
         eprintln!("LawyerTool failed to start: {e}");

@@ -1,0 +1,76 @@
+{
+  "marital_status": "married",
+  "spouse": {
+    "is_canadian_citizen_or_pr": false,
+    "accompanying": true,
+    "education": "secondary",
+    "canadian_work_years": 0,
+    "language": {
+      "test": "celpip_general",
+      "test_date": "2025-06-01",
+      "speaking": 7,
+      "listening": 7,
+      "reading": 7,
+      "writing": 7
+    }
+  },
+  "age": 30,
+  "education": "bachelor_or_three_year",
+  "canadian_education": null,
+  "first_language": {
+    "test": "tef_canada",
+    "test_date": "2025-06-01",
+    "speaking": 470,
+    "listening": 440,
+    "reading": 440,
+    "writing": 450
+  },
+  "second_language": {
+    "test": "ielts_general",
+    "test_date": "2025-06-01",
+    "speaking": 60,
+    "listening": 60,
+    "reading": 60,
+    "writing": 60
+  },
+  "canadian_work_years": 1,
+  "canadian_work_by_noc": [
+    {
+      "noc": "21231",
+      "months": 12
+    }
+  ],
+  "foreign_work_years": 0,
+  "certificate_of_qualification": false,
+  "job_offer": {
+    "noc": "21231"
+  },
+  "provincial_nomination": false,
+  "sibling_in_canada": false,
+  "eligibility": {
+    "work_history": [
+      {
+        "noc": "21231",
+        "in_canada": true,
+        "start": "2024-01-01",
+        "end": "2024-12-31",
+        "hours_per_week": 37,
+        "paid": true,
+        "self_employed": false,
+        "full_time_student": false,
+        "authorized": true,
+        "qualified_in_trade": null
+      }
+    ],
+    "credential": "foreign_with_eca",
+    "canadian_study_two_years": null,
+    "spouse_canadian_study_two_years": null,
+    "spouse_canadian_work_one_year": null,
+    "relative_in_canada": null,
+    "authorized_to_work_in_canada": null,
+    "fsw_arranged_employment": null,
+    "intends_to_live_in_quebec": false,
+    "settlement_funds_cad": 30000,
+    "family_size": 2
+  }
+}
