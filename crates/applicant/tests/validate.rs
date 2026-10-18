@@ -22,6 +22,7 @@ fn single() -> Applicant {
         first_language: Some(ielts(70, 80, 70, 70)),
         second_language: None,
         canadian_work_years: 1,
+        canadian_work_by_noc: vec![],
         foreign_work_years: 3,
         certificate_of_qualification: false,
         job_offer: None,
@@ -130,4 +131,36 @@ fn json_roundtrip_rejects_unknown_fields() {
     assert_eq!(a, back);
     let bad = json.replacen("{", "{\"nickname\":\"x\",", 1);
     assert!(serde_json::from_str::<Applicant>(&bad).is_err());
+}
+
+#[test]
+fn noc_codes() {
+    let teer = |s| Noc::parse(s).unwrap().offer_category();
+    assert_eq!(teer("00012"), JobOfferNoc::Teer0Major00);
+    assert_eq!(teer("10010"), JobOfferNoc::Teer0123);
+    assert_eq!(teer("21231"), JobOfferNoc::Teer0123);
+    assert_eq!(teer("64100"), JobOfferNoc::Teer45);
+    for bad in ["2123", "212310", "2123a"] {
+        assert!(Noc::parse(bad).is_none(), "{bad}");
+    }
+    assert!(serde_json::from_str::<Noc>("\"2123\"").is_err());
+}
+
+#[test]
+fn canadian_work_by_noc_must_match_years() {
+    let mut a = single();
+    let w = |noc, months| NocMonths {
+        noc: Noc::parse(noc).unwrap(),
+        months,
+    };
+    a.canadian_work_by_noc = vec![w("21231", 8), w("10010", 6)];
+    assert_eq!(a.validate(), Ok(()), "14 months = 1 year");
+    a.canadian_work_by_noc = vec![w("21231", 30)];
+    assert_eq!(
+        a.validate(),
+        Err(vec![ValidationError::CanadianWorkMismatch {
+            months: 30,
+            years: 1
+        }])
+    );
 }

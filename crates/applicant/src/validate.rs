@@ -31,6 +31,10 @@ pub enum ValidationError {
     SecondWithoutFirst,
     #[error("family size must be at least 1")]
     FamilySize,
+    #[error(
+        "Canadian work by occupation totals {months} months but canadian_work_years is {years}"
+    )]
+    CanadianWorkMismatch { months: u16, years: u8 },
 }
 
 /// Youngest age at which skilled work is plausibly counted.
@@ -85,6 +89,16 @@ impl Applicant {
                     errs.push(ValidationError::SecondLanguageSameAsFirst)
                 }
                 Some(_) => {}
+            }
+        }
+
+        if !self.canadian_work_by_noc.is_empty() {
+            let months: u16 = self.canadian_work_by_noc.iter().map(|w| w.months).sum();
+            if months / crate::MONTHS_PER_YEAR != u16::from(self.canadian_work_years) {
+                errs.push(ValidationError::CanadianWorkMismatch {
+                    months,
+                    years: self.canadian_work_years,
+                });
             }
         }
 
