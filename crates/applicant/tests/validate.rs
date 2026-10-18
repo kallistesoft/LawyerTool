@@ -1,3 +1,5 @@
+#![allow(clippy::unwrap_used)] // test helpers may panic
+
 use applicant::*;
 
 fn ielts(s: u16, l: u16, r: u16, w: u16) -> LanguageTest {

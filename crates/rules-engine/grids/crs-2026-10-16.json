@@ -1,0 +1,1329 @@
+{
+  "id": "crs-2026-10-16",
+  "effective_from": "2026-10-16",
+  "sources": [
+    {
+      "id": "criteries-scg",
+      "url": "https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/verifier-note/criteries-scg.html",
+      "sha256": "c4a492adfa2cad679c2e797cc4391d7d2231198ad8b6e08c8483f37ad2080961",
+      "fetched": "2026-10-18"
+    }
+  ],
+  "crs": {
+    "core_max": {
+      "key": null,
+      "points": {
+        "with_spouse": 460,
+        "without_spouse": 500
+      },
+      "cite": {
+        "source": "criteries-scg",
+        "table": null,
+        "row": null,
+        "text": "Avec un époux ou conjoint de fait : Maximum 460 points total pour tous les facteurs Sans époux ou conjoint de fait : Maximum 500 points"
+      }
+    },
+    "age": [
+      {
+        "key": {
+          "min": 0,
+          "max": 17
+        },
+        "points": {
+          "with_spouse": 0,
+          "without_spouse": 0
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 1,
+          "text": "17 ans ou moins | 0 | 0"
+        }
+      },
+      {
+        "key": {
+          "min": 18,
+          "max": 18
+        },
+        "points": {
+          "with_spouse": 90,
+          "without_spouse": 99
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 2,
+          "text": "18 ans | 90 | 99"
+        }
+      },
+      {
+        "key": {
+          "min": 19,
+          "max": 19
+        },
+        "points": {
+          "with_spouse": 95,
+          "without_spouse": 105
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 3,
+          "text": "19 ans | 95 | 105"
+        }
+      },
+      {
+        "key": {
+          "min": 20,
+          "max": 29
+        },
+        "points": {
+          "with_spouse": 100,
+          "without_spouse": 110
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 4,
+          "text": "20 to 29 ans | 100 | 110"
+        }
+      },
+      {
+        "key": {
+          "min": 30,
+          "max": 30
+        },
+        "points": {
+          "with_spouse": 95,
+          "without_spouse": 105
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 5,
+          "text": "30 ans | 95 | 105"
+        }
+      },
+      {
+        "key": {
+          "min": 31,
+          "max": 31
+        },
+        "points": {
+          "with_spouse": 90,
+          "without_spouse": 99
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 6,
+          "text": "31 ans | 90 | 99"
+        }
+      },
+      {
+        "key": {
+          "min": 32,
+          "max": 32
+        },
+        "points": {
+          "with_spouse": 85,
+          "without_spouse": 94
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 7,
+          "text": "32 ans | 85 | 94"
+        }
+      },
+      {
+        "key": {
+          "min": 33,
+          "max": 33
+        },
+        "points": {
+          "with_spouse": 80,
+          "without_spouse": 88
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 8,
+          "text": "33 ans | 80 | 88"
+        }
+      },
+      {
+        "key": {
+          "min": 34,
+          "max": 34
+        },
+        "points": {
+          "with_spouse": 75,
+          "without_spouse": 83
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 9,
+          "text": "34 ans | 75 | 83"
+        }
+      },
+      {
+        "key": {
+          "min": 35,
+          "max": 35
+        },
+        "points": {
+          "with_spouse": 70,
+          "without_spouse": 77
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 10,
+          "text": "35 ans | 70 | 77"
+        }
+      },
+      {
+        "key": {
+          "min": 36,
+          "max": 36
+        },
+        "points": {
+          "with_spouse": 65,
+          "without_spouse": 72
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 11,
+          "text": "36 ans | 65 | 72"
+        }
+      },
+      {
+        "key": {
+          "min": 37,
+          "max": 37
+        },
+        "points": {
+          "with_spouse": 60,
+          "without_spouse": 66
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 12,
+          "text": "37 ans | 60 | 66"
+        }
+      },
+      {
+        "key": {
+          "min": 38,
+          "max": 38
+        },
+        "points": {
+          "with_spouse": 55,
+          "without_spouse": 61
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 13,
+          "text": "38 ans | 55 | 61"
+        }
+      },
+      {
+        "key": {
+          "min": 39,
+          "max": 39
+        },
+        "points": {
+          "with_spouse": 50,
+          "without_spouse": 55
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 14,
+          "text": "39 ans | 50 | 55"
+        }
+      },
+      {
+        "key": {
+          "min": 40,
+          "max": 40
+        },
+        "points": {
+          "with_spouse": 45,
+          "without_spouse": 50
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 15,
+          "text": "40 ans | 45 | 50"
+        }
+      },
+      {
+        "key": {
+          "min": 41,
+          "max": 41
+        },
+        "points": {
+          "with_spouse": 35,
+          "without_spouse": 39
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 16,
+          "text": "41 ans | 35 | 39"
+        }
+      },
+      {
+        "key": {
+          "min": 42,
+          "max": 42
+        },
+        "points": {
+          "with_spouse": 25,
+          "without_spouse": 28
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 17,
+          "text": "42 ans | 25 | 28"
+        }
+      },
+      {
+        "key": {
+          "min": 43,
+          "max": 43
+        },
+        "points": {
+          "with_spouse": 15,
+          "without_spouse": 17
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 18,
+          "text": "43 ans | 15 | 17"
+        }
+      },
+      {
+        "key": {
+          "min": 44,
+          "max": 44
+        },
+        "points": {
+          "with_spouse": 5,
+          "without_spouse": 6
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 19,
+          "text": "44 ans | 5 | 6"
+        }
+      },
+      {
+        "key": {
+          "min": 45,
+          "max": null
+        },
+        "points": {
+          "with_spouse": 0,
+          "without_spouse": 0
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 20,
+          "text": "45 ans ou plus | 0 | 0"
+        }
+      }
+    ],
+    "education": [
+      {
+        "key": "less_than_secondary",
+        "points": {
+          "with_spouse": 0,
+          "without_spouse": 0
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 1,
+          "text": "Études secondaires non complétées | 0 | 0"
+        }
+      },
+      {
+        "key": "secondary",
+        "points": {
+          "with_spouse": 28,
+          "without_spouse": 30
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 2,
+          "text": "Diplôme d'études secondaires | 28 | 30"
+        }
+      },
+      {
+        "key": "one_year_post_secondary",
+        "points": {
+          "with_spouse": 84,
+          "without_spouse": 90
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 3,
+          "text": "Degré, diplôme ou certificat de un an obtenu dans le cadre d'un programme à une université, un collège, une école technique ou de métiers ou un autre institut | 84 | 90"
+        }
+      },
+      {
+        "key": "two_year_post_secondary",
+        "points": {
+          "with_spouse": 91,
+          "without_spouse": 98
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 4,
+          "text": "Degré, diplôme ou certificat de deux ans obtenu dans le cadre d'un programme à une université, un collège, une école technique ou de métiers ou un autre institut | 91 | 98"
+        }
+      },
+      {
+        "key": "bachelor_or_three_year",
+        "points": {
+          "with_spouse": 112,
+          "without_spouse": 120
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 5,
+          "text": "Baccalauréat OU autres programmes (trois ans ou plus) à une université, un collège, une école technique ou de métiers ou un autre institut | 112 | 120"
+        }
+      },
+      {
+        "key": "two_or_more_credentials",
+        "points": {
+          "with_spouse": 119,
+          "without_spouse": 128
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 6,
+          "text": "Au moins deux certificats, diplômes ou degrés. Un doit avoir été obtenu dans le cadre d'un programme d'une durée de trois ans ou plus. | 119 | 128"
+        }
+      },
+      {
+        "key": "master_or_professional",
+        "points": {
+          "with_spouse": 126,
+          "without_spouse": 135
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 7,
+          "text": "Diplôme d'études universitaires de deuxième cycle OU Diplôme professionnel requis pour la pratique au sein d'une profession décernant des permis de pratique (Pour un diplôme professionnel, le programme d'études doit avoir été en médecine, médecine vétérinaire, dentisterie, optométrie, droit, chiropratique, ou en pharmacie.) | 126 | 135"
+        }
+      },
+      {
+        "key": "doctorate",
+        "points": {
+          "with_spouse": 140,
+          "without_spouse": 150
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 8,
+          "text": "Diplôme universitaire de troisième cycle (Ph.D.) | 140 | 150"
+        }
+      }
+    ],
+    "first_language": [
+      {
+        "key": {
+          "min": 0,
+          "max": 3
+        },
+        "points": {
+          "with_spouse": 0,
+          "without_spouse": 0
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 3,
+          "row": 1,
+          "text": "Moins que le niveau 4 des NCLC | 0 | 0"
+        }
+      },
+      {
+        "key": {
+          "min": 4,
+          "max": 5
+        },
+        "points": {
+          "with_spouse": 6,
+          "without_spouse": 6
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 3,
+          "row": 2,
+          "text": "NCLC 4 ou 5 | 6 | 6"
+        }
+      },
+      {
+        "key": {
+          "min": 6,
+          "max": 6
+        },
+        "points": {
+          "with_spouse": 8,
+          "without_spouse": 9
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 3,
+          "row": 3,
+          "text": "NCLC 6 | 8 | 9"
+        }
+      },
+      {
+        "key": {
+          "min": 7,
+          "max": 7
+        },
+        "points": {
+          "with_spouse": 16,
+          "without_spouse": 17
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 3,
+          "row": 4,
+          "text": "NCLC 7 | 16 | 17"
+        }
+      },
+      {
+        "key": {
+          "min": 8,
+          "max": 8
+        },
+        "points": {
+          "with_spouse": 22,
+          "without_spouse": 23
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 3,
+          "row": 5,
+          "text": "NCLC 8 | 22 | 23"
+        }
+      },
+      {
+        "key": {
+          "min": 9,
+          "max": 9
+        },
+        "points": {
+          "with_spouse": 29,
+          "without_spouse": 31
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 3,
+          "row": 6,
+          "text": "NCLC 9 | 29 | 31"
+        }
+      },
+      {
+        "key": {
+          "min": 10,
+          "max": null
+        },
+        "points": {
+          "with_spouse": 32,
+          "without_spouse": 34
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 3,
+          "row": 7,
+          "text": "NCLC 10 ou plus | 32 | 34"
+        }
+      }
+    ],
+    "second_language": [
+      {
+        "key": {
+          "min": 0,
+          "max": 3
+        },
+        "points": {
+          "with_spouse": 0,
+          "without_spouse": 0
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 4,
+          "row": 1,
+          "text": "Moins que le niveau 4 des NCLC | 0 | 0"
+        }
+      },
+      {
+        "key": {
+          "min": 5,
+          "max": 6
+        },
+        "points": {
+          "with_spouse": 1,
+          "without_spouse": 1
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 4,
+          "row": 2,
+          "text": "NCLC 5 ou 6 | 1 | 1"
+        }
+      },
+      {
+        "key": {
+          "min": 7,
+          "max": 8
+        },
+        "points": {
+          "with_spouse": 3,
+          "without_spouse": 3
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 4,
+          "row": 3,
+          "text": "NCLC 7 ou 8 | 3 | 3"
+        }
+      },
+      {
+        "key": {
+          "min": 9,
+          "max": null
+        },
+        "points": {
+          "with_spouse": 6,
+          "without_spouse": 6
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 4,
+          "row": 4,
+          "text": "NCLC 9 ou plus | 6 | 6"
+        }
+      }
+    ],
+    "second_language_max": {
+      "key": null,
+      "points": {
+        "with_spouse": 22,
+        "without_spouse": 24
+      },
+      "cite": {
+        "source": "criteries-scg",
+        "table": 4,
+        "row": 0,
+        "text": "Niveaux de compétence linguistique canadiens (NCLC) par compétence | Avec un époux ou conjoint de fait (Maximum 22 points) | Sans époux ou conjoint de fait (Maximum 24 points)"
+      }
+    },
+    "canadian_work": [
+      {
+        "key": {
+          "min": 0,
+          "max": 0
+        },
+        "points": {
+          "with_spouse": 0,
+          "without_spouse": 0
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 5,
+          "row": 1,
+          "text": "Aucune ou moins d'un an | 0 | 0"
+        }
+      },
+      {
+        "key": {
+          "min": 1,
+          "max": 1
+        },
+        "points": {
+          "with_spouse": 35,
+          "without_spouse": 40
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 5,
+          "row": 2,
+          "text": "1 an | 35 | 40"
+        }
+      },
+      {
+        "key": {
+          "min": 2,
+          "max": 2
+        },
+        "points": {
+          "with_spouse": 46,
+          "without_spouse": 53
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 5,
+          "row": 3,
+          "text": "2 ans | 46 | 53"
+        }
+      },
+      {
+        "key": {
+          "min": 3,
+          "max": 3
+        },
+        "points": {
+          "with_spouse": 56,
+          "without_spouse": 64
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 5,
+          "row": 4,
+          "text": "3 ans | 56 | 64"
+        }
+      },
+      {
+        "key": {
+          "min": 4,
+          "max": 4
+        },
+        "points": {
+          "with_spouse": 63,
+          "without_spouse": 72
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 5,
+          "row": 5,
+          "text": "4 ans | 63 | 72"
+        }
+      },
+      {
+        "key": {
+          "min": 5,
+          "max": null
+        },
+        "points": {
+          "with_spouse": 70,
+          "without_spouse": 80
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 5,
+          "row": 6,
+          "text": "5 ans ou plus | 70 | 80"
+        }
+      }
+    ],
+    "spouse_max": {
+      "value": 40,
+      "cite": {
+        "source": "criteries-scg",
+        "table": 6,
+        "row": 0,
+        "text": "Facteur | Points (Maximum 40 points)"
+      }
+    },
+    "spouse_education": [
+      {
+        "key": "less_than_secondary",
+        "points": 0,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 1,
+          "text": "Études secondaires non complétées | 0 | n/a"
+        }
+      },
+      {
+        "key": "secondary",
+        "points": 2,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 2,
+          "text": "Diplôme d'études secondaires | 2 | n/a"
+        }
+      },
+      {
+        "key": "one_year_post_secondary",
+        "points": 6,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 3,
+          "text": "Degré, diplôme ou certificat de un an obtenu dans le cadre d'un programme à une université, un collège, une école technique ou de métiers ou un autre institut | 6 | n/a"
+        }
+      },
+      {
+        "key": "two_year_post_secondary",
+        "points": 7,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 4,
+          "text": "Degré, diplôme ou certificat de deux ans obtenu dans le cadre d'un programme à une université, un collège, une école technique ou de métiers ou un autre institut | 7 | n/a"
+        }
+      },
+      {
+        "key": "bachelor_or_three_year",
+        "points": 8,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 5,
+          "text": "Baccalauréat OU autres programmes (trois ans ou plus) à une université, un collège, une école technique ou de métiers ou un autre institut | 8 | n/a"
+        }
+      },
+      {
+        "key": "two_or_more_credentials",
+        "points": 9,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 6,
+          "text": "Au moins deux certificats, diplômes ou degrés. Un doit avoir été obtenu dans le cadre d'un programme d'une durée de trois ans ou plus. | 9 | n/a"
+        }
+      },
+      {
+        "key": "master_or_professional",
+        "points": 10,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 7,
+          "text": "Diplôme d'études universitaires de deuxième cycle OU Diplôme professionnel requis pour la pratique au sein d'une profession décernant des permis de pratique (Pour un diplôme professionnel, le programme d'études doit avoir été en médecine, médecine vétérinaire, dentisterie, optométrie, droit, chiropratique, ou en pharmacie.) | 10 | n/a"
+        }
+      },
+      {
+        "key": "doctorate",
+        "points": 10,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 8,
+          "text": "Diplôme universitaire de troisième cycle (Ph.D.) | 10 | n/a"
+        }
+      }
+    ],
+    "spouse_language": [
+      {
+        "key": {
+          "min": 0,
+          "max": 4
+        },
+        "points": 0,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 8,
+          "row": 1,
+          "text": "NCLC 4 ou moins | 0 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 5,
+          "max": 6
+        },
+        "points": 1,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 8,
+          "row": 2,
+          "text": "NCLC 5 ou 6 | 1 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 7,
+          "max": 8
+        },
+        "points": 3,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 8,
+          "row": 3,
+          "text": "NCLC 7 ou 8 | 3 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 9,
+          "max": null
+        },
+        "points": 5,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 8,
+          "row": 4,
+          "text": "NCLC 9 ou plus | 5 | n/a"
+        }
+      }
+    ],
+    "spouse_canadian_work": [
+      {
+        "key": {
+          "min": 0,
+          "max": 0
+        },
+        "points": 0,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 9,
+          "row": 1,
+          "text": "Aucune ou moins d'un an | 0 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 1,
+          "max": 1
+        },
+        "points": 5,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 9,
+          "row": 2,
+          "text": "1 an | 5 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 2,
+          "max": 2
+        },
+        "points": 7,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 9,
+          "row": 3,
+          "text": "2 ans | 7 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 3,
+          "max": 3
+        },
+        "points": 8,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 9,
+          "row": 4,
+          "text": "3 ans | 8 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 4,
+          "max": 4
+        },
+        "points": 9,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 9,
+          "row": 5,
+          "text": "4 ans | 9 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 5,
+          "max": null
+        },
+        "points": 10,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 9,
+          "row": 6,
+          "text": "5 ans ou plus | 10 | n/a"
+        }
+      }
+    ],
+    "transferability": {
+      "education_language": {
+        "lower_min": 7,
+        "upper_min": 9,
+        "rows": [
+          {
+            "key": "secondary_or_less",
+            "lower": 0,
+            "upper": 0,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 13,
+              "row": 1,
+              "text": "Diplôme d'école secondaire ou moins | 0 | 0"
+            }
+          },
+          {
+            "key": "post_secondary",
+            "lower": 13,
+            "upper": 25,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 13,
+              "row": 2,
+              "text": "Diplôme postsecondaire nécessitant au moins une année d'études | 13 | 25"
+            }
+          },
+          {
+            "key": "two_or_more",
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 13,
+              "row": 3,
+              "text": "Deux diplômes postsecondaires ou plus ET au moins l'un d'entre eux a nécessité trois années d'études ou plus | 25 | 50"
+            }
+          },
+          {
+            "key": "master_or_professional",
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 13,
+              "row": 4,
+              "text": "il a obtenu un diplôme d'études universitaires de deuxième cycle ou un diplôme professionnel nécessaire à l'exercice d'une profession délivré à l'égard d'une profession mentionnée dans la liste du niveau de compétence A de la matrice de la Classification nationale des professions et pour laquelle un permis délivré par un organisme provincial de réglementation | 25 | 50"
+            }
+          },
+          {
+            "key": "doctorate",
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 13,
+              "row": 5,
+              "text": "il a obtenu un diplôme d'études universitaires de troisième cycle | 25 | 50"
+            }
+          }
+        ],
+        "cite": {
+          "source": "criteries-scg",
+          "table": 13,
+          "row": 0,
+          "text": "Avec une bonne maîtrise d'une langue officielle (Niveaux de compétence linguistique canadiens [NCLC] 7 ou plus) et un diplôme postsecondaire | Points pour NCLC 7 ou plus dans chacune des compétences dans la première langue officielle, dont au moins l'une d'entre elles est inférieure au niveau 9 (Maximum 25 points) | Points pour NCLC 9 ou plus dans chacune des quatre compétences dans la première langue officielle (Maximum 50 points)"
+        }
+      },
+      "education_canadian_work": {
+        "lower_min": 1,
+        "upper_min": 2,
+        "rows": [
+          {
+            "key": "secondary_or_less",
+            "lower": 0,
+            "upper": 0,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 14,
+              "row": 1,
+              "text": "Diplôme d'école secondaire ou moins | 0 | 0"
+            }
+          },
+          {
+            "key": "post_secondary",
+            "lower": 13,
+            "upper": 25,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 14,
+              "row": 2,
+              "text": "Diplôme postsecondaire nécessitant au moins une année d'études | 13 | 25"
+            }
+          },
+          {
+            "key": "two_or_more",
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 14,
+              "row": 3,
+              "text": "Deux diplômes postsecondaires ou plus ET au moins l'un d'entre eux a nécessité trois années d'études ou plus | 25 | 50"
+            }
+          },
+          {
+            "key": "master_or_professional",
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 14,
+              "row": 4,
+              "text": "il a obtenu un diplôme d'études universitaires de deuxième cycle ou un diplôme professionnel nécessaire à l'exercice d'une profession délivré à l'égard d'une profession mentionnée dans la liste du niveau de compétence A de la matrice de la Classification nationale des professions et pour laquelle un permis délivré par un organisme provincial de réglementation | 25 | 50"
+            }
+          },
+          {
+            "key": "doctorate",
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 14,
+              "row": 5,
+              "text": "il a obtenu un diplôme d'études universitaires de troisième cycle | 25 | 50"
+            }
+          }
+        ],
+        "cite": {
+          "source": "criteries-scg",
+          "table": 14,
+          "row": 0,
+          "text": "Avec une expérience de travail au Canada et un diplôme postsecondaire | Points pour les études + une année d'expérience de travail au Canada (Maximum 25 points) | Points pour les études + deux années ou plus d'expérience de travail au Canada (Maximum 50 points)"
+        }
+      },
+      "foreign_language": {
+        "lower_min": 7,
+        "upper_min": 9,
+        "rows": [
+          {
+            "key": {
+              "min": 0,
+              "max": 0
+            },
+            "lower": 0,
+            "upper": 0,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 15,
+              "row": 1,
+              "text": "Aucune expérience de travail à l'étranger | 0 | 0"
+            }
+          },
+          {
+            "key": {
+              "min": 1,
+              "max": 2
+            },
+            "lower": 13,
+            "upper": 25,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 15,
+              "row": 2,
+              "text": "Une année ou deux années d'expérience de travail à l'étranger | 13 | 25"
+            }
+          },
+          {
+            "key": {
+              "min": 3,
+              "max": null
+            },
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 15,
+              "row": 3,
+              "text": "Trois années ou plus d'expérience de travail à l'étranger | 25 | 50"
+            }
+          }
+        ],
+        "cite": {
+          "source": "criteries-scg",
+          "table": 15,
+          "row": 0,
+          "text": "Années d'expérience | Points pour de l'expérience de travail à l'étranger + NCLC 7 ou plus dans chacune des compétences dans la première langue officielle, dont au moins l'une d'entre elles est inférieure au niveau 9 (Maximum 25 points) | Points pour de l'expérience de travail à l'étranger + NCLC 9 ou plus dans chacune des quatre compétences dans la première langue officielle (Maximum 50 points)"
+        }
+      },
+      "foreign_canadian_work": {
+        "lower_min": 1,
+        "upper_min": 2,
+        "rows": [
+          {
+            "key": {
+              "min": 0,
+              "max": 0
+            },
+            "lower": 0,
+            "upper": 0,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 16,
+              "row": 1,
+              "text": "Aucune expérience de travail à l'étranger | 0 | 0"
+            }
+          },
+          {
+            "key": {
+              "min": 1,
+              "max": 2
+            },
+            "lower": 13,
+            "upper": 25,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 16,
+              "row": 2,
+              "text": "Une année ou deux années d'expérience de travail à l'étranger | 13 | 25"
+            }
+          },
+          {
+            "key": {
+              "min": 3,
+              "max": null
+            },
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 16,
+              "row": 3,
+              "text": "Trois années ou plus d'expérience de travail à l'étranger | 25 | 50"
+            }
+          }
+        ],
+        "cite": {
+          "source": "criteries-scg",
+          "table": 16,
+          "row": 0,
+          "text": "Années d'expérience | Points pour de l'expérience de travail à l'étranger + une année d'expérience de travail au Canada (Maximum 25 points) | Points pour de l'expérience de travail à l'étranger + deux années ou plus d'expérience de travail au Canada (Maximum 50 points)"
+        }
+      },
+      "certificate": {
+        "lower_min": 5,
+        "upper_min": 7,
+        "rows": [
+          {
+            "key": null,
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 17,
+              "row": 1,
+              "text": "Avec un certificat de compétence | 25 | 50"
+            }
+          }
+        ],
+        "cite": {
+          "source": "criteries-scg",
+          "table": 17,
+          "row": 0,
+          "text": "Certificat de compétence (métier spécialisé) – Avec une bonne maîtrise d'une langue officielle et un certificat de compétence (Niveaux de compétence linguistique canadiens [NCLC] 7 ou plus) | Points pour un certificat de compétence + NCLC 5 ou plus dans chacune des compétences dans la première langue officielle, dont au moins l'une d'entre elles est inférieure au niveau 7 (Maximum 25 points) | Points pour un certificat de compétence NCLC 7 ou plus dans chacune des quatre compétences dans la première langue officielle (Maximum 50 points)"
+        }
+      },
+      "group_max": {
+        "value": 50,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 10,
+          "row": 0,
+          "text": "Scolarité | Points (Maximum 50 points)"
+        }
+      },
+      "max": {
+        "value": 100,
+        "cite": {
+          "source": "criteries-scg",
+          "table": null,
+          "row": null,
+          "text": "transférabilité des compétences : Maximum 100 points"
+        }
+      }
+    },
+    "additional": {
+      "sibling": {
+        "key": null,
+        "points": 15,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 19,
+          "row": 1,
+          "text": "Frère ou sœur vivant au Canada qui est citoyen ou résident permanent du Canada | 15"
+        }
+      },
+      "french_weak_english": {
+        "key": null,
+        "points": 25,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 19,
+          "row": 2,
+          "text": "Si vous obtenez le niveau 7 ou plus des NCLC en français pour les quatre aptitudes et si vous obtenez le niveau 4 ou moins des CLB en anglais (ou si vous n'avez pas passé de test en anglais) | 25"
+        }
+      },
+      "french_strong_english": {
+        "key": null,
+        "points": 50,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 19,
+          "row": 3,
+          "text": "Si vous obtenez le niveau 7 ou plus des NCLC en français pour les quatre aptitudes et si vous obtenez le niveau 5 ou plus des CLB en anglais pour les quatre aptitudes | 50"
+        }
+      },
+      "french_min_nclc": 7,
+      "english_min_clb": 5,
+      "canadian_education_short": {
+        "key": null,
+        "points": 15,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 19,
+          "row": 4,
+          "text": "Études postsecondaires effectuées au Canada – titre de compétence d'un an ou de deux ans | 15"
+        }
+      },
+      "canadian_education_long": {
+        "key": null,
+        "points": 30,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 19,
+          "row": 5,
+          "text": "Études postsecondaires effectuées au Canada – titre de compétence de trois ans ou plus | 30"
+        }
+      },
+      "provincial_nomination": {
+        "key": null,
+        "points": 600,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 19,
+          "row": 6,
+          "text": "Désignation comme candidat d'une province ou d'un territoire | 600"
+        }
+      },
+      "max": {
+        "value": 600,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 19,
+          "row": 0,
+          "text": "Points supplémentaires | Maximum 600 points"
+        }
+      }
+    }
+  }
+}

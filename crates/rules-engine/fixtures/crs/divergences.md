@@ -22,3 +22,19 @@ the case is flagged for manual review.
 - **Engine:** scores the TCF row at NCLC 4 as 6 / 6. The oracle harness
   skips only this pattern (TCF first language, any skill at NCLC 4).
 - **Live check:** to confirm in Chrome (golden profile to be added).
+
+## D-002: Second official language at NCLC 4
+
+- **Status:** PENDING ruling
+- **Found:** 2026-10-18, by `Grid::issues()` on the parsed v0 grid
+- **Criteria page** (second official language table): rows are "Moins que le
+  niveau 4 des NCLC → 0", then "NCLC 5 ou 6 → 1". NCLC 4 is in no row.
+- **Calculator** (`scg-outil-udit.js`, column "SOL", row `B` = NCLC 4): `0`
+  for every test.
+- **Impact:** an applicant with a second-language skill at exactly NCLC 4.
+  0 vs 1 point per skill, at most 4 points.
+- **Proposed ruling:** 0 points at NCLC 4. This matches the calculator, and
+  the table's first row is most likely meant to read "NCLC 4 ou moins" (as the
+  spouse table does). To confirm against the Ministerial Instructions.
+- **Engine until ruled:** refuses to score this case and flags it for manual
+  review.
