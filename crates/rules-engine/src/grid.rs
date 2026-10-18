@@ -247,6 +247,9 @@ pub struct Grid {
     /// Test score → CLB/NCLC conversion tables.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub language: Vec<EquivalencyTable>,
+    /// FSW / CEC / FST minimum requirements and proof of funds.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub programs: Option<crate::programs::Programs>,
 }
 
 /// Inclusive raw-score band; `max: None` = open-ended (top row of a table

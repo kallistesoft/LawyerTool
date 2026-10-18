@@ -6,7 +6,10 @@
 
 use std::path::Path;
 
-use grid_parser::{Page, parse_crs, parse_equivalency, parse_high_wage, parse_labour_market};
+use grid_parser::{
+    Page, ProgramPages, parse_crs, parse_equivalency, parse_high_wage, parse_labour_market,
+    parse_programs,
+};
 use rules_engine::grid::{Grid, IsoDate, Source};
 
 const DIR: &str = concat!(
@@ -40,6 +43,42 @@ const SOURCES: &[(&str, &str, &str, &str)] = &[
         "equivalences-aip-en.html",
         "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/atlantic-immigration/language-testing.html",
         "cdbc513a16992dd2cd0b4c6ea0edde725b2195096ac28928d12b5d2246846fa4",
+    ),
+    (
+        "fsw",
+        "travailleurs-qualifies-federal.html",
+        "/qui-presenter-demande/travailleurs-qualifies-federal.html",
+        "fb3225fc47ff67e0ff970de3f76b3ed9e6f043f065f5f9dc3daae1c2dc9c6ae2",
+    ),
+    (
+        "cec",
+        "categorie-experience-canadienne.html",
+        "/qui-presenter-demande/categorie-experience-canadienne.html",
+        "20fc4881025225d6814d63fc4f1cc3dff32b80dc3d7d6dbcab4c84821c7448f9",
+    ),
+    (
+        "fst",
+        "metiers-specialises.html",
+        "/qui-presenter-demande/metiers-specialises.html",
+        "2a9a263c749b167a22a339feeea6d28e31efc152e33602da2613c5980bde2397",
+    ),
+    (
+        "examen-linguistique",
+        "examen-linguistique.html",
+        "/documents/examen-linguistique.html",
+        "75bd233a859f96e9bc403a5b6deb8ea332c3f54c167c3c46caf2c959acb8e8fd",
+    ),
+    (
+        "evaluer-diplomes-etudes",
+        "evaluer-diplomes-etudes.html",
+        "/documents/evaluer-diplomes-etudes.html",
+        "10f01e1e870dcb675b2dd0002cacd058ad88eaefda63969ccc01634452ba8253",
+    ),
+    (
+        "preuve-fonds",
+        "preuve-fonds-suffisants.html",
+        "/documents/preuve-fonds-suffisants.html",
+        "35f2e57bd595728b526dc63567480c2754ebd07981cab078d84bce8ceb058003",
     ),
 ];
 
@@ -82,6 +121,25 @@ fn main() -> Res<()> {
     let (equiv, equiv_src) = load("equivalences-aip-en")?;
     v0.language = parse_equivalency(&equiv)?;
     v0.sources.push(equiv_src);
+    let ids = [
+        "fsw",
+        "cec",
+        "fst",
+        "examen-linguistique",
+        "evaluer-diplomes-etudes",
+        "preuve-fonds",
+    ];
+    let loaded = ids.iter().map(|id| load(id)).collect::<Res<Vec<_>>>()?;
+    let pages = ProgramPages {
+        fsw: &loaded[0].0,
+        cec: &loaded[1].0,
+        fst: &loaded[2].0,
+        language: &loaded[3].0,
+        education: &loaded[4].0,
+        funds: &loaded[5].0,
+    };
+    v0.programs = Some(parse_programs(&pages)?);
+    v0.sources.extend(loaded.iter().map(|(_, s)| s.clone()));
     write(dir, &v0)?;
 
     // 2026-11-03: same criteria-page grid plus the labour market factor.

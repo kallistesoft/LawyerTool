@@ -13,6 +13,11 @@ by hand-editing.
 | `salaire-eleve.html` | https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/verifier-note/salaire-eleve.html | `a7a15b38f9ab6ce6cc977046105b92516ed0def3153f7abda76621beda06238c` |
 | `examen-linguistique.html` | https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/documents/examen-linguistique.html | `75bd233a859f96e9bc403a5b6deb8ea332c3f54c167c3c46caf2c959acb8e8fd` |
 | `equivalences-aip-en.html` | https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/atlantic-immigration/language-testing.html | `cdbc513a16992dd2cd0b4c6ea0edde725b2195096ac28928d12b5d2246846fa4` |
+| `travailleurs-qualifies-federal.html` | https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/qui-presenter-demande/travailleurs-qualifies-federal.html | `fb3225fc47ff67e0ff970de3f76b3ed9e6f043f065f5f9dc3daae1c2dc9c6ae2` |
+| `categorie-experience-canadienne.html` | https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/qui-presenter-demande/categorie-experience-canadienne.html | `20fc4881025225d6814d63fc4f1cc3dff32b80dc3d7d6dbcab4c84821c7448f9` |
+| `metiers-specialises.html` | https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/qui-presenter-demande/metiers-specialises.html | `2a9a263c749b167a22a339feeea6d28e31efc152e33602da2613c5980bde2397` |
+| `evaluer-diplomes-etudes.html` | https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/documents/evaluer-diplomes-etudes.html | `10f01e1e870dcb675b2dd0002cacd058ad88eaefda63969ccc01634452ba8253` |
+| `preuve-fonds-suffisants.html` | https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/documents/preuve-fonds-suffisants.html | `35f2e57bd595728b526dc63567480c2754ebd07981cab078d84bce8ceb058003` |
 | `ee_rounds_123_fr.json` | https://www.canada.ca/content/dam/ircc/documents/json/ee_rounds_123_fr.json | `6c6468ad045d0bd7e0ef2fc308b02efeed7510b25dddbec5ddb7f31d26c47b57` |
 
 `criteries-scg.html` is the reference grid. `scg-outil-udit.js` is the
@@ -24,4 +29,5 @@ TEF Canada scales by test date (see D-003). The French version of that page
 returned 404 on 2026-10-18. `examen-linguistique.html` (Express Entry) also has
 the CEC / FSW / FST language minimums.
 
-Still to add: FSW / CEC / FST criteria pages.
+The FSW / CEC / FST pages, `evaluer-diplomes-etudes.html` (FSW education points)
+and `preuve-fonds-suffisants.html` (settlement funds) feed `grid.programs`.

@@ -13,6 +13,42 @@
       "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/atlantic-immigration/language-testing.html",
       "sha256": "cdbc513a16992dd2cd0b4c6ea0edde725b2195096ac28928d12b5d2246846fa4",
       "fetched": "2026-10-18"
+    },
+    {
+      "id": "fsw",
+      "url": "https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/qui-presenter-demande/travailleurs-qualifies-federal.html",
+      "sha256": "fb3225fc47ff67e0ff970de3f76b3ed9e6f043f065f5f9dc3daae1c2dc9c6ae2",
+      "fetched": "2026-10-18"
+    },
+    {
+      "id": "cec",
+      "url": "https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/qui-presenter-demande/categorie-experience-canadienne.html",
+      "sha256": "20fc4881025225d6814d63fc4f1cc3dff32b80dc3d7d6dbcab4c84821c7448f9",
+      "fetched": "2026-10-18"
+    },
+    {
+      "id": "fst",
+      "url": "https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/qui-presenter-demande/metiers-specialises.html",
+      "sha256": "2a9a263c749b167a22a339feeea6d28e31efc152e33602da2613c5980bde2397",
+      "fetched": "2026-10-18"
+    },
+    {
+      "id": "examen-linguistique",
+      "url": "https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/documents/examen-linguistique.html",
+      "sha256": "75bd233a859f96e9bc403a5b6deb8ea332c3f54c167c3c46caf2c959acb8e8fd",
+      "fetched": "2026-10-18"
+    },
+    {
+      "id": "evaluer-diplomes-etudes",
+      "url": "https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/documents/evaluer-diplomes-etudes.html",
+      "sha256": "10f01e1e870dcb675b2dd0002cacd058ad88eaefda63969ccc01634452ba8253",
+      "fetched": "2026-10-18"
+    },
+    {
+      "id": "preuve-fonds",
+      "url": "https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/documents/preuve-fonds-suffisants.html",
+      "sha256": "35f2e57bd595728b526dc63567480c2754ebd07981cab078d84bce8ceb058003",
+      "fetched": "2026-10-18"
     }
   ],
   "crs": {
@@ -2674,5 +2710,733 @@
         "text": "NCLC level | Reading | Writing | Listening | Speaking"
       }
     }
-  ]
+  ],
+  "programs": {
+    "fsw": {
+      "experience": {
+        "min_hours": {
+          "value": 1560,
+          "cite": {
+            "source": "fsw",
+            "table": null,
+            "row": null,
+            "text": "au moins une année de travail ou 1 560 heures au total"
+          }
+        },
+        "window_years": {
+          "value": 10,
+          "cite": {
+            "source": "fsw",
+            "table": null,
+            "row": null,
+            "text": "avoir été acquise au cours des 10 dernières années"
+          }
+        },
+        "max_hours_per_week": {
+          "value": 30,
+          "cite": {
+            "source": "fsw",
+            "table": null,
+            "row": null,
+            "text": "au-delà des 30 heures par semaine"
+          }
+        }
+      },
+      "min_clb": {
+        "value": 7,
+        "cite": {
+          "source": "examen-linguistique",
+          "table": 2,
+          "row": 1,
+          "text": "Anglais | CLB 7"
+        }
+      },
+      "first_language": [
+        {
+          "key": {
+            "min": 9,
+            "max": null
+          },
+          "points": 6,
+          "cite": {
+            "source": "fsw",
+            "table": 0,
+            "row": 1,
+            "text": "Niveau 9 des NCLC ou plus | 6 | 6 | 6 | 6"
+          }
+        },
+        {
+          "key": {
+            "min": 8,
+            "max": 8
+          },
+          "points": 5,
+          "cite": {
+            "source": "fsw",
+            "table": 0,
+            "row": 2,
+            "text": "Niveau 8 des NCLC | 5 | 5 | 5 | 5"
+          }
+        },
+        {
+          "key": {
+            "min": 7,
+            "max": 7
+          },
+          "points": 4,
+          "cite": {
+            "source": "fsw",
+            "table": 0,
+            "row": 3,
+            "text": "Niveau 7 des NCLC | 4 | 4 | 4 | 4"
+          }
+        }
+      ],
+      "second_language": {
+        "key": null,
+        "points": 4,
+        "cite": {
+          "source": "fsw",
+          "table": 1,
+          "row": 1,
+          "text": "Au moins le niveau 5 des NCLC pour les 4 compétences | 4"
+        }
+      },
+      "second_language_min": 5,
+      "education": [
+        {
+          "key": "secondary",
+          "points": 5,
+          "cite": {
+            "source": "evaluer-diplomes-etudes",
+            "table": 2,
+            "row": 146,
+            "text": "Certificat de fin d'études secondaires | École secondaire (diplôme d'études secondaires) | 5"
+          }
+        },
+        {
+          "key": "one_year_post_secondary",
+          "points": 15,
+          "cite": {
+            "source": "evaluer-diplomes-etudes",
+            "table": 2,
+            "row": 138,
+            "text": "Certificat de niveau collégial | Degré, diplôme ou certificat de un an obtenu dans le cadre d'un programme à une université, un collège, une école technique ou de métiers ou un autre institut | 15"
+          }
+        },
+        {
+          "key": "two_year_post_secondary",
+          "points": 19,
+          "cite": {
+            "source": "evaluer-diplomes-etudes",
+            "table": 2,
+            "row": 127,
+            "text": "Diplôme collégial | Degré, diplôme ou certificat de deux ans obtenu dans le cadre d'un programme à une université, un collège, une école technique ou de métiers ou un autre institut | 19"
+          }
+        },
+        {
+          "key": "bachelor_or_three_year",
+          "points": 21,
+          "cite": {
+            "source": "evaluer-diplomes-etudes",
+            "table": 2,
+            "row": 1,
+            "text": "Diplôme de baccalauréat avec qualifications acceptables pour l'admissibilité au programme de certification académique du CCCA | Baccalauréat ou autres programmes (trois ans ou plus) à une université, un collège, une école technique ou de métiers ou un autre institut | 21"
+          }
+        },
+        {
+          "key": "two_or_more_credentials",
+          "points": 22,
+          "cite": {
+            "source": "evaluer-diplomes-etudes",
+            "table": 2,
+            "row": 56,
+            "text": "Certificat postbaccalauréat plus un autre certificat, diplôme ou degré nécessitant trois années d'études ou plus | Au moins deux certificats, diplômes ou degrés | 22"
+          }
+        },
+        {
+          "key": "master_or_professional",
+          "points": 23,
+          "cite": {
+            "source": "evaluer-diplomes-etudes",
+            "table": 2,
+            "row": 2,
+            "text": "Diplôme de maîtrise avec qualifications acceptables pour l'admissibilité au programme de certification académique du CCCA | Diplôme universitaire au niveau de la maîtrise | 23"
+          }
+        },
+        {
+          "key": "doctorate",
+          "points": 25,
+          "cite": {
+            "source": "evaluer-diplomes-etudes",
+            "table": 2,
+            "row": 3,
+            "text": "Doctorat | Diplôme universitaire au niveau du doctorat (Ph. D.) | 25"
+          }
+        }
+      ],
+      "work_experience": [
+        {
+          "key": {
+            "min": 1,
+            "max": 1
+          },
+          "points": 9,
+          "cite": {
+            "source": "fsw",
+            "table": 2,
+            "row": 1,
+            "text": "1 an | 9"
+          }
+        },
+        {
+          "key": {
+            "min": 2,
+            "max": 3
+          },
+          "points": 11,
+          "cite": {
+            "source": "fsw",
+            "table": 2,
+            "row": 2,
+            "text": "2 ou 3 ans | 11"
+          }
+        },
+        {
+          "key": {
+            "min": 4,
+            "max": 5
+          },
+          "points": 13,
+          "cite": {
+            "source": "fsw",
+            "table": 2,
+            "row": 3,
+            "text": "4 ou 5 ans | 13"
+          }
+        },
+        {
+          "key": {
+            "min": 6,
+            "max": null
+          },
+          "points": 15,
+          "cite": {
+            "source": "fsw",
+            "table": 2,
+            "row": 4,
+            "text": "6 ans ou plus | 15"
+          }
+        }
+      ],
+      "age": [
+        {
+          "key": {
+            "min": 0,
+            "max": 17
+          },
+          "points": 0,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 1,
+            "text": "Moins de 18 ans | 0"
+          }
+        },
+        {
+          "key": {
+            "min": 18,
+            "max": 35
+          },
+          "points": 12,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 2,
+            "text": "18-35 ans | 12"
+          }
+        },
+        {
+          "key": {
+            "min": 36,
+            "max": 36
+          },
+          "points": 11,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 3,
+            "text": "36 ans | 11"
+          }
+        },
+        {
+          "key": {
+            "min": 37,
+            "max": 37
+          },
+          "points": 10,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 4,
+            "text": "37 ans | 10"
+          }
+        },
+        {
+          "key": {
+            "min": 38,
+            "max": 38
+          },
+          "points": 9,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 5,
+            "text": "38 ans | 9"
+          }
+        },
+        {
+          "key": {
+            "min": 39,
+            "max": 39
+          },
+          "points": 8,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 6,
+            "text": "39 ans | 8"
+          }
+        },
+        {
+          "key": {
+            "min": 40,
+            "max": 40
+          },
+          "points": 7,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 7,
+            "text": "40 ans | 7"
+          }
+        },
+        {
+          "key": {
+            "min": 41,
+            "max": 41
+          },
+          "points": 6,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 8,
+            "text": "41 ans | 6"
+          }
+        },
+        {
+          "key": {
+            "min": 42,
+            "max": 42
+          },
+          "points": 5,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 9,
+            "text": "42 ans | 5"
+          }
+        },
+        {
+          "key": {
+            "min": 43,
+            "max": 43
+          },
+          "points": 4,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 10,
+            "text": "43 ans | 4"
+          }
+        },
+        {
+          "key": {
+            "min": 44,
+            "max": 44
+          },
+          "points": 3,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 11,
+            "text": "44 ans | 3"
+          }
+        },
+        {
+          "key": {
+            "min": 45,
+            "max": 45
+          },
+          "points": 2,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 12,
+            "text": "45 ans | 2"
+          }
+        },
+        {
+          "key": {
+            "min": 46,
+            "max": 46
+          },
+          "points": 1,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 13,
+            "text": "46 ans | 1"
+          }
+        },
+        {
+          "key": {
+            "min": 47,
+            "max": null
+          },
+          "points": 0,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 14,
+            "text": "47 ans et plus | 0"
+          }
+        }
+      ],
+      "arranged_employment": {
+        "value": 10,
+        "cite": {
+          "source": "fsw",
+          "table": null,
+          "row": null,
+          "text": "Emploi réservé au Canada (maximum de 10 points)"
+        }
+      },
+      "adaptability": {
+        "spouse_language": {
+          "key": null,
+          "points": 5,
+          "cite": {
+            "source": "fsw",
+            "table": 4,
+            "row": 1,
+            "text": "Niveau de compétence linguistique de votre époux ou conjoint de fait Votre époux ou conjoint de fait a un niveau de compétence linguistique en français ou en anglais de 4 ou plus des NCLC pour les 4 compétences linguistiques (expression orale, compréhension de l'oral, lecture et écriture). Pour obtenir ces points, vous devez soumettre les résultats de test d'un organisme approuvé obtenus par votre époux ou conjoint de fait lorsque vous présentez votre demande. Les tests de langue sont valides pour 2 ans à compter de la date du résultat du test. Ils doivent être valides le jour où vous présentez votre demande de résidence permanente. | 5"
+          }
+        },
+        "spouse_language_min": 4,
+        "own_canadian_study": {
+          "key": null,
+          "points": 5,
+          "cite": {
+            "source": "fsw",
+            "table": 4,
+            "row": 2,
+            "text": "Vos études antérieures au Canada Vous avez terminé au moins 2 années d'études à temps plein (dans un programme d'au moins 2 ans) dans un établissement d'enseignement secondaire ou postsecondaire au Canada. Par « études à temps plein », on entend au moins 15 heures de cours par semaine. Vous devez avoir maintenu un rendement scolaire jugé satisfaisant par l'établissement durant cette période. | 5"
+          }
+        },
+        "spouse_canadian_study": {
+          "key": null,
+          "points": 5,
+          "cite": {
+            "source": "fsw",
+            "table": 4,
+            "row": 3,
+            "text": "Les études antérieures au Canada de votre époux ou conjoint de fait Votre époux ou conjoint de fait a terminé au moins 2 années d'études à temps plein (dans un programme d'au moins 2 ans) dans un établissement d'enseignement secondaire ou postsecondaire au Canada. Par « études à temps plein », on entend au moins 15 heures de cours par semaine. Votre époux ou conjoint de fait doit avoir maintenu un rendement scolaire jugé satisfaisant par l'établissement durant cette période. | 5"
+          }
+        },
+        "own_canadian_work": {
+          "key": null,
+          "points": 10,
+          "cite": {
+            "source": "fsw",
+            "table": 4,
+            "row": 4,
+            "text": "Votre travail antérieur au Canada Vous avez travaillé pendant au moins un an à temps plein au Canada : dans un emploi inscrit dans la catégorie FEER 0, 1, 2 ou 3 de la CNP au moyen d'un permis de travail valide ou pendant que vous étiez autorisé à travailler au Canada | 10"
+          }
+        },
+        "spouse_canadian_work": {
+          "key": null,
+          "points": 5,
+          "cite": {
+            "source": "fsw",
+            "table": 4,
+            "row": 5,
+            "text": "Le travail antérieur de votre époux ou conjoint de fait au Canada Votre époux ou conjoint de fait a travaillé à temps plein au Canada pendant au moins un an au moyen d'un permis de travail valide ou pendant qu'il était autorisé à travailler au Canada. | 5"
+          }
+        },
+        "arranged_employment": {
+          "key": null,
+          "points": 5,
+          "cite": {
+            "source": "fsw",
+            "table": 4,
+            "row": 6,
+            "text": "Emploi réservé au Canada Vous obtenez des points si vous avez un emploi réservé . | 5"
+          }
+        },
+        "relative_in_canada": {
+          "key": null,
+          "points": 5,
+          "cite": {
+            "source": "fsw",
+            "table": 4,
+            "row": 7,
+            "text": "Membres de la famille au Canada Vous, ou votre époux ou conjoint de fait, avez un membre de la famille qui : vit au Canada est âgé de 18 ans ou plus est citoyen canadien ou résident permanent du Canada Ce membre de la famille doit être : un parent un grand-parent un enfant un petit-enfant votre frère ou sœur ou celui ou celle de votre conjoint (enfant de votre parent ou de celui de votre conjoint) votre oncle ou tante ou celui ou celle de votre conjoint (par le sang ou par alliance) votre neveu ou nièce ou celui ou celle de votre conjoint (petit-enfant de votre parent ou de celui de votre conjoint) | 5"
+          }
+        },
+        "max": {
+          "value": 10,
+          "cite": {
+            "source": "fsw",
+            "table": 4,
+            "row": 0,
+            "text": "Faculté d'adaptation | Maximum de 10 points"
+          }
+        }
+      },
+      "pass_mark": {
+        "value": 67,
+        "cite": {
+          "source": "fsw",
+          "table": null,
+          "row": null,
+          "text": "Si vous obtenez 67 points ou plus"
+        }
+      }
+    },
+    "cec": {
+      "experience": {
+        "min_hours": {
+          "value": 1560,
+          "cite": {
+            "source": "cec",
+            "table": null,
+            "row": null,
+            "text": "au moins une année de travail ou 1 560 heures au total"
+          }
+        },
+        "window_years": {
+          "value": 3,
+          "cite": {
+            "source": "cec",
+            "table": null,
+            "row": null,
+            "text": "heures au total (30 heures par semaine) au cours des 3 années précédant votre demande"
+          }
+        },
+        "max_hours_per_week": {
+          "value": 30,
+          "cite": {
+            "source": "cec",
+            "table": null,
+            "row": null,
+            "text": "heures au total (30 heures par semaine) au cours des"
+          }
+        }
+      },
+      "min_clb_teer_0_1": {
+        "value": 7,
+        "cite": {
+          "source": "examen-linguistique",
+          "table": 1,
+          "row": 1,
+          "text": "FEER 0 or 1 | CLB 7 | NCLC 7"
+        }
+      },
+      "min_clb_teer_2_3": {
+        "value": 5,
+        "cite": {
+          "source": "examen-linguistique",
+          "table": 1,
+          "row": 2,
+          "text": "FEER 2 or 3 | CLB 5 | NCLC 5"
+        }
+      }
+    },
+    "fst": {
+      "experience": {
+        "min_hours": {
+          "value": 3120,
+          "cite": {
+            "source": "fst",
+            "table": null,
+            "row": null,
+            "text": "au moins 2 ans de travail à temps plein (ou 3 120 heures au total)"
+          }
+        },
+        "window_years": {
+          "value": 5,
+          "cite": {
+            "source": "fst",
+            "table": null,
+            "row": null,
+            "text": "dans un métier spécialisé au cours des 5 années précédant votre demande"
+          }
+        },
+        "max_hours_per_week": {
+          "value": 30,
+          "cite": {
+            "source": "fst",
+            "table": null,
+            "row": null,
+            "text": "au-delà des 30 heures par semaine"
+          }
+        }
+      },
+      "trades": [
+        {
+          "prefix": "72",
+          "except": [
+            "726"
+          ]
+        },
+        {
+          "prefix": "73",
+          "except": []
+        },
+        {
+          "prefix": "82",
+          "except": []
+        },
+        {
+          "prefix": "83",
+          "except": []
+        },
+        {
+          "prefix": "92",
+          "except": []
+        },
+        {
+          "prefix": "93",
+          "except": [
+            "932"
+          ]
+        },
+        {
+          "prefix": "6320",
+          "except": []
+        },
+        {
+          "prefix": "62200",
+          "except": []
+        }
+      ],
+      "trades_cite": {
+        "source": "fst",
+        "table": null,
+        "row": null,
+        "text": "Groupes majeurs 72 (à l'exception du sous-groupe majeur 726), 73 , 82 , 83 , 92 , ou 93 (à l'exception du sous-groupe majeur 932) Sous-groupe 6320 Groupe de base 62200"
+      },
+      "min_clb_speaking_listening": {
+        "value": 5,
+        "cite": {
+          "source": "examen-linguistique",
+          "table": 3,
+          "row": 1,
+          "text": "Anglais | Expression orale et compréhension de l'oral | CLB 5"
+        }
+      },
+      "min_clb_reading_writing": {
+        "value": 4,
+        "cite": {
+          "source": "examen-linguistique",
+          "table": 3,
+          "row": 2,
+          "text": "Anglais | Compréhension de l'écrit et expression écrite | CLB 4"
+        }
+      }
+    },
+    "funds": {
+      "rows": [
+        {
+          "family_size": 1,
+          "amount_cad": 15263,
+          "cite": {
+            "source": "preuve-fonds",
+            "table": 0,
+            "row": 1,
+            "text": "1 | 15 263 $"
+          }
+        },
+        {
+          "family_size": 2,
+          "amount_cad": 19001,
+          "cite": {
+            "source": "preuve-fonds",
+            "table": 0,
+            "row": 2,
+            "text": "2 | 19 001 $"
+          }
+        },
+        {
+          "family_size": 3,
+          "amount_cad": 23360,
+          "cite": {
+            "source": "preuve-fonds",
+            "table": 0,
+            "row": 3,
+            "text": "3 | 23 360 $"
+          }
+        },
+        {
+          "family_size": 4,
+          "amount_cad": 28362,
+          "cite": {
+            "source": "preuve-fonds",
+            "table": 0,
+            "row": 4,
+            "text": "4 | 28 362 $"
+          }
+        },
+        {
+          "family_size": 5,
+          "amount_cad": 32168,
+          "cite": {
+            "source": "preuve-fonds",
+            "table": 0,
+            "row": 5,
+            "text": "5 | 32 168 $"
+          }
+        },
+        {
+          "family_size": 6,
+          "amount_cad": 36280,
+          "cite": {
+            "source": "preuve-fonds",
+            "table": 0,
+            "row": 6,
+            "text": "6 | 36 280 $"
+          }
+        },
+        {
+          "family_size": 7,
+          "amount_cad": 40392,
+          "cite": {
+            "source": "preuve-fonds",
+            "table": 0,
+            "row": 7,
+            "text": "7 | 40 392 $"
+          }
+        }
+      ],
+      "per_extra_member_cad": 4112,
+      "extra_cite": {
+        "source": "preuve-fonds",
+        "table": 0,
+        "row": 8,
+        "text": "Si plus de 7 personnes, pour chaque membre de la famille supplémentaire, ajoutez | 4 112 $"
+      },
+      "updated": "7 julliet 2025"
+    }
+  }
 }

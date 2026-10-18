@@ -6,4 +6,5 @@
 pub mod crs;
 pub mod grid;
 pub mod language;
+pub mod programs;
 pub mod rulings;

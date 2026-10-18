@@ -8,11 +8,13 @@ mod crs;
 mod equivalency;
 mod labour;
 mod page;
+mod programs;
 
 pub use crs::parse_crs;
 pub use equivalency::parse_equivalency;
 pub use labour::{parse_high_wage, parse_labour_market};
 pub use page::{Page, norm};
+pub use programs::{ProgramPages, parse_programs};
 
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum ParseError {

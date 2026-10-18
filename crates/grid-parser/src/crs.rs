@@ -145,6 +145,7 @@ pub fn parse_crs(
         sources: vec![source],
         crs,
         language: vec![],
+        programs: None,
     })
 }
 
