@@ -91,6 +91,9 @@ impl KdfParams {
     };
 }
 
+// OWASP minimum for Argon2id is 19 MiB / 2 passes; the default must stay above it.
+const _: () = assert!(KdfParams::DEFAULT.m_cost >= 64 * 1024 && KdfParams::DEFAULT.t_cost >= 3);
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Wrapped {
     #[serde(with = "hex")]
