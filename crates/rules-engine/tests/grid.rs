@@ -47,3 +47,22 @@ fn iso_dates() {
         assert!(IsoDate::parse(bad).is_none(), "{bad}");
     }
 }
+
+#[test]
+fn rulings_resolve_all_v0_issues() {
+    let mut g = v0();
+    rules_engine::rulings::apply(&mut g);
+    assert_eq!(g.issues(), vec![]);
+    let row = g
+        .crs
+        .second_language
+        .iter()
+        .find(|r| r.key.contains(4))
+        .unwrap();
+    assert_eq!(row.points.get(true), 0);
+    assert_eq!(row.cite.source, "ruling:D-002");
+
+    let once = g.clone();
+    rules_engine::rulings::apply(&mut g);
+    assert_eq!(g, once, "rulings are idempotent");
+}

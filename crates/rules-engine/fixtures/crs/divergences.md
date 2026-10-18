@@ -25,7 +25,7 @@ the case is flagged for manual review.
 
 ## D-002: Second official language at NCLC 4
 
-- **Status:** PENDING ruling
+- **Status:** RULED 2026-10-18: 0 points at NCLC 4
 - **Found:** 2026-10-18, by `Grid::issues()` on the parsed v0 grid
 - **Criteria page** (second official language table): rows are "Moins que le
   niveau 4 des NCLC → 0", then "NCLC 5 ou 6 → 1". NCLC 4 is in no row.
@@ -33,8 +33,9 @@ the case is flagged for manual review.
   for every test.
 - **Impact:** an applicant with a second-language skill at exactly NCLC 4.
   0 vs 1 point per skill, at most 4 points.
-- **Proposed ruling:** 0 points at NCLC 4. This matches the calculator, and
-  the table's first row is most likely meant to read "NCLC 4 ou moins" (as the
-  spouse table does). To confirm against the Ministerial Instructions.
-- **Engine until ruled:** refuses to score this case and flags it for manual
-  review.
+- **Ruling:** 0 points at NCLC 4. This matches the calculator, and the
+  table's first row is most likely meant to read "NCLC 4 ou moins" (as the
+  spouse table does). Approved by the project owner on 2026-10-18; to
+  re-confirm against the Ministerial Instructions during the pilot (M4).
+- **Engine:** `rulings::apply` adds the row `NCLC 4 → 0 / 0` to the second
+  language table, cited as `ruling:D-002`.
