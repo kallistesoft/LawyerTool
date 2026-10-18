@@ -1,0 +1,18 @@
+[package]
+name = "rules-engine"
+description = "Deterministic CRS and Express Entry eligibility engine (pure: no I/O)"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+applicant = { path = "../applicant" }
+serde.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true
+
+[lints]
+workspace = true

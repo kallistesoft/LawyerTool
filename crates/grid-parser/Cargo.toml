@@ -1,0 +1,12 @@
+[package]
+name = "grid-parser"
+description = "Deterministic parser from official IRCC pages to a rules grid"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+
+[lints]
+workspace = true
