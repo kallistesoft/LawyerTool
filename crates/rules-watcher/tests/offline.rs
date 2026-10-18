@@ -207,3 +207,29 @@ async fn live_check_against_shipped_grid() {
         );
     }
 }
+
+proptest::proptest! {
+    #![proptest_config(proptest::prelude::ProptestConfig { cases: 256, ..Default::default() })]
+
+    /// Hostile or corrupted draws feeds are refused, never panic.
+    #[test]
+    fn draws_feed_never_panics(bytes in proptest::collection::vec(proptest::prelude::any::<u8>(), 0..2000)) {
+        let _ = parse_draws(&bytes);
+    }
+
+    #[test]
+    fn draws_rows_with_hostile_values(number in "\\PC{0,12}", crs in "\\PC{0,24}", size in "\\PC{0,12}") {
+        let feed = serde_json::json!({ "rounds": [{ "drawNumber": number, "drawDate": "2026-10-16", "drawName": "x", "drawSize": size, "drawCRS": crs }] });
+        if let Ok(d) = parse_draws(feed.to_string().as_bytes()) {
+            proptest::prop_assert!(d[0].min_crs <= 1200);
+            proptest::prop_assert!(d[0].number.chars().all(|c| c.is_ascii_alphanumeric()));
+        }
+    }
+}
+
+#[test]
+fn every_source_has_a_content_type_allowlist() {
+    for s in SOURCES {
+        assert!(!rules_watcher::accepted_types(s).is_empty(), "{}", s.id);
+    }
+}

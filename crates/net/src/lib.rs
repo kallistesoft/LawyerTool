@@ -78,6 +78,22 @@ pub fn redirect_allowed(allow: &Allowlist, next: &Url, hops_so_far: usize) -> Re
     allow.check(next).map(|_| ())
 }
 
+/// Whether a `Content-Type` header matches one of `accept` (media type only,
+/// case-insensitive; parameters like `charset` ignored). Empty `accept` = any.
+pub fn content_type_allowed(content_type: Option<&str>, accept: &[&str]) -> bool {
+    if accept.is_empty() {
+        return true;
+    }
+    let Some(ct) = content_type else { return false };
+    let media = ct
+        .split(';')
+        .next()
+        .unwrap_or("")
+        .trim()
+        .to_ascii_lowercase();
+    accept.iter().any(|a| a.eq_ignore_ascii_case(&media))
+}
+
 /// Collects a body in chunks, refusing anything over `max`.
 #[derive(Debug)]
 pub struct Capped {
@@ -129,6 +145,8 @@ pub struct Request {
     pub source_file: Option<String>,
     pub headers: Vec<(String, String)>,
     pub body: Option<Vec<u8>>,
+    /// Accepted response media types (without parameters); empty = any.
+    pub accept: Vec<&'static str>,
 }
 
 impl Request {
@@ -140,6 +158,7 @@ impl Request {
             source_file: None,
             headers: vec![],
             body: None,
+            accept: vec![],
         }
     }
 }
@@ -256,6 +275,12 @@ impl Client {
                 .get(reqwest::header::CONTENT_TYPE)
                 .and_then(|v| v.to_str().ok())
                 .map(str::to_owned);
+            if !content_type_allowed(content_type.as_deref(), &req.accept) {
+                return Err(NetError::Failed(format!(
+                    "unexpected content type {}",
+                    content_type.as_deref().unwrap_or("(none)")
+                )));
+            }
             let mut body = Capped::new(self.max_bytes);
             while let Some(chunk) = resp
                 .chunk()

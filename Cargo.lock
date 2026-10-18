@@ -1471,6 +1471,7 @@ name = "grid-parser"
 version = "0.1.10"
 dependencies = [
  "applicant",
+ "proptest",
  "regex",
  "rules-engine",
  "scraper",
@@ -3270,6 +3271,7 @@ dependencies = [
  "audit",
  "grid-parser",
  "net",
+ "proptest",
  "rules-engine",
  "serde",
  "serde_json",
