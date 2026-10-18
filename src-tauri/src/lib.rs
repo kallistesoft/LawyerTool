@@ -85,6 +85,7 @@ pub fn run() {
             clients::client_save,
             clients::client_delete,
             clients::assess,
+            clients::deid_preview,
             updates::update_check,
             updates::update_install,
         ])

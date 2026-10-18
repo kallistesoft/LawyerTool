@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { assess, errorMessage } from './api'
+  import { assess, deidPreview, errorMessage, type Redaction } from './api'
   import { PROGRAM, type Assessment, type Check, type Cite, type CrsResult, type Flag, type Section } from './model'
 
   let { id, onEdit, onBack }: { id: number; onEdit: (id: number) => void; onBack: () => void } = $props()
@@ -10,7 +10,19 @@
   let error: string | null = $state(null)
   let reviewed: Record<string, boolean> = $state({})
 
+  let preview = $state<{ payload: string; bytes: number; redactions: Redaction[] } | null>(null)
+  let previewError: string | null = $state(null)
+  async function showPreview() {
+    previewError = null
+    try {
+      preview = await deidPreview(id, on)
+    } catch (e) {
+      previewError = errorMessage(e)
+    }
+  }
+
   async function run() {
+    preview = null
     error = null
     try {
       result = await assess(id, on)
@@ -120,10 +132,34 @@
     {:else if result && 'Err' in result.eligibility}
       <p class="error">{result.eligibility.Err}</p>
     {/if}
+    <h3>Envoi à Claude</h3>
+    <p class="hint">
+      Pour rédiger la note, seul ce contenu serait transmis : profil et résultats, sans nom, coordonnées ni numéros
+      d’identification. Rien n’est envoyé à cette étape.
+    </p>
+    <button onclick={showPreview}>Aperçu de l’envoi à Claude</button>
+    {#if previewError}<p class="error">{previewError}</p>{/if}
+    {#if preview}
+      <p>
+        {preview.bytes.toLocaleString('fr-CA')} octets ·
+        {preview.redactions.length === 0
+          ? 'aucun identifiant trouvé dans le contenu'
+          : `${preview.redactions.length} remplacement(s) : ${[...new Set(preview.redactions.map((r) => r.placeholder))].join(', ')}`}
+      </p>
+      <pre class="payload">{preview.payload}</pre>
+    {/if}
   {/if}
 </section>
 
 <style>
+  .payload {
+    max-height: 24rem;
+    overflow: auto;
+    font-size: 0.75rem;
+    padding: 0.6rem;
+    border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+    border-radius: 4px;
+  }
   .total {
     font-size: 2rem;
     margin: 0.3rem 0 1rem;

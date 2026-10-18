@@ -1,0 +1,15 @@
+[package]
+name = "deid"
+description = "De-identification of what is sent to Claude, with re-attachment of identifiers locally"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+regex = "1"
+
+[lints]
+workspace = true

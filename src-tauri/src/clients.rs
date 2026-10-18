@@ -138,6 +138,10 @@ pub fn assess(
     id: i64,
     on: Option<String>,
 ) -> Result<Assessment, CommandError> {
+    assess_inner(&s, id, on)
+}
+
+fn assess_inner(s: &Session, id: i64, on: Option<String>) -> Result<Assessment, CommandError> {
     let on = match on {
         Some(d) => {
             IsoDate::parse(&d).ok_or_else(|| err("invalid_date", "Date invalide (AAAA-MM-JJ)."))?
@@ -168,6 +172,63 @@ pub fn assess(
     })
 }
 
+/// What would be sent to Claude to draft the note: the task, the profile and
+/// the engine's results, de-identified. Nothing is sent by this command.
+#[derive(Serialize)]
+pub struct Preview {
+    /// Exact JSON text that would be sent.
+    payload: String,
+    bytes: usize,
+    redactions: Vec<deid::Redaction>,
+}
+
+pub fn claude_payload(
+    identity: &Identity,
+    a: &Applicant,
+    assessment: &Assessment,
+) -> deid::Deidentified {
+    let raw = serde_json::json!({
+        "task": "draft_explanatory_note",
+        "client": deid::CLIENT,
+        "assessed_on": assessment.on,
+        "grid": assessment.grid_id,
+        "profile": a,
+        "crs": assessment.crs,
+        "eligibility": assessment.eligibility,
+    });
+    let ids = deid::Identifiers {
+        full_name: identity.full_name.clone(),
+        email: identity.email.clone(),
+        phone: identity.phone.clone(),
+        file_reference: identity.file_reference.clone(),
+    };
+    deid::deidentify(raw, &ids)
+}
+
+#[tauri::command]
+pub fn deid_preview(
+    s: State<'_, Arc<Session>>,
+    id: i64,
+    on: Option<String>,
+) -> Result<Preview, CommandError> {
+    let assessment = assess_inner(&s, id, on)?;
+    let (identity, profile) = s.with_vault(|v| {
+        let r = v
+            .client_get(id)?
+            .ok_or_else(|| err("not_found", "Client introuvable."))?;
+        Ok((r.identity, r.profile))
+    })?;
+    let a: Applicant =
+        serde_json::from_str(&profile).map_err(|_| err("corrupt", "Profil illisible."))?;
+    let d = claude_payload(&identity, &a, &assessment);
+    let payload = serde_json::to_string_pretty(&d.payload).map_err(|_| CommandError::internal())?;
+    Ok(Preview {
+        bytes: payload.len(),
+        payload,
+        redactions: d.redactions,
+    })
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
@@ -178,6 +239,46 @@ mod tests {
             g.iter()
                 .all(|g| g.programs.is_some() && !g.language.is_empty())
         );
+    }
+
+    /// The Claude payload never contains the client's identity, even when the
+    /// profile would (defence in depth).
+    #[test]
+    fn claude_payload_is_deidentified() {
+        let a: applicant::Applicant =
+            serde_json::from_str(include_str!("../tests/fixtures/ui-full-applicant.json"))
+                .unwrap_or_else(|e| panic!("{e}"));
+        let on = applicant::IsoDate::parse("2026-10-18").unwrap_or_else(|| unreachable!());
+        let g = rules_engine::grid::in_force(
+            super::grids().as_ref().unwrap_or_else(|e| panic!("{e}")),
+            &on,
+        )
+        .unwrap_or_else(|| unreachable!());
+        let assessment = super::Assessment {
+            on: on.as_str().into(),
+            grid_id: Some(g.id.clone()),
+            crs: rules_engine::crs::score(g, &a, &on).map_err(|e| e.to_string()),
+            eligibility: rules_engine::eligibility::assess(g, &a, &on).map_err(|e| e.to_string()),
+        };
+        let identity = vault::Identity {
+            full_name: "Hélène Tremblay".into(),
+            email: Some("h.t@example.com".into()),
+            phone: Some("514-555-0142".into()),
+            file_reference: Some("2026-041".into()),
+        };
+        let d = super::claude_payload(&identity, &a, &assessment);
+        let text = d.payload.to_string();
+        for leaked in [
+            "Hélène",
+            "Tremblay",
+            "h.t@example.com",
+            "555-0142",
+            "2026-041",
+        ] {
+            assert!(!text.contains(leaked), "{leaked} leaked");
+        }
+        assert!(text.contains("\"client\":\"[CLIENT]\""));
+        assert!(text.contains("\"profile\"") && text.contains("\"crs\""));
     }
 
     /// The TypeScript model (ui/src/lib/model.ts) must produce JSON the Rust

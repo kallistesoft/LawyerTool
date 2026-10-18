@@ -20,6 +20,7 @@
     "allow-client-save",
     "allow-client-delete",
     "allow-assess",
+    "allow-deid-preview",
     "core:event:allow-listen",
     "core:event:allow-unlisten"
   ]
