@@ -1,0 +1,117 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  # Every third-party action below is pinned to a commit SHA (tag in comment).
+
+jobs:
+  check:
+    name: Check (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+      - uses: Swatinem/rust-cache@63fed3e2fecf6f7b51dc6f043341b79ef82a9ae7 # v2.9.2
+      - name: Install frontend and oracle dependencies
+        shell: bash
+        run: |
+          npm ci --prefix ui --ignore-scripts --no-fund
+          npm ci --prefix tools/oracle --ignore-scripts --no-fund
+      - name: Build frontend
+        run: npm --prefix ui run build
+      - name: Type-check frontend
+        run: npm --prefix ui run check
+      - name: Format
+        run: cargo fmt --all --check
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+      - name: Test
+        run: cargo test --workspace --locked
+      - name: Dependency boundaries
+        shell: bash
+        run: ./scripts/check-deps.sh
+
+  oracle:
+    name: Differential fuzz vs official calculator
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+      - uses: Swatinem/rust-cache@63fed3e2fecf6f7b51dc6f043341b79ef82a9ae7 # v2.9.2
+      - run: npm ci --prefix tools/oracle --ignore-scripts --no-fund
+      - name: Fuzz (saved regressions + 2000 new cases)
+        env:
+          PROPTEST_CASES: "2000"
+        run: cargo test -p oracle-tests --locked -- --include-ignored
+
+  audit:
+    name: Supply chain
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+      - uses: taiki-e/install-action@8cca0918f8471c33515202b73f56ab27f2bed283 # v2.87.29
+        with:
+          tool: cargo-audit
+      - name: cargo audit
+        run: cargo audit
+      - name: npm audit (app frontend)
+        run: npm audit --prefix ui --audit-level=moderate
+      - name: npm audit (dev-only oracle; jQuery pinned to the live page's 2.2.4)
+        run: npm audit --prefix tools/oracle --audit-level=high
+
+  build:
+    name: Unsigned app (${{ matrix.os }})
+    needs: check
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            args: --target universal-apple-darwin --bundles app,dmg
+            targets: aarch64-apple-darwin x86_64-apple-darwin
+          - os: windows-latest
+            args: --bundles msi
+            targets: x86_64-pc-windows-msvc
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+      - uses: Swatinem/rust-cache@63fed3e2fecf6f7b51dc6f043341b79ef82a9ae7 # v2.9.2
+      - name: Rust targets
+        shell: bash
+        run: rustup target add ${{ matrix.targets }}
+      - run: npm ci --prefix ui --ignore-scripts --no-fund
+      - name: Build installers
+        run: node ui/node_modules/@tauri-apps/cli/tauri.js build ${{ matrix.args }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: lawyertool-unsigned-${{ matrix.os }}
+          path: |
+            target/**/bundle/dmg/*.dmg
+            target/**/bundle/msi/*.msi
+          if-no-files-found: error
+          retention-days: 14
