@@ -10,6 +10,8 @@ use crate::ParseError;
 pub struct Table {
     pub index: u16,
     pub heading: String,
+    /// `<caption>` text, empty if none.
+    pub caption: String,
     /// Normalized cell text, header row first.
     pub rows: Vec<Vec<String>>,
 }
@@ -52,9 +54,15 @@ impl Page {
                     .map(|tr| tr.select(&sel("th, td")).map(text_of).collect())
                     .collect();
                 let index = u16::try_from(tables.len()).map_err(|_| ParseError::TooManyTables)?;
+                let caption = el
+                    .select(&sel("caption"))
+                    .next()
+                    .map(text_of)
+                    .unwrap_or_default();
                 tables.push(Table {
                     index,
                     heading: heading.clone(),
+                    caption,
                     rows,
                 });
             } else {

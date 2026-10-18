@@ -214,6 +214,63 @@ pub struct Crs {
     pub spouse_canadian_work: Vec<SingleRow<Range>>,
     pub transferability: Transferability,
     pub additional: Additional,
+    /// Labour market integration factor (from 2026-11-03). When present,
+    /// Canadian work points move out of the core factors into this factor.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub labour_market: Option<LabourMarket>,
+    /// High-wage occupation list used by `labour_market`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub high_wage: Option<HighWageList>,
+}
+
+/// High-wage tier of a NOC: national median wage relative to the average
+/// median wage of the Canadian workforce.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum WageTier {
+    /// At least 1.3×, under 1.5×.
+    AtLeast1_3,
+    /// At least 1.5×, under 2×.
+    AtLeast1_5,
+    /// At least 2×.
+    AtLeast2,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct LabourMarket {
+    /// Factor cap, with and without spouse.
+    pub max: Row<()>,
+    /// Duration points, keyed by years of Canadian work.
+    pub duration: Vec<Row<Range>>,
+    /// Extra points for at least `high_wage_min_months` of Canadian work in
+    /// occupations at this tier or higher.
+    pub high_wage_experience: Vec<SingleRow<WageTier>>,
+    pub high_wage_min_months: u16,
+    /// Points for a qualifying job offer in an occupation at this tier.
+    pub job_offer: Vec<SingleRow<WageTier>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Occupation {
+    /// NOC 2021 code, five digits.
+    pub noc: String,
+    pub tier: WageTier,
+    pub cite: Cite,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct HighWageList {
+    pub effective_from: IsoDate,
+    pub occupations: Vec<Occupation>,
+}
+
+impl HighWageList {
+    pub fn tier(&self, noc: &str) -> Option<WageTier> {
+        self.occupations
+            .iter()
+            .find(|o| o.noc == noc)
+            .map(|o| o.tier)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

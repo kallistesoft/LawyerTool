@@ -1,0 +1,3384 @@
+{
+  "id": "crs-2026-11-03",
+  "effective_from": "2026-11-03",
+  "sources": [
+    {
+      "id": "criteries-scg",
+      "url": "https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/verifier-note/criteries-scg.html",
+      "sha256": "c4a492adfa2cad679c2e797cc4391d7d2231198ad8b6e08c8483f37ad2080961",
+      "fetched": "2026-10-18"
+    },
+    {
+      "id": "modifications",
+      "url": "https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/modifications.html",
+      "sha256": "9729a26925f1ceed605766636b212c0ae1a6785ed0b638667dc1ad63e155a718",
+      "fetched": "2026-10-18"
+    },
+    {
+      "id": "salaire-eleve",
+      "url": "https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/verifier-note/salaire-eleve.html",
+      "sha256": "a7a15b38f9ab6ce6cc977046105b92516ed0def3153f7abda76621beda06238c",
+      "fetched": "2026-10-18"
+    }
+  ],
+  "crs": {
+    "core_max": {
+      "key": null,
+      "points": {
+        "with_spouse": 460,
+        "without_spouse": 500
+      },
+      "cite": {
+        "source": "criteries-scg",
+        "table": null,
+        "row": null,
+        "text": "Avec un époux ou conjoint de fait : Maximum 460 points total pour tous les facteurs Sans époux ou conjoint de fait : Maximum 500 points"
+      }
+    },
+    "age": [
+      {
+        "key": {
+          "min": 0,
+          "max": 17
+        },
+        "points": {
+          "with_spouse": 0,
+          "without_spouse": 0
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 1,
+          "text": "17 ans ou moins | 0 | 0"
+        }
+      },
+      {
+        "key": {
+          "min": 18,
+          "max": 18
+        },
+        "points": {
+          "with_spouse": 90,
+          "without_spouse": 99
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 2,
+          "text": "18 ans | 90 | 99"
+        }
+      },
+      {
+        "key": {
+          "min": 19,
+          "max": 19
+        },
+        "points": {
+          "with_spouse": 95,
+          "without_spouse": 105
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 3,
+          "text": "19 ans | 95 | 105"
+        }
+      },
+      {
+        "key": {
+          "min": 20,
+          "max": 29
+        },
+        "points": {
+          "with_spouse": 100,
+          "without_spouse": 110
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 4,
+          "text": "20 to 29 ans | 100 | 110"
+        }
+      },
+      {
+        "key": {
+          "min": 30,
+          "max": 30
+        },
+        "points": {
+          "with_spouse": 95,
+          "without_spouse": 105
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 5,
+          "text": "30 ans | 95 | 105"
+        }
+      },
+      {
+        "key": {
+          "min": 31,
+          "max": 31
+        },
+        "points": {
+          "with_spouse": 90,
+          "without_spouse": 99
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 6,
+          "text": "31 ans | 90 | 99"
+        }
+      },
+      {
+        "key": {
+          "min": 32,
+          "max": 32
+        },
+        "points": {
+          "with_spouse": 85,
+          "without_spouse": 94
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 7,
+          "text": "32 ans | 85 | 94"
+        }
+      },
+      {
+        "key": {
+          "min": 33,
+          "max": 33
+        },
+        "points": {
+          "with_spouse": 80,
+          "without_spouse": 88
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 8,
+          "text": "33 ans | 80 | 88"
+        }
+      },
+      {
+        "key": {
+          "min": 34,
+          "max": 34
+        },
+        "points": {
+          "with_spouse": 75,
+          "without_spouse": 83
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 9,
+          "text": "34 ans | 75 | 83"
+        }
+      },
+      {
+        "key": {
+          "min": 35,
+          "max": 35
+        },
+        "points": {
+          "with_spouse": 70,
+          "without_spouse": 77
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 10,
+          "text": "35 ans | 70 | 77"
+        }
+      },
+      {
+        "key": {
+          "min": 36,
+          "max": 36
+        },
+        "points": {
+          "with_spouse": 65,
+          "without_spouse": 72
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 11,
+          "text": "36 ans | 65 | 72"
+        }
+      },
+      {
+        "key": {
+          "min": 37,
+          "max": 37
+        },
+        "points": {
+          "with_spouse": 60,
+          "without_spouse": 66
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 12,
+          "text": "37 ans | 60 | 66"
+        }
+      },
+      {
+        "key": {
+          "min": 38,
+          "max": 38
+        },
+        "points": {
+          "with_spouse": 55,
+          "without_spouse": 61
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 13,
+          "text": "38 ans | 55 | 61"
+        }
+      },
+      {
+        "key": {
+          "min": 39,
+          "max": 39
+        },
+        "points": {
+          "with_spouse": 50,
+          "without_spouse": 55
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 14,
+          "text": "39 ans | 50 | 55"
+        }
+      },
+      {
+        "key": {
+          "min": 40,
+          "max": 40
+        },
+        "points": {
+          "with_spouse": 45,
+          "without_spouse": 50
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 15,
+          "text": "40 ans | 45 | 50"
+        }
+      },
+      {
+        "key": {
+          "min": 41,
+          "max": 41
+        },
+        "points": {
+          "with_spouse": 35,
+          "without_spouse": 39
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 16,
+          "text": "41 ans | 35 | 39"
+        }
+      },
+      {
+        "key": {
+          "min": 42,
+          "max": 42
+        },
+        "points": {
+          "with_spouse": 25,
+          "without_spouse": 28
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 17,
+          "text": "42 ans | 25 | 28"
+        }
+      },
+      {
+        "key": {
+          "min": 43,
+          "max": 43
+        },
+        "points": {
+          "with_spouse": 15,
+          "without_spouse": 17
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 18,
+          "text": "43 ans | 15 | 17"
+        }
+      },
+      {
+        "key": {
+          "min": 44,
+          "max": 44
+        },
+        "points": {
+          "with_spouse": 5,
+          "without_spouse": 6
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 19,
+          "text": "44 ans | 5 | 6"
+        }
+      },
+      {
+        "key": {
+          "min": 45,
+          "max": null
+        },
+        "points": {
+          "with_spouse": 0,
+          "without_spouse": 0
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 20,
+          "text": "45 ans ou plus | 0 | 0"
+        }
+      }
+    ],
+    "education": [
+      {
+        "key": "less_than_secondary",
+        "points": {
+          "with_spouse": 0,
+          "without_spouse": 0
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 1,
+          "text": "Études secondaires non complétées | 0 | 0"
+        }
+      },
+      {
+        "key": "secondary",
+        "points": {
+          "with_spouse": 28,
+          "without_spouse": 30
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 2,
+          "text": "Diplôme d'études secondaires | 28 | 30"
+        }
+      },
+      {
+        "key": "one_year_post_secondary",
+        "points": {
+          "with_spouse": 84,
+          "without_spouse": 90
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 3,
+          "text": "Degré, diplôme ou certificat de un an obtenu dans le cadre d'un programme à une université, un collège, une école technique ou de métiers ou un autre institut | 84 | 90"
+        }
+      },
+      {
+        "key": "two_year_post_secondary",
+        "points": {
+          "with_spouse": 91,
+          "without_spouse": 98
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 4,
+          "text": "Degré, diplôme ou certificat de deux ans obtenu dans le cadre d'un programme à une université, un collège, une école technique ou de métiers ou un autre institut | 91 | 98"
+        }
+      },
+      {
+        "key": "bachelor_or_three_year",
+        "points": {
+          "with_spouse": 112,
+          "without_spouse": 120
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 5,
+          "text": "Baccalauréat OU autres programmes (trois ans ou plus) à une université, un collège, une école technique ou de métiers ou un autre institut | 112 | 120"
+        }
+      },
+      {
+        "key": "two_or_more_credentials",
+        "points": {
+          "with_spouse": 119,
+          "without_spouse": 128
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 6,
+          "text": "Au moins deux certificats, diplômes ou degrés. Un doit avoir été obtenu dans le cadre d'un programme d'une durée de trois ans ou plus. | 119 | 128"
+        }
+      },
+      {
+        "key": "master_or_professional",
+        "points": {
+          "with_spouse": 126,
+          "without_spouse": 135
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 7,
+          "text": "Diplôme d'études universitaires de deuxième cycle OU Diplôme professionnel requis pour la pratique au sein d'une profession décernant des permis de pratique (Pour un diplôme professionnel, le programme d'études doit avoir été en médecine, médecine vétérinaire, dentisterie, optométrie, droit, chiropratique, ou en pharmacie.) | 126 | 135"
+        }
+      },
+      {
+        "key": "doctorate",
+        "points": {
+          "with_spouse": 140,
+          "without_spouse": 150
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 8,
+          "text": "Diplôme universitaire de troisième cycle (Ph.D.) | 140 | 150"
+        }
+      }
+    ],
+    "first_language": [
+      {
+        "key": {
+          "min": 0,
+          "max": 3
+        },
+        "points": {
+          "with_spouse": 0,
+          "without_spouse": 0
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 3,
+          "row": 1,
+          "text": "Moins que le niveau 4 des NCLC | 0 | 0"
+        }
+      },
+      {
+        "key": {
+          "min": 4,
+          "max": 5
+        },
+        "points": {
+          "with_spouse": 6,
+          "without_spouse": 6
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 3,
+          "row": 2,
+          "text": "NCLC 4 ou 5 | 6 | 6"
+        }
+      },
+      {
+        "key": {
+          "min": 6,
+          "max": 6
+        },
+        "points": {
+          "with_spouse": 8,
+          "without_spouse": 9
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 3,
+          "row": 3,
+          "text": "NCLC 6 | 8 | 9"
+        }
+      },
+      {
+        "key": {
+          "min": 7,
+          "max": 7
+        },
+        "points": {
+          "with_spouse": 16,
+          "without_spouse": 17
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 3,
+          "row": 4,
+          "text": "NCLC 7 | 16 | 17"
+        }
+      },
+      {
+        "key": {
+          "min": 8,
+          "max": 8
+        },
+        "points": {
+          "with_spouse": 22,
+          "without_spouse": 23
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 3,
+          "row": 5,
+          "text": "NCLC 8 | 22 | 23"
+        }
+      },
+      {
+        "key": {
+          "min": 9,
+          "max": 9
+        },
+        "points": {
+          "with_spouse": 29,
+          "without_spouse": 31
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 3,
+          "row": 6,
+          "text": "NCLC 9 | 29 | 31"
+        }
+      },
+      {
+        "key": {
+          "min": 10,
+          "max": null
+        },
+        "points": {
+          "with_spouse": 32,
+          "without_spouse": 34
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 3,
+          "row": 7,
+          "text": "NCLC 10 ou plus | 32 | 34"
+        }
+      }
+    ],
+    "second_language": [
+      {
+        "key": {
+          "min": 0,
+          "max": 3
+        },
+        "points": {
+          "with_spouse": 0,
+          "without_spouse": 0
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 4,
+          "row": 1,
+          "text": "Moins que le niveau 4 des NCLC | 0 | 0"
+        }
+      },
+      {
+        "key": {
+          "min": 5,
+          "max": 6
+        },
+        "points": {
+          "with_spouse": 1,
+          "without_spouse": 1
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 4,
+          "row": 2,
+          "text": "NCLC 5 ou 6 | 1 | 1"
+        }
+      },
+      {
+        "key": {
+          "min": 7,
+          "max": 8
+        },
+        "points": {
+          "with_spouse": 3,
+          "without_spouse": 3
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 4,
+          "row": 3,
+          "text": "NCLC 7 ou 8 | 3 | 3"
+        }
+      },
+      {
+        "key": {
+          "min": 9,
+          "max": null
+        },
+        "points": {
+          "with_spouse": 6,
+          "without_spouse": 6
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 4,
+          "row": 4,
+          "text": "NCLC 9 ou plus | 6 | 6"
+        }
+      }
+    ],
+    "second_language_max": {
+      "key": null,
+      "points": {
+        "with_spouse": 22,
+        "without_spouse": 24
+      },
+      "cite": {
+        "source": "criteries-scg",
+        "table": 4,
+        "row": 0,
+        "text": "Niveaux de compétence linguistique canadiens (NCLC) par compétence | Avec un époux ou conjoint de fait (Maximum 22 points) | Sans époux ou conjoint de fait (Maximum 24 points)"
+      }
+    },
+    "canadian_work": [
+      {
+        "key": {
+          "min": 0,
+          "max": 0
+        },
+        "points": {
+          "with_spouse": 0,
+          "without_spouse": 0
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 5,
+          "row": 1,
+          "text": "Aucune ou moins d'un an | 0 | 0"
+        }
+      },
+      {
+        "key": {
+          "min": 1,
+          "max": 1
+        },
+        "points": {
+          "with_spouse": 35,
+          "without_spouse": 40
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 5,
+          "row": 2,
+          "text": "1 an | 35 | 40"
+        }
+      },
+      {
+        "key": {
+          "min": 2,
+          "max": 2
+        },
+        "points": {
+          "with_spouse": 46,
+          "without_spouse": 53
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 5,
+          "row": 3,
+          "text": "2 ans | 46 | 53"
+        }
+      },
+      {
+        "key": {
+          "min": 3,
+          "max": 3
+        },
+        "points": {
+          "with_spouse": 56,
+          "without_spouse": 64
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 5,
+          "row": 4,
+          "text": "3 ans | 56 | 64"
+        }
+      },
+      {
+        "key": {
+          "min": 4,
+          "max": 4
+        },
+        "points": {
+          "with_spouse": 63,
+          "without_spouse": 72
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 5,
+          "row": 5,
+          "text": "4 ans | 63 | 72"
+        }
+      },
+      {
+        "key": {
+          "min": 5,
+          "max": null
+        },
+        "points": {
+          "with_spouse": 70,
+          "without_spouse": 80
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 5,
+          "row": 6,
+          "text": "5 ans ou plus | 70 | 80"
+        }
+      }
+    ],
+    "spouse_max": {
+      "value": 40,
+      "cite": {
+        "source": "criteries-scg",
+        "table": 6,
+        "row": 0,
+        "text": "Facteur | Points (Maximum 40 points)"
+      }
+    },
+    "spouse_education": [
+      {
+        "key": "less_than_secondary",
+        "points": 0,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 1,
+          "text": "Études secondaires non complétées | 0 | n/a"
+        }
+      },
+      {
+        "key": "secondary",
+        "points": 2,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 2,
+          "text": "Diplôme d'études secondaires | 2 | n/a"
+        }
+      },
+      {
+        "key": "one_year_post_secondary",
+        "points": 6,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 3,
+          "text": "Degré, diplôme ou certificat de un an obtenu dans le cadre d'un programme à une université, un collège, une école technique ou de métiers ou un autre institut | 6 | n/a"
+        }
+      },
+      {
+        "key": "two_year_post_secondary",
+        "points": 7,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 4,
+          "text": "Degré, diplôme ou certificat de deux ans obtenu dans le cadre d'un programme à une université, un collège, une école technique ou de métiers ou un autre institut | 7 | n/a"
+        }
+      },
+      {
+        "key": "bachelor_or_three_year",
+        "points": 8,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 5,
+          "text": "Baccalauréat OU autres programmes (trois ans ou plus) à une université, un collège, une école technique ou de métiers ou un autre institut | 8 | n/a"
+        }
+      },
+      {
+        "key": "two_or_more_credentials",
+        "points": 9,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 6,
+          "text": "Au moins deux certificats, diplômes ou degrés. Un doit avoir été obtenu dans le cadre d'un programme d'une durée de trois ans ou plus. | 9 | n/a"
+        }
+      },
+      {
+        "key": "master_or_professional",
+        "points": 10,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 7,
+          "text": "Diplôme d'études universitaires de deuxième cycle OU Diplôme professionnel requis pour la pratique au sein d'une profession décernant des permis de pratique (Pour un diplôme professionnel, le programme d'études doit avoir été en médecine, médecine vétérinaire, dentisterie, optométrie, droit, chiropratique, ou en pharmacie.) | 10 | n/a"
+        }
+      },
+      {
+        "key": "doctorate",
+        "points": 10,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 8,
+          "text": "Diplôme universitaire de troisième cycle (Ph.D.) | 10 | n/a"
+        }
+      }
+    ],
+    "spouse_language": [
+      {
+        "key": {
+          "min": 0,
+          "max": 4
+        },
+        "points": 0,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 8,
+          "row": 1,
+          "text": "NCLC 4 ou moins | 0 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 5,
+          "max": 6
+        },
+        "points": 1,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 8,
+          "row": 2,
+          "text": "NCLC 5 ou 6 | 1 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 7,
+          "max": 8
+        },
+        "points": 3,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 8,
+          "row": 3,
+          "text": "NCLC 7 ou 8 | 3 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 9,
+          "max": null
+        },
+        "points": 5,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 8,
+          "row": 4,
+          "text": "NCLC 9 ou plus | 5 | n/a"
+        }
+      }
+    ],
+    "spouse_canadian_work": [
+      {
+        "key": {
+          "min": 0,
+          "max": 0
+        },
+        "points": 0,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 9,
+          "row": 1,
+          "text": "Aucune ou moins d'un an | 0 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 1,
+          "max": 1
+        },
+        "points": 5,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 9,
+          "row": 2,
+          "text": "1 an | 5 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 2,
+          "max": 2
+        },
+        "points": 7,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 9,
+          "row": 3,
+          "text": "2 ans | 7 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 3,
+          "max": 3
+        },
+        "points": 8,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 9,
+          "row": 4,
+          "text": "3 ans | 8 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 4,
+          "max": 4
+        },
+        "points": 9,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 9,
+          "row": 5,
+          "text": "4 ans | 9 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 5,
+          "max": null
+        },
+        "points": 10,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 9,
+          "row": 6,
+          "text": "5 ans ou plus | 10 | n/a"
+        }
+      }
+    ],
+    "transferability": {
+      "education_language": {
+        "lower_min": 7,
+        "upper_min": 9,
+        "rows": [
+          {
+            "key": "secondary_or_less",
+            "lower": 0,
+            "upper": 0,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 13,
+              "row": 1,
+              "text": "Diplôme d'école secondaire ou moins | 0 | 0"
+            }
+          },
+          {
+            "key": "post_secondary",
+            "lower": 13,
+            "upper": 25,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 13,
+              "row": 2,
+              "text": "Diplôme postsecondaire nécessitant au moins une année d'études | 13 | 25"
+            }
+          },
+          {
+            "key": "two_or_more",
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 13,
+              "row": 3,
+              "text": "Deux diplômes postsecondaires ou plus ET au moins l'un d'entre eux a nécessité trois années d'études ou plus | 25 | 50"
+            }
+          },
+          {
+            "key": "master_or_professional",
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 13,
+              "row": 4,
+              "text": "il a obtenu un diplôme d'études universitaires de deuxième cycle ou un diplôme professionnel nécessaire à l'exercice d'une profession délivré à l'égard d'une profession mentionnée dans la liste du niveau de compétence A de la matrice de la Classification nationale des professions et pour laquelle un permis délivré par un organisme provincial de réglementation | 25 | 50"
+            }
+          },
+          {
+            "key": "doctorate",
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 13,
+              "row": 5,
+              "text": "il a obtenu un diplôme d'études universitaires de troisième cycle | 25 | 50"
+            }
+          }
+        ],
+        "cite": {
+          "source": "criteries-scg",
+          "table": 13,
+          "row": 0,
+          "text": "Avec une bonne maîtrise d'une langue officielle (Niveaux de compétence linguistique canadiens [NCLC] 7 ou plus) et un diplôme postsecondaire | Points pour NCLC 7 ou plus dans chacune des compétences dans la première langue officielle, dont au moins l'une d'entre elles est inférieure au niveau 9 (Maximum 25 points) | Points pour NCLC 9 ou plus dans chacune des quatre compétences dans la première langue officielle (Maximum 50 points)"
+        }
+      },
+      "education_canadian_work": {
+        "lower_min": 1,
+        "upper_min": 2,
+        "rows": [
+          {
+            "key": "secondary_or_less",
+            "lower": 0,
+            "upper": 0,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 14,
+              "row": 1,
+              "text": "Diplôme d'école secondaire ou moins | 0 | 0"
+            }
+          },
+          {
+            "key": "post_secondary",
+            "lower": 13,
+            "upper": 25,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 14,
+              "row": 2,
+              "text": "Diplôme postsecondaire nécessitant au moins une année d'études | 13 | 25"
+            }
+          },
+          {
+            "key": "two_or_more",
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 14,
+              "row": 3,
+              "text": "Deux diplômes postsecondaires ou plus ET au moins l'un d'entre eux a nécessité trois années d'études ou plus | 25 | 50"
+            }
+          },
+          {
+            "key": "master_or_professional",
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 14,
+              "row": 4,
+              "text": "il a obtenu un diplôme d'études universitaires de deuxième cycle ou un diplôme professionnel nécessaire à l'exercice d'une profession délivré à l'égard d'une profession mentionnée dans la liste du niveau de compétence A de la matrice de la Classification nationale des professions et pour laquelle un permis délivré par un organisme provincial de réglementation | 25 | 50"
+            }
+          },
+          {
+            "key": "doctorate",
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 14,
+              "row": 5,
+              "text": "il a obtenu un diplôme d'études universitaires de troisième cycle | 25 | 50"
+            }
+          }
+        ],
+        "cite": {
+          "source": "criteries-scg",
+          "table": 14,
+          "row": 0,
+          "text": "Avec une expérience de travail au Canada et un diplôme postsecondaire | Points pour les études + une année d'expérience de travail au Canada (Maximum 25 points) | Points pour les études + deux années ou plus d'expérience de travail au Canada (Maximum 50 points)"
+        }
+      },
+      "foreign_language": {
+        "lower_min": 7,
+        "upper_min": 9,
+        "rows": [
+          {
+            "key": {
+              "min": 0,
+              "max": 0
+            },
+            "lower": 0,
+            "upper": 0,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 15,
+              "row": 1,
+              "text": "Aucune expérience de travail à l'étranger | 0 | 0"
+            }
+          },
+          {
+            "key": {
+              "min": 1,
+              "max": 2
+            },
+            "lower": 13,
+            "upper": 25,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 15,
+              "row": 2,
+              "text": "Une année ou deux années d'expérience de travail à l'étranger | 13 | 25"
+            }
+          },
+          {
+            "key": {
+              "min": 3,
+              "max": null
+            },
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 15,
+              "row": 3,
+              "text": "Trois années ou plus d'expérience de travail à l'étranger | 25 | 50"
+            }
+          }
+        ],
+        "cite": {
+          "source": "criteries-scg",
+          "table": 15,
+          "row": 0,
+          "text": "Années d'expérience | Points pour de l'expérience de travail à l'étranger + NCLC 7 ou plus dans chacune des compétences dans la première langue officielle, dont au moins l'une d'entre elles est inférieure au niveau 9 (Maximum 25 points) | Points pour de l'expérience de travail à l'étranger + NCLC 9 ou plus dans chacune des quatre compétences dans la première langue officielle (Maximum 50 points)"
+        }
+      },
+      "foreign_canadian_work": {
+        "lower_min": 1,
+        "upper_min": 2,
+        "rows": [
+          {
+            "key": {
+              "min": 0,
+              "max": 0
+            },
+            "lower": 0,
+            "upper": 0,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 16,
+              "row": 1,
+              "text": "Aucune expérience de travail à l'étranger | 0 | 0"
+            }
+          },
+          {
+            "key": {
+              "min": 1,
+              "max": 2
+            },
+            "lower": 13,
+            "upper": 25,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 16,
+              "row": 2,
+              "text": "Une année ou deux années d'expérience de travail à l'étranger | 13 | 25"
+            }
+          },
+          {
+            "key": {
+              "min": 3,
+              "max": null
+            },
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 16,
+              "row": 3,
+              "text": "Trois années ou plus d'expérience de travail à l'étranger | 25 | 50"
+            }
+          }
+        ],
+        "cite": {
+          "source": "criteries-scg",
+          "table": 16,
+          "row": 0,
+          "text": "Années d'expérience | Points pour de l'expérience de travail à l'étranger + une année d'expérience de travail au Canada (Maximum 25 points) | Points pour de l'expérience de travail à l'étranger + deux années ou plus d'expérience de travail au Canada (Maximum 50 points)"
+        }
+      },
+      "certificate": {
+        "lower_min": 5,
+        "upper_min": 7,
+        "rows": [
+          {
+            "key": null,
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 17,
+              "row": 1,
+              "text": "Avec un certificat de compétence | 25 | 50"
+            }
+          }
+        ],
+        "cite": {
+          "source": "criteries-scg",
+          "table": 17,
+          "row": 0,
+          "text": "Certificat de compétence (métier spécialisé) – Avec une bonne maîtrise d'une langue officielle et un certificat de compétence (Niveaux de compétence linguistique canadiens [NCLC] 7 ou plus) | Points pour un certificat de compétence + NCLC 5 ou plus dans chacune des compétences dans la première langue officielle, dont au moins l'une d'entre elles est inférieure au niveau 7 (Maximum 25 points) | Points pour un certificat de compétence NCLC 7 ou plus dans chacune des quatre compétences dans la première langue officielle (Maximum 50 points)"
+        }
+      },
+      "group_max": {
+        "value": 50,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 10,
+          "row": 0,
+          "text": "Scolarité | Points (Maximum 50 points)"
+        }
+      },
+      "max": {
+        "value": 100,
+        "cite": {
+          "source": "criteries-scg",
+          "table": null,
+          "row": null,
+          "text": "transférabilité des compétences : Maximum 100 points"
+        }
+      }
+    },
+    "additional": {
+      "sibling": {
+        "key": null,
+        "points": 15,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 19,
+          "row": 1,
+          "text": "Frère ou sœur vivant au Canada qui est citoyen ou résident permanent du Canada | 15"
+        }
+      },
+      "french_weak_english": {
+        "key": null,
+        "points": 25,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 19,
+          "row": 2,
+          "text": "Si vous obtenez le niveau 7 ou plus des NCLC en français pour les quatre aptitudes et si vous obtenez le niveau 4 ou moins des CLB en anglais (ou si vous n'avez pas passé de test en anglais) | 25"
+        }
+      },
+      "french_strong_english": {
+        "key": null,
+        "points": 50,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 19,
+          "row": 3,
+          "text": "Si vous obtenez le niveau 7 ou plus des NCLC en français pour les quatre aptitudes et si vous obtenez le niveau 5 ou plus des CLB en anglais pour les quatre aptitudes | 50"
+        }
+      },
+      "french_min_nclc": 7,
+      "english_min_clb": 5,
+      "canadian_education_short": {
+        "key": null,
+        "points": 15,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 19,
+          "row": 4,
+          "text": "Études postsecondaires effectuées au Canada – titre de compétence d'un an ou de deux ans | 15"
+        }
+      },
+      "canadian_education_long": {
+        "key": null,
+        "points": 30,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 19,
+          "row": 5,
+          "text": "Études postsecondaires effectuées au Canada – titre de compétence de trois ans ou plus | 30"
+        }
+      },
+      "provincial_nomination": {
+        "key": null,
+        "points": 600,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 19,
+          "row": 6,
+          "text": "Désignation comme candidat d'une province ou d'un territoire | 600"
+        }
+      },
+      "max": {
+        "value": 600,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 19,
+          "row": 0,
+          "text": "Points supplémentaires | Maximum 600 points"
+        }
+      }
+    },
+    "labour_market": {
+      "max": {
+        "key": null,
+        "points": {
+          "with_spouse": 140,
+          "without_spouse": 150
+        },
+        "cite": {
+          "source": "modifications",
+          "table": 0,
+          "row": 1,
+          "text": "Expérience de travail au Canada | 140 points : 70 pour la durée de l'emploi 70 pour une expérience dans une profession à salaire élevé | 150 points : 80 pour la durée de l'emploi 70 pour une expérience dans une profession à salaire élevé"
+        }
+      },
+      "duration": [
+        {
+          "key": {
+            "min": 0,
+            "max": 0
+          },
+          "points": {
+            "with_spouse": 0,
+            "without_spouse": 0
+          },
+          "cite": {
+            "source": "modifications",
+            "table": 1,
+            "row": 1,
+            "text": "Aucune ou moins d'un an | 0 | 0"
+          }
+        },
+        {
+          "key": {
+            "min": 1,
+            "max": 1
+          },
+          "points": {
+            "with_spouse": 35,
+            "without_spouse": 40
+          },
+          "cite": {
+            "source": "modifications",
+            "table": 1,
+            "row": 2,
+            "text": "1 an | 35 | 40"
+          }
+        },
+        {
+          "key": {
+            "min": 2,
+            "max": 2
+          },
+          "points": {
+            "with_spouse": 46,
+            "without_spouse": 53
+          },
+          "cite": {
+            "source": "modifications",
+            "table": 1,
+            "row": 3,
+            "text": "2 ans | 46 | 53"
+          }
+        },
+        {
+          "key": {
+            "min": 3,
+            "max": 3
+          },
+          "points": {
+            "with_spouse": 56,
+            "without_spouse": 64
+          },
+          "cite": {
+            "source": "modifications",
+            "table": 1,
+            "row": 4,
+            "text": "3 ans | 56 | 64"
+          }
+        },
+        {
+          "key": {
+            "min": 4,
+            "max": 4
+          },
+          "points": {
+            "with_spouse": 63,
+            "without_spouse": 72
+          },
+          "cite": {
+            "source": "modifications",
+            "table": 1,
+            "row": 5,
+            "text": "4 ans | 63 | 72"
+          }
+        },
+        {
+          "key": {
+            "min": 5,
+            "max": null
+          },
+          "points": {
+            "with_spouse": 70,
+            "without_spouse": 80
+          },
+          "cite": {
+            "source": "modifications",
+            "table": 1,
+            "row": 6,
+            "text": "5 ans ou plus | 70 | 80"
+          }
+        }
+      ],
+      "high_wage_experience": [
+        {
+          "key": "at_least2",
+          "points": 70,
+          "cite": {
+            "source": "modifications",
+            "table": 2,
+            "row": 1,
+            "text": "Au moins 12 mois dans un ou plusieurs professions à salaire élevé dont le salaire médian est au moins le double du salaire médian moyen | 70"
+          }
+        },
+        {
+          "key": "at_least1_5",
+          "points": 40,
+          "cite": {
+            "source": "modifications",
+            "table": 2,
+            "row": 2,
+            "text": "Si vous n'êtes pas admissible aux 70 points, au moins 12 mois cumulés dans un ou plusieurs professions à salaire élevé dont le salaire médian est au moins 1,5 fois le salaire médian moyen | 40"
+          }
+        },
+        {
+          "key": "at_least1_3",
+          "points": 20,
+          "cite": {
+            "source": "modifications",
+            "table": 2,
+            "row": 3,
+            "text": "Si vous n'êtes pas admissible aux 40 points, au moins 12 mois cumulés dans un ou plusieurs professions à salaire élevé dont le salaire médian est au moins 1,3 fois le salaire médian moyen | 20"
+          }
+        }
+      ],
+      "high_wage_min_months": 12,
+      "job_offer": [
+        {
+          "key": "at_least2",
+          "points": 100,
+          "cite": {
+            "source": "modifications",
+            "table": 3,
+            "row": 1,
+            "text": "Un emploi dans une profession à salaire élevé offrant au moins le double du salaire médian moyen | 100"
+          }
+        },
+        {
+          "key": "at_least1_5",
+          "points": 70,
+          "cite": {
+            "source": "modifications",
+            "table": 3,
+            "row": 2,
+            "text": "Un emploi dans une profession à salaire élevé dont la rémunération correspond à au moins 1,5 fois, mais à moins de deux fois, le salaire médian moyen | 70"
+          }
+        },
+        {
+          "key": "at_least1_3",
+          "points": 50,
+          "cite": {
+            "source": "modifications",
+            "table": 3,
+            "row": 3,
+            "text": "Un emploi dans une profession à salaire élevé dont la rémunération correspond à au moins 1,3 fois, mais à moins de 1,5 fois, le salaire médian moyen | 50"
+          }
+        }
+      ]
+    },
+    "high_wage": {
+      "effective_from": "2026-11-03",
+      "occupations": [
+        {
+          "noc": "00011",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 1,
+            "text": "00011 | Cadres supérieurs/cadres supérieures - administration publique"
+          }
+        },
+        {
+          "noc": "00012",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 2,
+            "text": "00012 | Cadres supérieurs/cadres supérieures - services financiers, communications et autres services aux entreprises"
+          }
+        },
+        {
+          "noc": "00013",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 3,
+            "text": "00013 | Cadres supérieurs/cadres supérieures - santé, enseignement, services sociaux et communautaires et associations mutuelles"
+          }
+        },
+        {
+          "noc": "10010",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 4,
+            "text": "10010 | Directeurs financiers/directrices financières"
+          }
+        },
+        {
+          "noc": "10011",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 5,
+            "text": "10011 | Directeurs/directrices des ressources humaines"
+          }
+        },
+        {
+          "noc": "10012",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 6,
+            "text": "10012 | Directeurs/directrices des achats"
+          }
+        },
+        {
+          "noc": "10020",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 7,
+            "text": "10020 | Directeurs/directrices des assurances, de l'immobilier et du courtage financier"
+          }
+        },
+        {
+          "noc": "10021",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 8,
+            "text": "10021 | Directeurs/directrices de banque, du crédit et d'autres services de placements"
+          }
+        },
+        {
+          "noc": "20010",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 9,
+            "text": "20010 | Directeurs/directrices des services de génie"
+          }
+        },
+        {
+          "noc": "20011",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 10,
+            "text": "20011 | Directeurs/directrices des services d'architecture et de sciences"
+          }
+        },
+        {
+          "noc": "20012",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 11,
+            "text": "20012 | Gestionnaires des systèmes informatiques"
+          }
+        },
+        {
+          "noc": "21330",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 12,
+            "text": "21330 | Ingénieurs miniers/ingénieures minières"
+          }
+        },
+        {
+          "noc": "21332",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 13,
+            "text": "21332 | Ingénieurs/ingénieures de l'extraction et du raffinage du pétrole"
+          }
+        },
+        {
+          "noc": "31100",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 14,
+            "text": "31100 | Spécialistes en médecine clinique et de laboratoire"
+          }
+        },
+        {
+          "noc": "31101",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 15,
+            "text": "31101 | Spécialistes en chirurgie"
+          }
+        },
+        {
+          "noc": "31102",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 16,
+            "text": "31102 | Omnipraticiens/omnipraticiennes et médecins en médecine familiale"
+          }
+        },
+        {
+          "noc": "31103",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 17,
+            "text": "31103 | Vétérinaires"
+          }
+        },
+        {
+          "noc": "31302",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 18,
+            "text": "31302 | Infirmiers praticiens / Infirmières praticiennes"
+          }
+        },
+        {
+          "noc": "31303",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 19,
+            "text": "31303 | Adjoints au médecin, sages-femmes et professionnels paramédicaux"
+          }
+        },
+        {
+          "noc": "40010",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 20,
+            "text": "40010 | Gestionnaires de la fonction publique - élaboration de politiques et administration de programmes sociaux et de santé"
+          }
+        },
+        {
+          "noc": "40011",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 21,
+            "text": "40011 | Gestionnaires de la fonction publique - analyse économique, élaboration de politiques et administration de programmes"
+          }
+        },
+        {
+          "noc": "40012",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 22,
+            "text": "40012 | Gestionnaires de la fonction publique - élaboration de politiques en matière d'éducation et administration de programmes"
+          }
+        },
+        {
+          "noc": "40019",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 23,
+            "text": "40019 | Autres gestionnaires de la fonction publique"
+          }
+        },
+        {
+          "noc": "40040",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 24,
+            "text": "40040 | Officiers/officières de direction des services de police et professions connexes des services de la protection du public"
+          }
+        },
+        {
+          "noc": "40041",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 25,
+            "text": "40041 | Chefs et officiers supérieurs/officières supérieures des services d'incendie"
+          }
+        },
+        {
+          "noc": "41100",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 26,
+            "text": "41100 | Juges"
+          }
+        },
+        {
+          "noc": "41101",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 27,
+            "text": "41101 | Avocats/avocates (partout au Canada) et notaires (au Québec)"
+          }
+        },
+        {
+          "noc": "41200",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 28,
+            "text": "41200 | Professeurs/professeures et chargés/chargées de cours au niveau universitaire"
+          }
+        },
+        {
+          "noc": "60010",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 29,
+            "text": "60010 | Directeurs/directrices des ventes corporatives"
+          }
+        },
+        {
+          "noc": "80010",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 30,
+            "text": "80010 | Directeurs/directrices de l'exploitation des ressources naturelles et de la pêche"
+          }
+        },
+        {
+          "noc": "90011",
+          "tier": "at_least2",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 0,
+            "row": 31,
+            "text": "90011 | Directeurs/directrices des services d'utilité publique"
+          }
+        },
+        {
+          "noc": "00014",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 1,
+            "text": "00014 | Cadres supérieurs/cadres supérieures - commerce, radiotélédiffusion et autres services"
+          }
+        },
+        {
+          "noc": "00015",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 2,
+            "text": "00015 | Cadres supérieurs/cadres supérieures - construction, transport, production et services d'utilité publique"
+          }
+        },
+        {
+          "noc": "10019",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 3,
+            "text": "10019 | Directeurs/directrices d'autres services administratifs"
+          }
+        },
+        {
+          "noc": "10022",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 4,
+            "text": "10022 | Directeurs/directrices de la publicité, du marketing et des relations publiques"
+          }
+        },
+        {
+          "noc": "10029",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 5,
+            "text": "10029 | Directeurs/directrices d'autres services aux entreprises"
+          }
+        },
+        {
+          "noc": "10030",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 6,
+            "text": "10030 | Directeurs/directrices d'entreprises de télécommunications"
+          }
+        },
+        {
+          "noc": "11103",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 7,
+            "text": "11103 | Agents/agentes en valeurs, agents/agentes en placements et négociateurs/négociatrices en valeurs"
+          }
+        },
+        {
+          "noc": "11201",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 8,
+            "text": "11201 | Professionnels/professionnelles des services-conseils en gestion aux entreprises"
+          }
+        },
+        {
+          "noc": "21100",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 9,
+            "text": "21100 | Physiciens/physiciennes et astronomes"
+          }
+        },
+        {
+          "noc": "21102",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 10,
+            "text": "21102 | Géoscientifiques et océanographes"
+          }
+        },
+        {
+          "noc": "21103",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 11,
+            "text": "21103 | Météorologues et climatologues"
+          }
+        },
+        {
+          "noc": "21109",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 12,
+            "text": "21109 | Autres professionnels/professionnelles des sciences physiques"
+          }
+        },
+        {
+          "noc": "21111",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 13,
+            "text": "21111 | Professionnels/professionnelles des sciences forestières"
+          }
+        },
+        {
+          "noc": "21120",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 14,
+            "text": "21120 | Professionnels/professionnelles de la santé et sécurité publique et environnementale"
+          }
+        },
+        {
+          "noc": "21202",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 15,
+            "text": "21202 | Urbanistes et planificateurs/planificatrices de l'utilisation des sols"
+          }
+        },
+        {
+          "noc": "21210",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 16,
+            "text": "21210 | Mathématiciens/mathématiciennes, statisticiens/statisticiennes et actuaires"
+          }
+        },
+        {
+          "noc": "21211",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 17,
+            "text": "21211 | Scientifiques des données"
+          }
+        },
+        {
+          "noc": "21220",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 18,
+            "text": "21220 | Spécialistes de la cybersécurité"
+          }
+        },
+        {
+          "noc": "21221",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 19,
+            "text": "21221 | Spécialistes des systèmes commerciaux"
+          }
+        },
+        {
+          "noc": "21222",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 20,
+            "text": "21222 | Spécialistes en informatique"
+          }
+        },
+        {
+          "noc": "21223",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 21,
+            "text": "21223 | Analystes de bases de données et administrateurs/administratrices de données"
+          }
+        },
+        {
+          "noc": "21230",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 22,
+            "text": "21230 | Développeurs/développeuses et programmeurs/programmeuses de systèmes informatiques"
+          }
+        },
+        {
+          "noc": "21231",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 23,
+            "text": "21231 | Ingénieurs/ingénieures et concepteurs/conceptrices en logiciel"
+          }
+        },
+        {
+          "noc": "21232",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 24,
+            "text": "21232 | Développeurs/développeuses et programmeurs/programmeuses de logiciels"
+          }
+        },
+        {
+          "noc": "21300",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 25,
+            "text": "21300 | Ingénieurs civils /ingénieures civiles"
+          }
+        },
+        {
+          "noc": "21301",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 26,
+            "text": "21301 | Ingénieurs mécaniciens /ingénieures mécaniciennes"
+          }
+        },
+        {
+          "noc": "21310",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 27,
+            "text": "21310 | Ingénieurs électriciens et électroniciens/ingénieures électriciennes et électroniciennes"
+          }
+        },
+        {
+          "noc": "21311",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 28,
+            "text": "21311 | Ingénieurs informaticiens/ingénieures informaticiennes (sauf ingénieurs/ingénieures et concepteurs/conceptrices en logiciel)"
+          }
+        },
+        {
+          "noc": "21320",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 29,
+            "text": "21320 | Ingénieurs chimistes / ingénieures chimistes"
+          }
+        },
+        {
+          "noc": "21321",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 30,
+            "text": "21321 | Ingénieurs / ingénieures d'industrie et de fabrication"
+          }
+        },
+        {
+          "noc": "21322",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 31,
+            "text": "21322 | Ingénieurs / ingénieures métallurgistes et des matériaux"
+          }
+        },
+        {
+          "noc": "21331",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 32,
+            "text": "21331 | Ingénieurs / ingénieures géologiques"
+          }
+        },
+        {
+          "noc": "21390",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 33,
+            "text": "21390 | Ingénieurs / ingénieures en aérospatiale"
+          }
+        },
+        {
+          "noc": "21399",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 34,
+            "text": "21399 | Autres ingénieurs /ingénieures"
+          }
+        },
+        {
+          "noc": "22231",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 35,
+            "text": "22231 | Inspecteurs/inspectrices d'ingénierie et officiers/officières de réglementation"
+          }
+        },
+        {
+          "noc": "22312",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 36,
+            "text": "22312 | Techniciens/techniciennes et mécaniciens/mécaniciennes d'instruments industriels"
+          }
+        },
+        {
+          "noc": "30010",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 37,
+            "text": "30010 | Directeurs/directrices des soins de santé"
+          }
+        },
+        {
+          "noc": "31110",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 38,
+            "text": "31110 | Dentistes"
+          }
+        },
+        {
+          "noc": "31112",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 39,
+            "text": "31112 | Audiologistes et orthophonistes"
+          }
+        },
+        {
+          "noc": "31120",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 40,
+            "text": "31120 | Pharmaciens / pharmaciennes"
+          }
+        },
+        {
+          "noc": "31200",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 41,
+            "text": "31200 | Psychologues"
+          }
+        },
+        {
+          "noc": "31202",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 42,
+            "text": "31202 | Physiothérapeutes"
+          }
+        },
+        {
+          "noc": "31203",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 43,
+            "text": "31203 | Ergothérapeutes"
+          }
+        },
+        {
+          "noc": "31300",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 44,
+            "text": "31300 | Coordonnateurs/coordonnatrices et superviseurs/superviseures des soins infirmiers"
+          }
+        },
+        {
+          "noc": "31301",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 45,
+            "text": "31301 | Infirmiers autorisés/infirmières autorisées et infirmiers psychiatriques autorisés/infirmières psychiatriques autorisées"
+          }
+        },
+        {
+          "noc": "32111",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 46,
+            "text": "32111 | Hygiénistes et thérapeutes dentaires"
+          }
+        },
+        {
+          "noc": "40020",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 47,
+            "text": "40020 | Administrateurs/administratrices - enseignement postsecondaire et formation professionnelle"
+          }
+        },
+        {
+          "noc": "40021",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 48,
+            "text": "40021 | Directeurs/directrices d'école et administrateurs/administratrices de programmes d'enseignement aux niveaux primaire et secondaire"
+          }
+        },
+        {
+          "noc": "40030",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 49,
+            "text": "40030 | Directeurs/directrices des services sociaux, communautaires et correctionnels"
+          }
+        },
+        {
+          "noc": "40042",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 50,
+            "text": "40042 | Officiers/officières de direction des Forces armées canadiennes"
+          }
+        },
+        {
+          "noc": "41210",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 51,
+            "text": "41210 | Enseignants/enseignantes au niveau collégial et autres instructeurs/instructrices en formation professionnelle"
+          }
+        },
+        {
+          "noc": "41220",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 52,
+            "text": "41220 | Enseignants/enseignantes au niveau secondaire"
+          }
+        },
+        {
+          "noc": "41221",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 53,
+            "text": "41221 | Enseignants/enseignantes aux niveaux primaire et préscolaire"
+          }
+        },
+        {
+          "noc": "41310",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 54,
+            "text": "41310 | Enquêteurs/enquêteuses de police et autres professions d'enquête"
+          }
+        },
+        {
+          "noc": "41311",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 55,
+            "text": "41311 | Agents/agentes de probation et de libération conditionnelle"
+          }
+        },
+        {
+          "noc": "41320",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 56,
+            "text": "41320 | Conseillers/conseillères en information scolaire"
+          }
+        },
+        {
+          "noc": "41401",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 57,
+            "text": "41401 | Économistes, recherchistes et analystes des politiques économiques"
+          }
+        },
+        {
+          "noc": "41402",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 58,
+            "text": "41402 | Agents/agentes de développement économique et recherchistes et analystes en marketing"
+          }
+        },
+        {
+          "noc": "41404",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 59,
+            "text": "41404 | Recherchistes, experts-conseils/expertes-conseils et agents/agentes de programmes en politiques de la santé"
+          }
+        },
+        {
+          "noc": "41407",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 60,
+            "text": "41407 | Agents/agentes de programmes propres au gouvernement"
+          }
+        },
+        {
+          "noc": "42100",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 61,
+            "text": "42100 | Policiers/policières (sauf cadres supérieurs)"
+          }
+        },
+        {
+          "noc": "42101",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 62,
+            "text": "42101 | Pompiers /pompières"
+          }
+        },
+        {
+          "noc": "50010",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 63,
+            "text": "50010 | Directeurs/directrices de bibliothèques, des archives, de musées et de galeries d'art"
+          }
+        },
+        {
+          "noc": "50011",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 64,
+            "text": "50011 | Directeurs/directrices - édition, cinéma, radiotélédiffusion et arts de la scène"
+          }
+        },
+        {
+          "noc": "51100",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 65,
+            "text": "51100 | Bibliothécaires"
+          }
+        },
+        {
+          "noc": "70010",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 66,
+            "text": "70010 | Directeurs/directrices de la construction"
+          }
+        },
+        {
+          "noc": "70012",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 67,
+            "text": "70012 | Directeurs/directrices de l'exploitation et de l'entretien d'immeubles"
+          }
+        },
+        {
+          "noc": "70020",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 68,
+            "text": "70020 | Directeurs/directrices des transports"
+          }
+        },
+        {
+          "noc": "70021",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 69,
+            "text": "70021 | Directeurs/directrices des services postaux et de messageries"
+          }
+        },
+        {
+          "noc": "72011",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 70,
+            "text": "72011 | Entrepreneurs/entrepreneuses et contremaîtres/contremaîtresses en électricité et en télécommunications"
+          }
+        },
+        {
+          "noc": "72012",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 71,
+            "text": "72012 | Entrepreneurs/entrepreneuses et contremaîtres/contremaîtresses en tuyauterie"
+          }
+        },
+        {
+          "noc": "72023",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 72,
+            "text": "72023 | Surveillants/surveillantes des opérations de transport ferroviaire"
+          }
+        },
+        {
+          "noc": "72103",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 73,
+            "text": "72103 | Chaudronniers /chaudronnières"
+          }
+        },
+        {
+          "noc": "72202",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 74,
+            "text": "72202 | Électriciens/électriciennes de réseaux électriques"
+          }
+        },
+        {
+          "noc": "72203",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 75,
+            "text": "72203 | Monteurs/monteuses de lignes électriques et de câbles"
+          }
+        },
+        {
+          "noc": "72301",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 76,
+            "text": "72301 | Tuyauteurs/tuyauteuses, monteurs/monteuses d'appareils de chauffage et poseurs/poseuses de gicleurs"
+          }
+        },
+        {
+          "noc": "72406",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 77,
+            "text": "72406 | Constructeurs/constructrices et mécaniciens/mécaniciennes d'ascenseurs"
+          }
+        },
+        {
+          "noc": "72600",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 78,
+            "text": "72600 | Pilotes, navigateurs/navigatrices et instructeurs/instructrices de pilotage du transport aérien"
+          }
+        },
+        {
+          "noc": "72601",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 79,
+            "text": "72601 | Contrôleurs aériens/contrôleuses aériennes et personnel assimilé"
+          }
+        },
+        {
+          "noc": "72604",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 80,
+            "text": "72604 | Contrôleurs/contrôleuses de la circulation ferroviaire et régulateurs/régulatrices de la circulation maritime"
+          }
+        },
+        {
+          "noc": "73310",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 81,
+            "text": "73310 | Mécaniciens/mécaniciennes de locomotive et de cour de triage"
+          }
+        },
+        {
+          "noc": "82020",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 82,
+            "text": "82020 | Surveillants/surveillantes de l'exploitation des mines et des carrières"
+          }
+        },
+        {
+          "noc": "82021",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 83,
+            "text": "82021 | Entrepreneurs/entrepreneuses et surveillants/surveillantes du forage et des services reliés à l'extraction de pétrole et de gaz"
+          }
+        },
+        {
+          "noc": "83101",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 84,
+            "text": "83101 | Foreurs/foreuses et personnel de mise à l'essai et des autres services reliés à l'extraction de pétrole et de gaz"
+          }
+        },
+        {
+          "noc": "90010",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 85,
+            "text": "90010 | Directeurs/directrices de la fabrication"
+          }
+        },
+        {
+          "noc": "92011",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 86,
+            "text": "92011 | Surveillants/surveillantes dans le raffinage du pétrole, dans le traitement du gaz et des produits chimiques et dans les services d'utilité publique"
+          }
+        },
+        {
+          "noc": "92100",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 87,
+            "text": "92100 | Mécaniciens/mécaniciennes de centrales et opérateurs/opératrices de réseaux électriques"
+          }
+        },
+        {
+          "noc": "93100",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 88,
+            "text": "93100 | Opérateurs/opératrices de poste central de contrôle et de conduite de procédés industriels dans le traitement des métaux et des minerais"
+          }
+        },
+        {
+          "noc": "93101",
+          "tier": "at_least1_5",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 1,
+            "row": 89,
+            "text": "93101 | Opérateurs/opératrices de salle de commande centrale et de conduite de procédés industriels dans le raffinage du pétrole et le traitement du gaz et des produits chimiques"
+          }
+        },
+        {
+          "noc": "00010",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 1,
+            "text": "00010 | Membres des corps législatifs"
+          }
+        },
+        {
+          "noc": "11100",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 2,
+            "text": "11100 | Vérificateurs/vérificatrices et comptables"
+          }
+        },
+        {
+          "noc": "11101",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 3,
+            "text": "11101 | Analystes financiers/analystes financières et analystes en placements"
+          }
+        },
+        {
+          "noc": "11102",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 4,
+            "text": "11102 | Conseillers financiers/conseillères financières"
+          }
+        },
+        {
+          "noc": "11109",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 5,
+            "text": "11109 | Autres agents financiers/agentes financières"
+          }
+        },
+        {
+          "noc": "11200",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 6,
+            "text": "11200 | Professionnels/professionnelles en ressources humaines"
+          }
+        },
+        {
+          "noc": "12201",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 7,
+            "text": "12201 | Experts/expertes en sinistres et rédacteurs/rédactrices sinistres"
+          }
+        },
+        {
+          "noc": "12203",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 8,
+            "text": "12203 | Estimateurs/estimatrices, évaluateurs/évaluatrices d'entreprise et autres évaluateurs/évaluatrices"
+          }
+        },
+        {
+          "noc": "21101",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 9,
+            "text": "21101 | Chimistes"
+          }
+        },
+        {
+          "noc": "21110",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 10,
+            "text": "21110 | Biologistes et personnel scientifique assimilé"
+          }
+        },
+        {
+          "noc": "21112",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 11,
+            "text": "21112 | Agronomes, conseillers/conseillères et spécialistes en agriculture"
+          }
+        },
+        {
+          "noc": "21200",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 12,
+            "text": "21200 | Architectes"
+          }
+        },
+        {
+          "noc": "21201",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 13,
+            "text": "21201 | Architectes paysagistes"
+          }
+        },
+        {
+          "noc": "21203",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 14,
+            "text": "21203 | Arpenteurs-géomètres/arpenteuses-géomètres"
+          }
+        },
+        {
+          "noc": "21234",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 15,
+            "text": "21234 | Développeurs/développeuses et programmeurs/programmeuses Web"
+          }
+        },
+        {
+          "noc": "22214",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 16,
+            "text": "22214 | Personnel technique en géomatique et en météorologie"
+          }
+        },
+        {
+          "noc": "22232",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 17,
+            "text": "22232 | Spécialistes de l'hygiène et de la sécurité au travail"
+          }
+        },
+        {
+          "noc": "22233",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 18,
+            "text": "22233 | Inspecteurs/inspectrices en construction"
+          }
+        },
+        {
+          "noc": "22310",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 19,
+            "text": "22310 | Technologues et techniciens/techniciennes en génie électrique et électronique"
+          }
+        },
+        {
+          "noc": "22313",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 20,
+            "text": "22313 | Mécaniciens/mécaniciennes, techniciens/techniciennes et contrôleurs/contrôleuses d'avionique et d'instruments et d'appareillages électriques d'aéronefs"
+          }
+        },
+        {
+          "noc": "31121",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 21,
+            "text": "31121 | Diététistes et nutritionnistes"
+          }
+        },
+        {
+          "noc": "32102",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 22,
+            "text": "32102 | Personnel ambulancier et paramédical"
+          }
+        },
+        {
+          "noc": "32103",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 23,
+            "text": "32103 | Inhalothérapeutes, perfusionnistes cardiovasculaires et technologues cardiopulmonaires"
+          }
+        },
+        {
+          "noc": "32120",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 24,
+            "text": "32120 | Technologues de laboratoire médicaux"
+          }
+        },
+        {
+          "noc": "32121",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 25,
+            "text": "32121 | Technologues en radiation médicale"
+          }
+        },
+        {
+          "noc": "32122",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 26,
+            "text": "32122 | Technologues en échographie"
+          }
+        },
+        {
+          "noc": "41300",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 27,
+            "text": "41300 | Travailleurs sociaux/travailleuses sociales"
+          }
+        },
+        {
+          "noc": "41400",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 28,
+            "text": "41400 | Recherchistes, experts-conseils/expertes-conseils et agents/agentes de programmes, en sciences naturelles et appliquées"
+          }
+        },
+        {
+          "noc": "41403",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 29,
+            "text": "41403 | Recherchistes, experts-conseils/expertes-conseils et agents/agentes de programmes en politiques sociales"
+          }
+        },
+        {
+          "noc": "41405",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 30,
+            "text": "41405 | Recherchistes, experts-conseils/expertes-conseils et agents/agentes de programmes en politiques de l'enseignement"
+          }
+        },
+        {
+          "noc": "41409",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 31,
+            "text": "41409 | Autres professionnels/professionnelles des sciences sociales"
+          }
+        },
+        {
+          "noc": "43201",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 32,
+            "text": "43201 | Agents/agentes de services correctionnels"
+          }
+        },
+        {
+          "noc": "43203",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 33,
+            "text": "43203 | Agents/agentes de services frontaliers, des douanes et de l'immigration"
+          }
+        },
+        {
+          "noc": "50012",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 34,
+            "text": "50012 | Directeurs/directrices de programmes et de services de sports, de loisirs et de conditionnement physique"
+          }
+        },
+        {
+          "noc": "51101",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 35,
+            "text": "51101 | Restaurateurs/restauratrices et conservateurs/conservatrices"
+          }
+        },
+        {
+          "noc": "51102",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 36,
+            "text": "51102 | Archivistes"
+          }
+        },
+        {
+          "noc": "51111",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 37,
+            "text": "51111 | Auteurs/auteures, écrivains/écrivaines et rédacteurs/rédactrices (sauf techniques)"
+          }
+        },
+        {
+          "noc": "51112",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 38,
+            "text": "51112 | Rédacteurs/rédactrices techniques"
+          }
+        },
+        {
+          "noc": "51120",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 39,
+            "text": "51120 | Producteurs/productrices, réalisateurs/réalisatrices, chorégraphes et personnel assimilé"
+          }
+        },
+        {
+          "noc": "52112",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 40,
+            "text": "52112 | Techniciens/techniciennes en radiodiffusion"
+          }
+        },
+        {
+          "noc": "60020",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 41,
+            "text": "60020 | Directeurs/directrices - commerce de détail et de gros"
+          }
+        },
+        {
+          "noc": "60031",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 42,
+            "text": "60031 | Directeurs/directrices des services d'hébergement"
+          }
+        },
+        {
+          "noc": "60040",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 43,
+            "text": "60040 | Directeurs/directrices du service à la clientèle et des services personnels"
+          }
+        },
+        {
+          "noc": "72010",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 44,
+            "text": "72010 | Entrepreneurs/entrepreneuses et contremaîtres/contremaîtresses des machinistes et du personnel des métiers du formage, du profilage et du montage des métaux et personnel assimilé"
+          }
+        },
+        {
+          "noc": "72013",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 45,
+            "text": "72013 | Entrepreneurs/entrepreneuses et contremaîtres/contremaîtresses en charpenterie"
+          }
+        },
+        {
+          "noc": "72014",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 46,
+            "text": "72014 | Entrepreneurs/entrepreneuses et contremaîtres/contremaîtresses des autres métiers de la construction et des services de réparation et d'installation"
+          }
+        },
+        {
+          "noc": "72020",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 47,
+            "text": "72020 | Entrepreneurs/entrepreneuses et contremaîtres/contremaîtresses en mécanique"
+          }
+        },
+        {
+          "noc": "72021",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 48,
+            "text": "72021 | Entrepreneurs/entrepreneuses et contremaîtres/contremaîtresses des équipes d'opérateurs d'équipement lourd"
+          }
+        },
+        {
+          "noc": "72102",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 49,
+            "text": "72102 | Tôliers/tôlières"
+          }
+        },
+        {
+          "noc": "72105",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 50,
+            "text": "72105 | Monteurs/monteuses de charpentes métalliques"
+          }
+        },
+        {
+          "noc": "72201",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 51,
+            "text": "72201 | Électriciens industriels/électriciennes industrielles"
+          }
+        },
+        {
+          "noc": "72302",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 52,
+            "text": "72302 | Monteurs/monteuses d'installations au gaz"
+          }
+        },
+        {
+          "noc": "72320",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 53,
+            "text": "72320 | Briqueteurs-maçons/briqueteuses-maçonnes"
+          }
+        },
+        {
+          "noc": "72321",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 54,
+            "text": "72321 | Calorifugeurs/calorifugeuses"
+          }
+        },
+        {
+          "noc": "72401",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 55,
+            "text": "72401 | Mécaniciens/mécaniciennes d'équipement lourd"
+          }
+        },
+        {
+          "noc": "72403",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 56,
+            "text": "72403 | Réparateurs/réparatrices de wagons"
+          }
+        },
+        {
+          "noc": "72404",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 57,
+            "text": "72404 | Mécaniciens/mécaniciennes et contrôleurs/contrôleuses d'aéronefs"
+          }
+        },
+        {
+          "noc": "72500",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 58,
+            "text": "72500 | Grutiers/grutières"
+          }
+        },
+        {
+          "noc": "72602",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 59,
+            "text": "72602 | Officiers/officières de pont du transport par voies navigables"
+          }
+        },
+        {
+          "noc": "72603",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 60,
+            "text": "72603 | Officiers mécaniciens/officières mécaniciennes du transport par voies navigables"
+          }
+        },
+        {
+          "noc": "73311",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 61,
+            "text": "73311 | Chefs de train et serre-freins"
+          }
+        },
+        {
+          "noc": "82010",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 62,
+            "text": "82010 | Surveillants/surveillantes de l'exploitation forestière"
+          }
+        },
+        {
+          "noc": "83100",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 63,
+            "text": "83100 | Mineurs/mineuses d'extraction et de préparation, mines souterraines"
+          }
+        },
+        {
+          "noc": "83120",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 64,
+            "text": "83120 | Capitaines et officiers/officières de bâtiments de pêche"
+          }
+        },
+        {
+          "noc": "92010",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 65,
+            "text": "92010 | Surveillants/surveillantes dans la transformation des métaux et des minerais"
+          }
+        },
+        {
+          "noc": "93102",
+          "tier": "at_least1_3",
+          "cite": {
+            "source": "salaire-eleve",
+            "table": 2,
+            "row": 66,
+            "text": "93102 | Opérateurs/opératrices au contrôle de la réduction en pâte des pâtes et papiers, de la fabrication du papier et du couchage"
+          }
+        }
+      ]
+    }
+  }
+}

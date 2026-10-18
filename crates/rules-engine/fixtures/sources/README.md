@@ -10,6 +10,7 @@ by hand-editing.
 | `verifier-note.html` | https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/verifier-note.html | `76036f8d718b7a0469943a78b74237ad30ff3abb77e01e2c50946fc61b67c348` |
 | `scg-outil-udit.js` | https://ircc.canada.ca/francais/immigrer/qualifie/scg-outil-udit.js | `61392e6266be6d976735305982eeb72ce30296f086ebf1b5dc802a305639a65a` |
 | `modifications.html` | https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/modifications.html | `9729a26925f1ceed605766636b212c0ae1a6785ed0b638667dc1ad63e155a718` |
+| `salaire-eleve.html` | https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/verifier-note/salaire-eleve.html | `a7a15b38f9ab6ce6cc977046105b92516ed0def3153f7abda76621beda06238c` |
 | `ee_rounds_123_fr.json` | https://www.canada.ca/content/dam/ircc/documents/json/ee_rounds_123_fr.json | `6c6468ad045d0bd7e0ef2fc308b02efeed7510b25dddbec5ddb7f31d26c47b57` |
 
 `criteries-scg.html` is the reference grid. `scg-outil-udit.js` is the

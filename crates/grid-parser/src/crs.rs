@@ -12,7 +12,7 @@ use rules_engine::grid::{
 use crate::ParseError;
 use crate::page::{Page, Table};
 
-fn re(p: &str) -> Regex {
+pub(crate) fn re(p: &str) -> Regex {
     // Patterns are constants in this file; a bad one is a bug.
     #[allow(clippy::expect_used)]
     Regex::new(p).expect("valid regex")
@@ -136,6 +136,8 @@ pub fn parse_crs(
         spouse_canadian_work: p.spouse_canadian_work()?,
         transferability: p.transferability()?,
         additional: p.additional()?,
+        labour_market: None,
+        high_wage: None,
     };
     Ok(Grid {
         id: id.to_owned(),
@@ -530,7 +532,7 @@ impl Parser<'_> {
 
 /// Matches every body row against exactly one pattern; every pattern must be
 /// used exactly once. Returns (row, key, captures).
-fn labelled<K: Copy>(
+pub(crate) fn labelled<K: Copy>(
     t: &Table,
     what: &'static str,
     labels: &[(&'static str, K)],
@@ -576,7 +578,7 @@ fn labelled<K: Copy>(
     }
 }
 
-fn ranged(
+pub(crate) fn ranged(
     t: &Table,
     what: &'static str,
     f: fn(&str) -> Option<Range>,
@@ -596,7 +598,12 @@ fn ranged(
         .collect()
 }
 
-fn cell_num(t: &Table, what: &'static str, row: u16, col: usize) -> Result<u16, ParseError> {
+pub(crate) fn cell_num(
+    t: &Table,
+    what: &'static str,
+    row: u16,
+    col: usize,
+) -> Result<u16, ParseError> {
     let text = t
         .rows
         .get(usize::from(row))
@@ -631,7 +638,7 @@ fn cap_num(c: &regex::Captures, i: usize) -> Result<u16, ParseError> {
 }
 
 /// "7" or a French number word.
-fn level(s: &str) -> Option<u8> {
+pub(crate) fn level(s: &str) -> Option<u8> {
     match s.to_lowercase().as_str() {
         "un" | "une" => Some(1),
         "deux" => Some(2),
@@ -642,7 +649,7 @@ fn level(s: &str) -> Option<u8> {
     }
 }
 
-fn caps(r: &str, s: &str) -> Option<Vec<u8>> {
+pub(crate) fn caps(r: &str, s: &str) -> Option<Vec<u8>> {
     let c = re(r).captures(s)?;
     c.iter()
         .skip(1)
@@ -706,7 +713,7 @@ fn parse_clb(s: &str) -> Option<Range> {
     })
 }
 
-fn parse_years(s: &str) -> Option<Range> {
+pub(crate) fn parse_years(s: &str) -> Option<Range> {
     if s == "Aucune ou moins d'un an" {
         return Some(Range {
             min: 0,

@@ -5,9 +5,11 @@
 //! keeps the last approved grid in force.
 
 mod crs;
+mod labour;
 mod page;
 
 pub use crs::parse_crs;
+pub use labour::{parse_high_wage, parse_labour_market};
 pub use page::{Page, norm};
 
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
@@ -55,4 +57,6 @@ pub enum ParseError {
     },
     #[error("running text not found: {0}")]
     TextNotFound(&'static str),
+    #[error("{what}: values disagree: {detail}")]
+    Inconsistent { what: &'static str, detail: String },
 }
