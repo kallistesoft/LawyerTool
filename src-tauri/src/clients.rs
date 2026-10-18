@@ -129,6 +129,8 @@ pub struct Assessment {
     /// The CRS score, or why it could not be computed.
     pub crs: Result<CrsResult, String>,
     pub eligibility: Result<Vec<ProgramResult>, String>,
+    /// Latest official draws (context for the score; empty before the first watcher run).
+    pub draws: Vec<vault::DrawRow>,
 }
 
 /// Assesses a saved client on `on` (YYYY-MM-DD, default today).
@@ -148,20 +150,22 @@ pub fn assess_inner(s: &Session, id: i64, on: Option<String>) -> Result<Assessme
         }
         None => today(),
     };
-    let grids = grids().as_ref().map_err(|e| err("grids", e.clone()))?;
-    let profile = s.with_vault(|v| {
-        Ok(v.client_get(id)?
+    let (profile, grids, draws) = s.with_vault(|v| {
+        let profile = v
+            .client_get(id)?
             .ok_or_else(|| err("not_found", "Client introuvable."))?
-            .profile)
+            .profile;
+        Ok((profile, crate::watch::all_grids(v)?, v.draws_latest(5)?))
     })?;
     let a: Applicant =
         serde_json::from_str(&profile).map_err(|_| err("corrupt", "Profil illisible."))?;
-    let Some(grid) = in_force(grids, &on) else {
+    let Some(grid) = in_force(&grids, &on) else {
         return Ok(Assessment {
             on: on.as_str().into(),
             grid_id: None,
             crs: Err("Aucune grille officielle pour cette date.".into()),
             eligibility: Err("Aucune grille officielle pour cette date.".into()),
+            draws,
         });
     };
     Ok(Assessment {
@@ -169,7 +173,13 @@ pub fn assess_inner(s: &Session, id: i64, on: Option<String>) -> Result<Assessme
         grid_id: Some(grid.id.clone()),
         crs: rules_engine::crs::score(grid, &a, &on).map_err(|e| e.to_string()),
         eligibility: rules_engine::eligibility::assess(grid, &a, &on).map_err(|e| e.to_string()),
+        draws,
     })
+}
+
+/// The grids shipped with the app (approved at build time).
+pub fn shipped_grids() -> Result<&'static [Grid], String> {
+    grids().as_ref().map(Vec::as_slice).map_err(Clone::clone)
 }
 
 /// What would be sent to Claude to draft the note: the task, the profile and
@@ -268,6 +278,7 @@ mod tests {
             grid_id: Some(g.id.clone()),
             crs: rules_engine::crs::score(g, &a, &on).map_err(|e| e.to_string()),
             eligibility: rules_engine::eligibility::assess(g, &a, &on).map_err(|e| e.to_string()),
+            draws: vec![],
         };
         let identity = vault::Identity {
             full_name: "Hélène Tremblay".into(),

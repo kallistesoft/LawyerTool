@@ -331,3 +331,99 @@ fn clients_crud_and_encrypted() {
         "client identity is encrypted"
     );
 }
+
+#[test]
+fn watcher_storage() {
+    let (_d, paths, store) = setup();
+    let (v, _) = Vault::create(&paths, &store, PASS, KDF).unwrap();
+    let draw = |n: &str, date: &str| vault::DrawRow {
+        number: n.into(),
+        date: date.into(),
+        name: "Aucun programme spécifié".into(),
+        invitations: 500,
+        min_crs: 480,
+        first_seen: "2026-10-18".into(),
+    };
+    assert_eq!(
+        v.draws_upsert(&[
+            draw("91a", "2018-05-30"),
+            draw("91b", "2018-05-30"),
+            draw("450", "2026-10-16")
+        ])
+        .unwrap(),
+        3
+    );
+    assert_eq!(
+        v.draws_upsert(&[draw("450", "2026-10-16"), draw("451", "2026-10-20")])
+            .unwrap(),
+        1,
+        "only new draws"
+    );
+    assert_eq!(
+        v.draws_latest(2)
+            .unwrap()
+            .iter()
+            .map(|d| d.number.as_str())
+            .collect::<Vec<_>>(),
+        ["451", "450"]
+    );
+
+    let st = vault::WatchState {
+        source_id: "criteries-scg".into(),
+        fingerprint: "abc".into(),
+        main_text: Some("texte".into()),
+        checked_at: "t1".into(),
+        changed_at: "t1".into(),
+    };
+    v.watch_state_set(&st).unwrap();
+    v.watch_state_set(&vault::WatchState {
+        fingerprint: "def".into(),
+        ..st.clone()
+    })
+    .unwrap();
+    assert_eq!(
+        v.watch_state_get("criteries-scg")
+            .unwrap()
+            .unwrap()
+            .fingerprint,
+        "def"
+    );
+
+    v.watch_run_record(&vault::WatchRun {
+        at: "t1".into(),
+        ok: true,
+        summary: "ok".into(),
+    })
+    .unwrap();
+    v.watch_run_record(&vault::WatchRun {
+        at: "t2".into(),
+        ok: false,
+        summary: "offline".into(),
+    })
+    .unwrap();
+    let (last, last_ok) = v.watch_runs_last().unwrap();
+    assert_eq!(
+        (last.unwrap().at, last_ok.unwrap().at),
+        ("t2".to_owned(), "t1".to_owned())
+    );
+
+    v.watch_pending_set("t2", "{}").unwrap();
+    v.watch_pending_set("t3", r#"{"x":1}"#).unwrap();
+    assert_eq!(
+        v.watch_pending_get().unwrap(),
+        Some(("t3".into(), r#"{"x":1}"#.into()))
+    );
+    v.watch_pending_clear().unwrap();
+    assert_eq!(v.watch_pending_get().unwrap(), None);
+
+    let snap = vault::SnapshotRow {
+        id: "crs-x".into(),
+        effective_from: "2026-10-18".into(),
+        approved_at: "t".into(),
+        note: None,
+        grid: "{}".into(),
+    };
+    v.snapshot_save(&snap).unwrap();
+    assert!(v.snapshot_save(&snap).is_err(), "snapshot ids are unique");
+    assert_eq!(v.snapshot_list().unwrap(), vec![snap]);
+}

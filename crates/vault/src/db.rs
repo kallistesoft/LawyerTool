@@ -39,6 +39,42 @@ pub const MIGRATIONS: &[&str] = &[
         file_reference TEXT,
         profile TEXT NOT NULL
     ) STRICT;",
+    // v4: rules watcher (public data only): approved grid snapshots, draws,
+    // per-source state, pending change set, run history.
+    "CREATE TABLE grid_snapshots (
+        id TEXT PRIMARY KEY,
+        effective_from TEXT NOT NULL,
+        approved_at TEXT NOT NULL,
+        note TEXT,
+        grid TEXT NOT NULL
+    ) STRICT;
+    CREATE TABLE draws (
+        number TEXT PRIMARY KEY,
+        date TEXT NOT NULL,
+        name TEXT NOT NULL,
+        invitations INTEGER NOT NULL,
+        min_crs INTEGER NOT NULL,
+        first_seen TEXT NOT NULL
+    ) STRICT;
+    CREATE INDEX draws_date ON draws (date);
+    CREATE TABLE watch_state (
+        source_id TEXT PRIMARY KEY,
+        fingerprint TEXT NOT NULL,
+        main_text TEXT,
+        checked_at TEXT NOT NULL,
+        changed_at TEXT NOT NULL
+    ) STRICT;
+    CREATE TABLE watch_runs (
+        id INTEGER PRIMARY KEY,
+        at TEXT NOT NULL,
+        ok INTEGER NOT NULL,
+        summary TEXT NOT NULL
+    ) STRICT;
+    CREATE TABLE watch_pending (
+        id INTEGER PRIMARY KEY CHECK (id = 1),
+        created_at TEXT NOT NULL,
+        payload TEXT NOT NULL
+    ) STRICT;",
 ];
 
 pub fn schema_version() -> u32 {

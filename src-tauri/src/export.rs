@@ -368,6 +368,7 @@ mod tests {
             grid_id: Some(g.id.clone()),
             crs: rules_engine::crs::score(g, &a, &on).map_err(|e| e.to_string()),
             eligibility: rules_engine::eligibility::assess(g, &a, &on).map_err(|e| e.to_string()),
+            draws: vec![],
         };
         // This profile is French-first with TEF: D-003 must be reviewed before export.
         let crs = assessment.crs.as_ref().unwrap_or_else(|e| panic!("{e}"));

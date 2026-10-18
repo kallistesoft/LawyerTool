@@ -6,6 +6,7 @@ mod dev;
 mod export;
 mod session;
 mod updates;
+mod watch;
 
 use std::sync::Arc;
 
@@ -71,6 +72,7 @@ pub fn run() {
             app.manage(session);
             app.manage(client);
             session::spawn_idle_watch(app.handle().clone());
+            watch::spawn_daily(app.handle().clone());
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -88,6 +90,10 @@ pub fn run() {
             clients::assess,
             clients::deid_preview,
             export::export_report,
+            watch::watch_status,
+            watch::watch_check_now,
+            watch::watch_approve,
+            watch::watch_reject,
             updates::update_check,
             updates::update_install,
         ])

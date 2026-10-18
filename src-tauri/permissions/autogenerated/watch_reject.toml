@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-watch-reject"
+description = "Enables the watch_reject command without any pre-configured scope."
+commands.allow = ["watch_reject"]
+
+[[permission]]
+identifier = "deny-watch-reject"
+description = "Denies the watch_reject command without any pre-configured scope."
+commands.deny = ["watch_reject"]

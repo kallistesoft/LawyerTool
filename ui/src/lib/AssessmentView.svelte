@@ -120,6 +120,22 @@
       <p class="error">{result.crs.Err}</p>
     {/if}
 
+    {#if crs && result.draws.length}
+      <h3>Derniers tirages</h3>
+      <table>
+        <thead><tr><th>Date</th><th>Type</th><th>Note minimale</th><th>Écart</th></tr></thead>
+        <tbody>
+          {#each result.draws as d (d.number)}
+            <tr>
+              <td>{d.date}</td><td>{d.name}</td><td>{d.min_crs}</td>
+              <td class={crs.total >= d.min_crs ? 'Eligible' : 'NotEligible'}>{crs.total - d.min_crs >= 0 ? '+' : ''}{crs.total - d.min_crs}</td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+      <p class="hint">Comparez au type de tirage visé : chaque catégorie a son propre seuil.</p>
+    {/if}
+
     <h3>Admissibilité aux programmes</h3>
     {#if programs}
       {#each programs as p (p.program)}

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-watch-check-now"
+description = "Enables the watch_check_now command without any pre-configured scope."
+commands.allow = ["watch_check_now"]
+
+[[permission]]
+identifier = "deny-watch-check-now"
+description = "Denies the watch_check_now command without any pre-configured scope."
+commands.deny = ["watch_check_now"]

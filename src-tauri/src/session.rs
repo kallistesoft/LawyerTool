@@ -83,10 +83,7 @@ impl Session {
     /// A setting from the vault's `meta` table (`None` if locked or unset).
     pub fn setting(&self, key: &str) -> Option<String> {
         let guard = self.vault.lock().ok()?;
-        let v = guard.as_ref()?;
-        v.conn()
-            .query_row("SELECT value FROM meta WHERE key = ?1", [key], |r| r.get(0))
-            .ok()
+        guard.as_ref()?.meta_get(key).ok().flatten()
     }
 
     /// Runs `f` with the unlocked vault (counts as activity).
@@ -102,7 +99,7 @@ impl Session {
         f(v)
     }
 
-    fn is_unlocked(&self) -> bool {
+    pub fn is_unlocked(&self) -> bool {
         self.vault.lock().map(|v| v.is_some()).unwrap_or(false)
     }
 
@@ -144,6 +141,10 @@ impl CommandError {
             code,
             message: message.into(),
         }
+    }
+
+    pub fn message(&self) -> &str {
+        &self.message
     }
 
     pub fn internal() -> Self {

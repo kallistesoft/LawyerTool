@@ -2175,13 +2175,16 @@ dependencies = [
  "net",
  "report",
  "rules-engine",
+ "rules-watcher",
  "semver",
  "serde",
  "serde_json",
+ "sha2 0.11.1",
  "tauri",
  "tauri-build",
  "tauri-plugin-dialog",
  "tauri-plugin-updater",
+ "tokio",
  "url",
  "vault",
  "zeroize",
@@ -3277,6 +3280,22 @@ dependencies = [
  "serde",
  "serde_json",
  "thiserror 2.0.21",
+]
+
+[[package]]
+name = "rules-watcher"
+version = "0.1.9"
+dependencies = [
+ "applicant",
+ "audit",
+ "grid-parser",
+ "net",
+ "rules-engine",
+ "serde",
+ "serde_json",
+ "sha2 0.11.1",
+ "tokio",
+ "url",
 ]
 
 [[package]]
