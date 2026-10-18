@@ -10,7 +10,10 @@ struct AppInfo {
 
 #[tauri::command]
 fn app_info() -> AppInfo {
-    AppInfo { name: env!("CARGO_PKG_NAME"), version: env!("CARGO_PKG_VERSION") }
+    AppInfo {
+        name: env!("CARGO_PKG_NAME"),
+        version: env!("CARGO_PKG_VERSION"),
+    }
 }
 
 pub fn run() {

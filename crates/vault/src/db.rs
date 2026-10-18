@@ -1,0 +1,183 @@
+//! SQLCipher connection, schema migrations, encrypted backup.
+
+use std::path::{Path, PathBuf};
+
+use rusqlite::Connection;
+
+use crate::Error;
+use crate::crypto::Secret;
+
+/// Ordered schema migrations; migration `i` brings the schema to version `i + 1`.
+pub const MIGRATIONS: &[&str] = &[
+    // v1: key/value metadata.
+    "CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL) STRICT;",
+];
+
+pub fn schema_version() -> u32 {
+    u32::try_from(MIGRATIONS.len()).unwrap_or(u32::MAX)
+}
+
+/// Opens `path` with `dek`. A wrong key surfaces as `Error::WrongKey`.
+pub fn open(path: &Path, dek: &Secret) -> Result<Connection, Error> {
+    let conn = Connection::open(path)?;
+    let key = dek.sqlcipher_literal();
+    conn.execute_batch(&format!("PRAGMA key = \"{}\";", key.as_str()))?;
+    // Fails with "file is not a database" if the key is wrong.
+    if conn
+        .query_row("SELECT count(*) FROM sqlite_master", [], |r| {
+            r.get::<_, i64>(0)
+        })
+        .is_err()
+    {
+        return Err(Error::WrongKey);
+    }
+    conn.execute_batch(
+        "PRAGMA cipher_memory_security = ON; PRAGMA foreign_keys = ON; PRAGMA secure_delete = ON;",
+    )?;
+    Ok(conn)
+}
+
+fn user_version(conn: &Connection) -> Result<u32, Error> {
+    Ok(conn.query_row("PRAGMA user_version", [], |r| r.get(0))?)
+}
+
+fn sql_string(s: &str) -> String {
+    format!("'{}'", s.replace('\'', "''"))
+}
+
+/// Encrypted copy of the open database (same key) at `dest`.
+pub fn export(conn: &Connection, dest: &Path, dek: &Secret) -> Result<(), Error> {
+    if dest.exists() {
+        return Err(Error::AlreadyExists(dest.to_path_buf()));
+    }
+    let path = dest
+        .to_str()
+        .ok_or(Error::Corrupt("non-UTF-8 backup path"))?;
+    let key = dek.sqlcipher_literal();
+    // sqlcipher_export copies schema and data but not user_version; copy it
+    // explicitly, or a restored backup would look like an empty v0 database.
+    let version = user_version(conn)?;
+    conn.execute_batch(&format!(
+        "ATTACH DATABASE {} AS backup KEY \"{}\"; SELECT sqlcipher_export('backup'); PRAGMA backup.user_version = {version}; DETACH DATABASE backup;",
+        sql_string(path),
+        key.as_str()
+    ))?;
+    Ok(())
+}
+
+/// Next free `<db>.backup-v<from>[-n]` path.
+fn backup_path(db: &Path, from: u32) -> PathBuf {
+    let base = db.with_extension(format!("backup-v{from}"));
+    if !base.exists() {
+        return base;
+    }
+    (1..)
+        .map(|n| db.with_extension(format!("backup-v{from}-{n}")))
+        .find(|p| !p.exists())
+        .unwrap_or(base)
+}
+
+/// Applies pending migrations, after an encrypted backup when the database
+/// already holds data. Returns the backup path, if one was made.
+pub fn migrate(conn: &mut Connection, db: &Path, dek: &Secret) -> Result<Option<PathBuf>, Error> {
+    migrate_with(conn, db, dek, MIGRATIONS)
+}
+
+pub(crate) fn migrate_with(
+    conn: &mut Connection,
+    db: &Path,
+    dek: &Secret,
+    migrations: &[&str],
+) -> Result<Option<PathBuf>, Error> {
+    let current = user_version(conn)?;
+    let target = u32::try_from(migrations.len()).unwrap_or(u32::MAX);
+    if current > target {
+        return Err(Error::NewerSchema {
+            found: current,
+            supported: target,
+        });
+    }
+    if current == target {
+        return Ok(None);
+    }
+    let backup = if current > 0 {
+        let p = backup_path(db, current);
+        export(conn, &p, dek)?;
+        Some(p)
+    } else {
+        None
+    };
+    for (i, sql) in migrations.iter().enumerate().skip(current as usize) {
+        let tx = conn.transaction()?;
+        tx.execute_batch(sql)?;
+        tx.execute_batch(&format!("PRAGMA user_version = {}", i + 1))?;
+        tx.commit()?;
+    }
+    Ok(backup)
+}
+
+#[cfg(test)]
+mod tests {
+    #![allow(clippy::unwrap_used)]
+
+    use super::*;
+
+    #[test]
+    fn migration_takes_encrypted_backup_first() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("t.db");
+        let dek = Secret::random().unwrap();
+        let v1: &[&str] = &["CREATE TABLE notes (body TEXT NOT NULL) STRICT;"];
+        let v2: &[&str] = &[v1[0], "ALTER TABLE notes ADD COLUMN author TEXT;"];
+
+        let mut conn = open(&path, &dek).unwrap();
+        assert_eq!(
+            migrate_with(&mut conn, &path, &dek, v1).unwrap(),
+            None,
+            "fresh DB: no backup"
+        );
+        conn.execute("INSERT INTO notes (body) VALUES ('before upgrade')", [])
+            .unwrap();
+
+        let backup = migrate_with(&mut conn, &path, &dek, v2)
+            .unwrap()
+            .expect("backup before migrating data");
+        assert_eq!(user_version(&conn).unwrap(), 2);
+
+        // The backup is encrypted with the same key, still at v1, with the data.
+        let b = open(&backup, &dek).unwrap();
+        assert_eq!(user_version(&b).unwrap(), 1);
+        let body: String = b
+            .query_row("SELECT body FROM notes", [], |r| r.get(0))
+            .unwrap();
+        assert_eq!(body, "before upgrade");
+        assert!(matches!(
+            open(&backup, &Secret::random().unwrap()),
+            Err(Error::WrongKey)
+        ));
+        assert!(
+            !std::fs::read(&backup)
+                .unwrap()
+                .windows(14)
+                .any(|w| w == b"before upgrade")
+        );
+
+        // A second migration does not overwrite the first backup.
+        let v3: &[&str] = &[v2[0], v2[1], "CREATE INDEX notes_body ON notes (body);"];
+        let second = migrate_with(&mut conn, &path, &dek, v3).unwrap().unwrap();
+        assert_ne!(second, backup);
+    }
+
+    #[test]
+    fn refuses_newer_schema() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("t.db");
+        let dek = Secret::random().unwrap();
+        let mut conn = open(&path, &dek).unwrap();
+        conn.execute_batch("PRAGMA user_version = 99").unwrap();
+        assert!(matches!(
+            migrate(&mut conn, &path, &dek),
+            Err(Error::NewerSchema { found: 99, .. })
+        ));
+    }
+}
