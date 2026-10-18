@@ -26,6 +26,19 @@ pub const MIGRATIONS: &[&str] = &[
         reason TEXT
     ) STRICT;
     CREATE INDEX audit_log_at ON audit_log (at);",
+    // v3: clients. Identity fields are kept apart from the profile (JSON of
+    // applicant::Applicant), which never holds names or contact details, so
+    // it can be de-identified for Claude.
+    "CREATE TABLE clients (
+        id INTEGER PRIMARY KEY,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        full_name TEXT NOT NULL,
+        email TEXT,
+        phone TEXT,
+        file_reference TEXT,
+        profile TEXT NOT NULL
+    ) STRICT;",
 ];
 
 pub fn schema_version() -> u32 {

@@ -2,6 +2,7 @@
 // and never sees keys or secrets; every call goes through a Rust command.
 import { invoke } from '@tauri-apps/api/core'
 import { listen, type UnlistenFn } from '@tauri-apps/api/event'
+import type { Applicant, Assessment, ClientSummary, ClientView, Identity } from './model'
 
 export interface AppInfo {
   name: string
@@ -60,3 +61,10 @@ export interface UpdateInfo {
 export const updateCheck = () => invoke<UpdateInfo>('update_check')
 /** Downloads, verifies and installs, then restarts the app. */
 export const updateInstall = () => invoke<void>('update_install')
+
+export const clientList = () => invoke<ClientSummary[]>('client_list')
+export const clientGet = (id: number) => invoke<ClientView>('client_get', { id })
+export const clientSave = (id: number | null, identity: Identity, profile: Applicant) =>
+  invoke<{ id: number; problems: string[] }>('client_save', { request: { id, identity, profile } })
+export const clientDelete = (id: number) => invoke<boolean>('client_delete', { id })
+export const assess = (id: number, on: string | null) => invoke<Assessment>('assess', { id, on })
