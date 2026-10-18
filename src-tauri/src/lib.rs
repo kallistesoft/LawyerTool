@@ -1,5 +1,7 @@
 //! Tauri shell. Commands are thin: validation and logic live in the crates.
 
+#[cfg(debug_assertions)]
+mod dev;
 mod session;
 
 use std::sync::Arc;
@@ -21,15 +23,36 @@ fn app_info() -> AppInfo {
     }
 }
 
+/// Release builds: the real vault (passphrase, keychain, auto-lock).
+#[cfg(not(debug_assertions))]
+fn new_session(dir: &std::path::Path) -> Result<session::Session, Box<dyn std::error::Error>> {
+    Ok(session::Session::new(
+        dir.join("lawyertool.db"),
+        session::DEFAULT_IDLE,
+    ))
+}
+
+/// Dev builds: an automatic test vault in `<data>/dev/`, unless
+/// `LAWYERTOOL_REAL_VAULT` is set.
+#[cfg(debug_assertions)]
+fn new_session(dir: &std::path::Path) -> Result<session::Session, Box<dyn std::error::Error>> {
+    if !dev::enabled() {
+        return Ok(session::Session::new(
+            dir.join("lawyertool.db"),
+            session::DEFAULT_IDLE,
+        ));
+    }
+    let dev_dir = dir.join("dev");
+    let v = dev::open(&dev_dir)?;
+    Ok(session::Session::dev(dev::db_path(&dev_dir), v))
+}
+
 pub fn run() {
     let result = tauri::Builder::default()
         .setup(|app| {
             let dir = app.path().app_data_dir()?;
             std::fs::create_dir_all(&dir)?;
-            let session = Arc::new(session::Session::new(
-                dir.join("lawyertool.db"),
-                session::DEFAULT_IDLE,
-            ));
+            let session = Arc::new(new_session(&dir)?);
             // The only HTTP client; every call is audited into the vault.
             let client = net::Client::new(
                 net::Allowlist::new(session::ALLOWED_HOSTS.iter().copied()),

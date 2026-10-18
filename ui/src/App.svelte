@@ -11,10 +11,12 @@
   let phrase = $state('')
   let info: AppInfo | null = $state(null)
   let idleMinutes = $state(5)
+  let dev = $state(false)
 
   async function refresh() {
     const s = await vaultStatus()
     idleMinutes = s.idle_minutes
+    dev = s.dev
     screen = s.unlocked ? 'home' : s.exists ? 'unlock' : 'setup'
   }
 
@@ -33,10 +35,14 @@
 
 <svelte:window onmousemove={reportActivity} onkeydown={reportActivity} onclick={reportActivity} />
 
+{#if dev}
+  <div class="dev-banner">MODE DEV : coffre de test automatique, sans phrase de passe ni verrouillage. Aucune donnée réelle.</div>
+{/if}
+
 <main>
   <header>
     <h1>LawyerTool</h1>
-    {#if screen === 'home'}<button class="link" onclick={() => vaultLock()}>Verrouiller</button>{/if}
+    {#if screen === 'home' && !dev}<button class="link" onclick={() => vaultLock()}>Verrouiller</button>{/if}
   </header>
 
   {#if screen === 'setup'}
@@ -50,7 +56,11 @@
   {:else if screen === 'home'}
     <section>
       <h2>Coffre déverrouillé</h2>
-      <p>Verrouillage automatique après {idleMinutes} minutes d'inactivité.</p>
+      {#if dev}
+        <p>Coffre de test (mode dev).</p>
+      {:else}
+        <p>Verrouillage automatique après {idleMinutes} minutes d'inactivité.</p>
+      {/if}
     </section>
   {/if}
 
@@ -58,6 +68,13 @@
 </main>
 
 <style>
+  .dev-banner {
+    background: #c77700;
+    color: #fff;
+    padding: 0.4rem 1rem;
+    font: 600 0.85rem system-ui, sans-serif;
+    text-align: center;
+  }
   main {
     max-width: 44rem;
     margin: 2rem auto;
