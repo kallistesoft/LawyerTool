@@ -797,6 +797,7 @@ dependencies = [
 name = "deid"
 version = "0.1.10"
 dependencies = [
+ "proptest",
  "regex",
  "serde",
  "serde_json",

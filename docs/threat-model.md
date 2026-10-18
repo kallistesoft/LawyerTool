@@ -1,7 +1,7 @@
 # LawyerTool threat model
 
-Status: draft v1, 2026-10-18 (M1). To be reviewed with the lawyer and before the
-independent security review (M3).
+Status: v2, 2026-10-18 (after M3 hardening). To be reviewed with the lawyer and by
+the independent security reviewer (see docs/security-review.md).
 
 ## 1. What we protect
 
@@ -58,9 +58,11 @@ independent security review (M3).
   (`Zeroize`). SQLCipher's `cipher_memory_security` (page locking) is off: on
   Windows it recursed until stack overflow when `VirtualLock` hit its quota;
   swapped memory is covered by the required full-disk encryption.
+- The vault also locks when the computer wakes from sleep (wall-clock jump
+  between idle-watch ticks).
 - **Residual:** if the laptop is stolen *unlocked and awake*, data is
-  exposed until auto-lock. Locking on OS sleep / screen lock is not wired yet
-  (Tauri does not expose it): follow-up.
+  exposed until auto-lock (5 min). Locking on the OS screen lock itself is
+  not wired (needs platform hooks): follow-up.
 
 ### T2. Malware on the lawyer's computer
 - Out of scope to defeat fully: malware running as the user can read the
@@ -79,7 +81,10 @@ independent security review (M3).
 - Parsers are pure Rust (no macros, no external viewers, no OCR in MVP);
   size limits; parse errors are refused, not guessed.
 - File content is never executed or rendered as HTML in the WebView.
-- Hostile-file tests in M3.
+- Input limits on everything the app stores (identity fields, profile size,
+  list lengths).
+- The form importer does not exist yet (waiting for a sample export); its
+  hostile-file tests come with it.
 
 ### T5. Prompt injection (website text or client answers sent to Claude)
 - Claude calls get **no tools**; outputs must match a schema and are
@@ -90,7 +95,13 @@ independent security review (M3).
 - Client analysis: the eligibility math is deterministic Rust; Claude drafts
   text only; the lawyer edits and approves before export.
 - Tested: injected "ignore previous instructions" text does not change parsed
-  values (`grid-parser` tests).
+  values (`grid-parser` tests); all page parsers are fuzzed with corrupted
+  copies of the real pages and random markup (never panic, bounded time);
+  lookalike digits and invisible characters fail loudly.
+- De-identification matches on a normalized skeleton (invisible characters
+  removed, full-width and Cyrillic/Greek lookalikes folded), catches
+  spaced-out names and spelled-out emails; a property test checks no part of
+  the client's name survives any of these disguises.
 
 ### T6. Network attacker / hostile redirect
 - `net` is the only HTTP client: HTTPS only (rustls, OS trust store), exact
@@ -100,8 +111,10 @@ independent security review (M3).
   fails if its audit entry cannot be written (so nothing leaves while locked).
 
 ### T7. Compromised or changed official page (rules watcher, M2b)
-- Hash of the normalized `<main>` content; changes produce a diff, never an
-  automatic update; the lawyer approves each change.
+- Implemented: 13 fixed URLs, content-type allowlist per source, hash of the
+  normalized `<main>` content; changes produce a value-by-value diff with
+  the official row text, never an automatic update; the lawyer approves,
+  and approved snapshots take effect from the approval date only.
 - Cross-checks: summary vs detail tables, page vs page, golden profiles and
   the official calculator oracle must still agree before approval.
 - Last approved snapshot stays in force on any failure; stale warnings.
@@ -117,6 +130,8 @@ independent security review (M3).
   offline / in CI secrets; only the public key ships in the app.
 - Update host on the allowlist; HTTPS; user is prompted, never force-restarted;
   `min_version` for critical fixes.
+- Dormant until configured (last step before release); the `zip` feature
+  (v1 zipped updates, 3 advisories) is not compiled in.
 - **Open:** update host location; signing key generation (by the owner).
 
 ### T10. Supply chain (dependencies, CI)
@@ -124,6 +139,10 @@ independent security review (M3).
   committed; `cargo audit` and `npm audit` in CI; GitHub Actions pinned to
   commit SHAs; minimal frontend (Svelte, no runtime framework deps).
 - Dev-only tools (the jsdom oracle, jQuery 2.2.4) are never shipped.
+- `cargo audit` (2026-10-18): 0 vulnerabilities. Accepted warnings, Linux /
+  GTK only (not built or shipped): glib RUSTSEC-2024-0429 (unsound),
+  proc-macro-error RUSTSEC-2024-0370 (unmaintained). The shipped UI has a
+  single runtime npm dependency (`@tauri-apps/api`), 0 findings.
 
 ### T11. Wrong legal output (integrity, not confidentiality)
 - Deterministic engine, cited to the official tables; 29 golden profiles
@@ -143,13 +162,18 @@ independent security review (M3).
   crash reports or temp files (brief rule 9).
 - SQLCipher memory locking is disabled (see T1), so it no longer prints
   `VirtualLock` warnings on Windows.
+- SQLite temporary files are kept in memory (`temp_store = MEMORY`).
+- Exports (PDF / Word) are written only where the user chooses in the
+  native dialog, after mandatory review, and are marked as unencrypted.
 
 ## 6. Open items
 
-- [ ] Lock on OS sleep / screen lock (platform hooks).
+- [x] Lock on OS sleep (wall-clock jump). [ ] Lock on OS screen lock (platform hooks).
 - [ ] Update host and signing key (M1 step 7).
 - [ ] Apple notarization and Windows EV code signing.
 - [ ] Anthropic commercial terms and zero data retention confirmation.
 - [ ] Law society guidance and client consent wording.
-- [ ] Hostile-file and injection test suite, `cargo audit` triage, independent
-      review (M3).
+- [x] Hostile page / feed fuzzing, injection and de-identification
+      adversarial tests, `cargo audit` triage (M3).
+- [ ] Hostile client-file tests (with the importer).
+- [ ] Independent security review (docs/security-review.md).

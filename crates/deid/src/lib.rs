@@ -71,6 +71,12 @@ fn re(p: &str) -> Regex {
 
 static EMAIL_RE: LazyLock<Regex> =
     LazyLock::new(|| re(r"(?i)\b[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}\b"));
+/// Spelled-out emails: "jean [at] example [dot] com", "jean (at) example.com".
+static EMAIL_OBFUSCATED_RE: LazyLock<Regex> = LazyLock::new(|| {
+    re(
+        r"(?i)\b[a-z0-9._%+-]+\s*(?:\[at\]|\(at\)|\{at\}|\s+at\s+)\s*[a-z0-9-]+(?:\s*(?:\.|\[dot\]|\(dot\)|\{dot\}|\s+dot\s+)\s*[a-z0-9-]+)+\b",
+    )
+});
 /// North American numbers: optional +1, area code, 7 digits; common separators.
 static PHONE_RE: LazyLock<Regex> =
     LazyLock::new(|| re(r"(?:\+?1[\s.-]?)?\(?\b\d{3}\)?[\s.-]?\d{3}[\s.-]\d{4}\b"));
@@ -132,6 +138,23 @@ fn accent_pattern(literal: &str) -> String {
         .collect()
 }
 
+/// "T r e m b l a y", "T.r.e.m.b.l.a.y": each letter of a name part (4+
+/// letters) followed by up to two separators.
+fn spaced_pattern(literal: &str) -> String {
+    let letters: Vec<char> = fold_accents(literal)
+        .chars()
+        .filter(|c| c.is_alphabetic())
+        .collect();
+    if letters.len() < 4 {
+        return accent_pattern(literal);
+    }
+    letters
+        .iter()
+        .map(|c| accent_pattern(&c.to_string()))
+        .collect::<Vec<_>>()
+        .join(r"[\s._-]{1,2}")
+}
+
 struct Rule {
     re: Regex,
     kind: Kind,
@@ -153,6 +176,11 @@ fn rules(ids: &Identifiers) -> Vec<Rule> {
             placeholder: CLIENT_EMAIL,
         });
     }
+    out.push(Rule {
+        re: EMAIL_OBFUSCATED_RE.clone(),
+        kind: Kind::Email,
+        placeholder: EMAIL,
+    });
     out.push(Rule {
         re: EMAIL_RE.clone(),
         kind: Kind::Email,
@@ -205,7 +233,11 @@ fn rules(ids: &Identifiers) -> Vec<Rule> {
         parts.sort_by_key(|p| std::cmp::Reverse(p.chars().count()));
         for lit in std::iter::once(name).chain(parts) {
             out.push(Rule {
-                re: re(&format!(r"(?i)\b{}\b", accent_pattern(lit))),
+                re: re(&format!(
+                    r"(?i)\b(?:{}|{})\b",
+                    accent_pattern(lit),
+                    spaced_pattern(lit)
+                )),
                 kind: Kind::ClientName,
                 placeholder: CLIENT,
             });
@@ -214,11 +246,92 @@ fn rules(ids: &Identifiers) -> Vec<Rule> {
     out
 }
 
+/// Matching form of one character: invisible characters vanish, full-width
+/// forms fold to ASCII, Cyrillic / Greek lookalikes map to Latin letters.
+fn skeleton_char(c: char) -> Option<char> {
+    match c {
+        '\u{200b}'..='\u{200f}'
+        | '\u{202a}'..='\u{202e}'
+        | '\u{2060}'..='\u{2064}'
+        | '\u{feff}'
+        | '\u{ad}' => None,
+        '\u{ff01}'..='\u{ff5e}' => char::from_u32(c as u32 - 0xfee0),
+        'а' | 'α' => Some('a'),
+        'е' | 'ε' => Some('e'),
+        'о' | 'ο' => Some('o'),
+        'р' | 'ρ' => Some('p'),
+        'с' => Some('c'),
+        'у' | 'γ' => Some('y'),
+        'х' | 'χ' => Some('x'),
+        'і' | 'ι' => Some('i'),
+        'ј' => Some('j'),
+        'ѕ' => Some('s'),
+        'А' | 'Α' => Some('A'),
+        'В' | 'Β' => Some('B'),
+        'Е' | 'Ε' => Some('E'),
+        'К' | 'Κ' => Some('K'),
+        'М' | 'Μ' => Some('M'),
+        'Н' | 'Η' => Some('H'),
+        'О' | 'Ο' => Some('O'),
+        'Р' | 'Ρ' => Some('P'),
+        'С' => Some('C'),
+        'Т' | 'Τ' => Some('T'),
+        'Х' | 'Χ' => Some('X'),
+        'І' | 'Ι' => Some('I'),
+        'Ν' => Some('N'),
+        'Ζ' => Some('Z'),
+        'Υ' => Some('Y'),
+        other => Some(other),
+    }
+}
+
+/// The string the rules are matched against, with each of its characters'
+/// byte range in the original.
+fn skeleton_map(s: &str) -> (String, Vec<(usize, usize)>) {
+    let mut sk = String::with_capacity(s.len());
+    let mut map = Vec::with_capacity(s.len());
+    for (i, c) in s.char_indices() {
+        if let Some(k) = skeleton_char(c) {
+            sk.push(k);
+            map.push((i, i + c.len_utf8()));
+        }
+    }
+    (sk, map)
+}
+
+/// Normalized matching form (exposed for tests and audits).
+pub fn skeleton(s: &str) -> String {
+    skeleton_map(s).0
+}
+
+/// Replaces every match of `re` in the skeleton of `text`, in the original.
+fn replace_mapped(text: &str, re: &Regex, placeholder: &str) -> Option<String> {
+    let (sk, map) = skeleton_map(text);
+    let starts: Vec<usize> = sk.char_indices().map(|(i, _)| i).collect();
+    let mut ranges = Vec::new();
+    for m in re.find_iter(&sk) {
+        if m.start() == m.end() {
+            continue;
+        }
+        let first = starts.binary_search(&m.start()).ok()?;
+        let last = starts.partition_point(|&b| b < m.end()).checked_sub(1)?;
+        ranges.push((map[first].0, map[last].1));
+    }
+    if ranges.is_empty() {
+        return None;
+    }
+    let mut out = text.to_owned();
+    for (a, b) in ranges.into_iter().rev() {
+        out.replace_range(a..b, placeholder);
+    }
+    Some(out)
+}
+
 fn scrub(s: &str, path: &str, rules: &[Rule], out: &mut Vec<Redaction>) -> String {
     let mut text = s.to_owned();
     for r in rules {
-        if r.re.is_match(&text) {
-            text = r.re.replace_all(&text, r.placeholder).into_owned();
+        if let Some(t) = replace_mapped(&text, &r.re, r.placeholder) {
+            text = t;
             out.push(Redaction {
                 path: path.to_owned(),
                 kind: r.kind,

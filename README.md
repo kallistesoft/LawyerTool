@@ -34,8 +34,17 @@ After that, every commit, merge, pull or branch switch rebuilds and reinstalls
 LawyerTool Dev has its own identifier (`ca.lawyertool.desktop.dev`) and data,
 so it never touches a real installation.
 
-## Releases
+## Releases and CI
 
-Every merge into `main` bumps the version (patch; label the PR
-`release:minor` or `release:major`) and tags `vX.Y.Z`. Installers are built by
-CI on `main`, tags, or on demand ("Run workflow").
+**GitHub Actions are disabled** (to save the plan's minutes; re-enable with
+`gh workflow enable ci.yml` etc.). Meanwhile:
+
+- checks: `./scripts/ci-local.sh` before every commit (same as the CI
+  "check" job; the Windows check only runs on GitHub);
+- version: after each merge into `main`, `./scripts/post-merge-bump.sh`
+  (`patch` by default, or `minor` / `major`) bumps, commits
+  `chore(release): vX.Y.Z`, tags and pushes, like the disabled
+  `release-version` workflow.
+
+Installers: `release.yml` (disabled) or locally with
+`node ui/node_modules/@tauri-apps/cli/tauri.js build`.
