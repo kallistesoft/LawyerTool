@@ -3280,6 +3280,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "rules-watcher"
+version = "0.1.9"
+dependencies = [
+ "applicant",
+ "audit",
+ "grid-parser",
+ "net",
+ "rules-engine",
+ "serde",
+ "serde_json",
+ "sha2 0.11.1",
+ "tokio",
+ "url",
+]
+
+[[package]]
 name = "rusqlite"
 version = "0.40.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
