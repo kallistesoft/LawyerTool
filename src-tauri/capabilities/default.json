@@ -1,0 +1,19 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Main window: our own commands and event listening only. No fs, shell or http plugins.",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "allow-app-info",
+    "allow-vault-status",
+    "allow-vault-create",
+    "allow-vault-unlock",
+    "allow-vault-recover",
+    "allow-vault-lock",
+    "allow-activity",
+    "core:event:allow-listen",
+    "core:event:allow-unlisten"
+  ]
+}

@@ -1,0 +1,4 @@
+# Standalone Windows binary: link the C runtime statically, so the app does
+# not depend on the Visual C++ redistributable being installed.
+[target.x86_64-pc-windows-msvc]
+rustflags = ["-C", "target-feature=+crt-static"]

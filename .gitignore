@@ -1,0 +1,7 @@
+/target
+node_modules/
+.DS_Store
+
+# Tauri generated schemas and build output
+/src-tauri/gen/
+/ui/dist/

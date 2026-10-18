@@ -1,0 +1,125 @@
+{
+  "applicant": {
+    "age": 34,
+    "canadian_education": null,
+    "canadian_work_by_noc": [],
+    "canadian_work_years": 5,
+    "certificate_of_qualification": true,
+    "education": "doctorate",
+    "eligibility": {
+      "authorized_to_work_in_canada": null,
+      "canadian_study_two_years": null,
+      "credential": null,
+      "family_size": null,
+      "fsw_arranged_employment": null,
+      "intends_to_live_in_quebec": null,
+      "relative_in_canada": null,
+      "settlement_funds_cad": null,
+      "spouse_canadian_study_two_years": null,
+      "spouse_canadian_work_one_year": null,
+      "work_history": []
+    },
+    "first_language": {
+      "listening": 10,
+      "reading": 10,
+      "speaking": 10,
+      "test": "celpip_general",
+      "test_date": "2025-06-01",
+      "writing": 10
+    },
+    "foreign_work_years": 3,
+    "job_offer": null,
+    "marital_status": "never_married",
+    "provincial_nomination": false,
+    "second_language": null,
+    "sibling_in_canada": false,
+    "spouse": null
+  },
+  "calculator": {
+    "core": 449,
+    "spouse": 0,
+    "skill": 100,
+    "bonus": 0,
+    "total": 549
+  },
+  "description": "PhD, CLB 10, 5 yrs Canada, 3 yrs abroad, certificate: transferability capped at 100",
+  "form": [
+    [
+      "q1",
+      "F"
+    ],
+    [
+      "q3",
+      "R"
+    ],
+    [
+      "q4",
+      "H"
+    ],
+    [
+      "q4b",
+      "A"
+    ],
+    [
+      "q5i",
+      "A"
+    ],
+    [
+      "q5i-a",
+      "A"
+    ],
+    [
+      "q5i-b-speaking",
+      "H"
+    ],
+    [
+      "q5i-b-listening",
+      "H"
+    ],
+    [
+      "q5i-b-reading",
+      "H"
+    ],
+    [
+      "q5i-b-writing",
+      "H"
+    ],
+    [
+      "q5ii",
+      "C"
+    ],
+    [
+      "q6i",
+      "F"
+    ],
+    [
+      "q6ii",
+      "D"
+    ],
+    [
+      "q7",
+      "B"
+    ],
+    [
+      "q8",
+      "A"
+    ],
+    [
+      "q9",
+      "A"
+    ],
+    [
+      "q10i",
+      "A"
+    ]
+  ],
+  "grid": "crs-2026-10-16",
+  "id": "16-doctorate-transfer-cap",
+  "recorded": {
+    "on": "2026-10-18",
+    "by": "live calculator, Chrome (claude-in-chrome)",
+    "url": "https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/verifier-note.html",
+    "calculator_js_sha256": "61392e6266be6d976735305982eeb72ce30296f086ebf1b5dc802a305639a65a"
+  },
+  "adjustments": []
+}

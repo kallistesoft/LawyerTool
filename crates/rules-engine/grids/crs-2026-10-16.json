@@ -1,0 +1,3442 @@
+{
+  "id": "crs-2026-10-16",
+  "effective_from": "2026-10-16",
+  "sources": [
+    {
+      "id": "criteries-scg",
+      "url": "https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/verifier-note/criteries-scg.html",
+      "sha256": "c4a492adfa2cad679c2e797cc4391d7d2231198ad8b6e08c8483f37ad2080961",
+      "fetched": "2026-10-18"
+    },
+    {
+      "id": "equivalences-aip-en",
+      "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/atlantic-immigration/language-testing.html",
+      "sha256": "cdbc513a16992dd2cd0b4c6ea0edde725b2195096ac28928d12b5d2246846fa4",
+      "fetched": "2026-10-18"
+    },
+    {
+      "id": "fsw",
+      "url": "https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/qui-presenter-demande/travailleurs-qualifies-federal.html",
+      "sha256": "fb3225fc47ff67e0ff970de3f76b3ed9e6f043f065f5f9dc3daae1c2dc9c6ae2",
+      "fetched": "2026-10-18"
+    },
+    {
+      "id": "cec",
+      "url": "https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/qui-presenter-demande/categorie-experience-canadienne.html",
+      "sha256": "20fc4881025225d6814d63fc4f1cc3dff32b80dc3d7d6dbcab4c84821c7448f9",
+      "fetched": "2026-10-18"
+    },
+    {
+      "id": "fst",
+      "url": "https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/qui-presenter-demande/metiers-specialises.html",
+      "sha256": "2a9a263c749b167a22a339feeea6d28e31efc152e33602da2613c5980bde2397",
+      "fetched": "2026-10-18"
+    },
+    {
+      "id": "examen-linguistique",
+      "url": "https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/documents/examen-linguistique.html",
+      "sha256": "75bd233a859f96e9bc403a5b6deb8ea332c3f54c167c3c46caf2c959acb8e8fd",
+      "fetched": "2026-10-18"
+    },
+    {
+      "id": "evaluer-diplomes-etudes",
+      "url": "https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/documents/evaluer-diplomes-etudes.html",
+      "sha256": "10f01e1e870dcb675b2dd0002cacd058ad88eaefda63969ccc01634452ba8253",
+      "fetched": "2026-10-18"
+    },
+    {
+      "id": "preuve-fonds",
+      "url": "https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/documents/preuve-fonds-suffisants.html",
+      "sha256": "35f2e57bd595728b526dc63567480c2754ebd07981cab078d84bce8ceb058003",
+      "fetched": "2026-10-18"
+    }
+  ],
+  "crs": {
+    "core_max": {
+      "key": null,
+      "points": {
+        "with_spouse": 460,
+        "without_spouse": 500
+      },
+      "cite": {
+        "source": "criteries-scg",
+        "table": null,
+        "row": null,
+        "text": "Avec un époux ou conjoint de fait : Maximum 460 points total pour tous les facteurs Sans époux ou conjoint de fait : Maximum 500 points"
+      }
+    },
+    "age": [
+      {
+        "key": {
+          "min": 0,
+          "max": 17
+        },
+        "points": {
+          "with_spouse": 0,
+          "without_spouse": 0
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 1,
+          "text": "17 ans ou moins | 0 | 0"
+        }
+      },
+      {
+        "key": {
+          "min": 18,
+          "max": 18
+        },
+        "points": {
+          "with_spouse": 90,
+          "without_spouse": 99
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 2,
+          "text": "18 ans | 90 | 99"
+        }
+      },
+      {
+        "key": {
+          "min": 19,
+          "max": 19
+        },
+        "points": {
+          "with_spouse": 95,
+          "without_spouse": 105
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 3,
+          "text": "19 ans | 95 | 105"
+        }
+      },
+      {
+        "key": {
+          "min": 20,
+          "max": 29
+        },
+        "points": {
+          "with_spouse": 100,
+          "without_spouse": 110
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 4,
+          "text": "20 to 29 ans | 100 | 110"
+        }
+      },
+      {
+        "key": {
+          "min": 30,
+          "max": 30
+        },
+        "points": {
+          "with_spouse": 95,
+          "without_spouse": 105
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 5,
+          "text": "30 ans | 95 | 105"
+        }
+      },
+      {
+        "key": {
+          "min": 31,
+          "max": 31
+        },
+        "points": {
+          "with_spouse": 90,
+          "without_spouse": 99
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 6,
+          "text": "31 ans | 90 | 99"
+        }
+      },
+      {
+        "key": {
+          "min": 32,
+          "max": 32
+        },
+        "points": {
+          "with_spouse": 85,
+          "without_spouse": 94
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 7,
+          "text": "32 ans | 85 | 94"
+        }
+      },
+      {
+        "key": {
+          "min": 33,
+          "max": 33
+        },
+        "points": {
+          "with_spouse": 80,
+          "without_spouse": 88
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 8,
+          "text": "33 ans | 80 | 88"
+        }
+      },
+      {
+        "key": {
+          "min": 34,
+          "max": 34
+        },
+        "points": {
+          "with_spouse": 75,
+          "without_spouse": 83
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 9,
+          "text": "34 ans | 75 | 83"
+        }
+      },
+      {
+        "key": {
+          "min": 35,
+          "max": 35
+        },
+        "points": {
+          "with_spouse": 70,
+          "without_spouse": 77
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 10,
+          "text": "35 ans | 70 | 77"
+        }
+      },
+      {
+        "key": {
+          "min": 36,
+          "max": 36
+        },
+        "points": {
+          "with_spouse": 65,
+          "without_spouse": 72
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 11,
+          "text": "36 ans | 65 | 72"
+        }
+      },
+      {
+        "key": {
+          "min": 37,
+          "max": 37
+        },
+        "points": {
+          "with_spouse": 60,
+          "without_spouse": 66
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 12,
+          "text": "37 ans | 60 | 66"
+        }
+      },
+      {
+        "key": {
+          "min": 38,
+          "max": 38
+        },
+        "points": {
+          "with_spouse": 55,
+          "without_spouse": 61
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 13,
+          "text": "38 ans | 55 | 61"
+        }
+      },
+      {
+        "key": {
+          "min": 39,
+          "max": 39
+        },
+        "points": {
+          "with_spouse": 50,
+          "without_spouse": 55
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 14,
+          "text": "39 ans | 50 | 55"
+        }
+      },
+      {
+        "key": {
+          "min": 40,
+          "max": 40
+        },
+        "points": {
+          "with_spouse": 45,
+          "without_spouse": 50
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 15,
+          "text": "40 ans | 45 | 50"
+        }
+      },
+      {
+        "key": {
+          "min": 41,
+          "max": 41
+        },
+        "points": {
+          "with_spouse": 35,
+          "without_spouse": 39
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 16,
+          "text": "41 ans | 35 | 39"
+        }
+      },
+      {
+        "key": {
+          "min": 42,
+          "max": 42
+        },
+        "points": {
+          "with_spouse": 25,
+          "without_spouse": 28
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 17,
+          "text": "42 ans | 25 | 28"
+        }
+      },
+      {
+        "key": {
+          "min": 43,
+          "max": 43
+        },
+        "points": {
+          "with_spouse": 15,
+          "without_spouse": 17
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 18,
+          "text": "43 ans | 15 | 17"
+        }
+      },
+      {
+        "key": {
+          "min": 44,
+          "max": 44
+        },
+        "points": {
+          "with_spouse": 5,
+          "without_spouse": 6
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 19,
+          "text": "44 ans | 5 | 6"
+        }
+      },
+      {
+        "key": {
+          "min": 45,
+          "max": null
+        },
+        "points": {
+          "with_spouse": 0,
+          "without_spouse": 0
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 1,
+          "row": 20,
+          "text": "45 ans ou plus | 0 | 0"
+        }
+      }
+    ],
+    "education": [
+      {
+        "key": "less_than_secondary",
+        "points": {
+          "with_spouse": 0,
+          "without_spouse": 0
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 1,
+          "text": "Études secondaires non complétées | 0 | 0"
+        }
+      },
+      {
+        "key": "secondary",
+        "points": {
+          "with_spouse": 28,
+          "without_spouse": 30
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 2,
+          "text": "Diplôme d'études secondaires | 28 | 30"
+        }
+      },
+      {
+        "key": "one_year_post_secondary",
+        "points": {
+          "with_spouse": 84,
+          "without_spouse": 90
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 3,
+          "text": "Degré, diplôme ou certificat de un an obtenu dans le cadre d'un programme à une université, un collège, une école technique ou de métiers ou un autre institut | 84 | 90"
+        }
+      },
+      {
+        "key": "two_year_post_secondary",
+        "points": {
+          "with_spouse": 91,
+          "without_spouse": 98
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 4,
+          "text": "Degré, diplôme ou certificat de deux ans obtenu dans le cadre d'un programme à une université, un collège, une école technique ou de métiers ou un autre institut | 91 | 98"
+        }
+      },
+      {
+        "key": "bachelor_or_three_year",
+        "points": {
+          "with_spouse": 112,
+          "without_spouse": 120
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 5,
+          "text": "Baccalauréat OU autres programmes (trois ans ou plus) à une université, un collège, une école technique ou de métiers ou un autre institut | 112 | 120"
+        }
+      },
+      {
+        "key": "two_or_more_credentials",
+        "points": {
+          "with_spouse": 119,
+          "without_spouse": 128
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 6,
+          "text": "Au moins deux certificats, diplômes ou degrés. Un doit avoir été obtenu dans le cadre d'un programme d'une durée de trois ans ou plus. | 119 | 128"
+        }
+      },
+      {
+        "key": "master_or_professional",
+        "points": {
+          "with_spouse": 126,
+          "without_spouse": 135
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 7,
+          "text": "Diplôme d'études universitaires de deuxième cycle OU Diplôme professionnel requis pour la pratique au sein d'une profession décernant des permis de pratique (Pour un diplôme professionnel, le programme d'études doit avoir été en médecine, médecine vétérinaire, dentisterie, optométrie, droit, chiropratique, ou en pharmacie.) | 126 | 135"
+        }
+      },
+      {
+        "key": "doctorate",
+        "points": {
+          "with_spouse": 140,
+          "without_spouse": 150
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 2,
+          "row": 8,
+          "text": "Diplôme universitaire de troisième cycle (Ph.D.) | 140 | 150"
+        }
+      }
+    ],
+    "first_language": [
+      {
+        "key": {
+          "min": 0,
+          "max": 3
+        },
+        "points": {
+          "with_spouse": 0,
+          "without_spouse": 0
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 3,
+          "row": 1,
+          "text": "Moins que le niveau 4 des NCLC | 0 | 0"
+        }
+      },
+      {
+        "key": {
+          "min": 4,
+          "max": 5
+        },
+        "points": {
+          "with_spouse": 6,
+          "without_spouse": 6
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 3,
+          "row": 2,
+          "text": "NCLC 4 ou 5 | 6 | 6"
+        }
+      },
+      {
+        "key": {
+          "min": 6,
+          "max": 6
+        },
+        "points": {
+          "with_spouse": 8,
+          "without_spouse": 9
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 3,
+          "row": 3,
+          "text": "NCLC 6 | 8 | 9"
+        }
+      },
+      {
+        "key": {
+          "min": 7,
+          "max": 7
+        },
+        "points": {
+          "with_spouse": 16,
+          "without_spouse": 17
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 3,
+          "row": 4,
+          "text": "NCLC 7 | 16 | 17"
+        }
+      },
+      {
+        "key": {
+          "min": 8,
+          "max": 8
+        },
+        "points": {
+          "with_spouse": 22,
+          "without_spouse": 23
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 3,
+          "row": 5,
+          "text": "NCLC 8 | 22 | 23"
+        }
+      },
+      {
+        "key": {
+          "min": 9,
+          "max": 9
+        },
+        "points": {
+          "with_spouse": 29,
+          "without_spouse": 31
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 3,
+          "row": 6,
+          "text": "NCLC 9 | 29 | 31"
+        }
+      },
+      {
+        "key": {
+          "min": 10,
+          "max": null
+        },
+        "points": {
+          "with_spouse": 32,
+          "without_spouse": 34
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 3,
+          "row": 7,
+          "text": "NCLC 10 ou plus | 32 | 34"
+        }
+      }
+    ],
+    "second_language": [
+      {
+        "key": {
+          "min": 0,
+          "max": 3
+        },
+        "points": {
+          "with_spouse": 0,
+          "without_spouse": 0
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 4,
+          "row": 1,
+          "text": "Moins que le niveau 4 des NCLC | 0 | 0"
+        }
+      },
+      {
+        "key": {
+          "min": 5,
+          "max": 6
+        },
+        "points": {
+          "with_spouse": 1,
+          "without_spouse": 1
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 4,
+          "row": 2,
+          "text": "NCLC 5 ou 6 | 1 | 1"
+        }
+      },
+      {
+        "key": {
+          "min": 7,
+          "max": 8
+        },
+        "points": {
+          "with_spouse": 3,
+          "without_spouse": 3
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 4,
+          "row": 3,
+          "text": "NCLC 7 ou 8 | 3 | 3"
+        }
+      },
+      {
+        "key": {
+          "min": 9,
+          "max": null
+        },
+        "points": {
+          "with_spouse": 6,
+          "without_spouse": 6
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 4,
+          "row": 4,
+          "text": "NCLC 9 ou plus | 6 | 6"
+        }
+      }
+    ],
+    "second_language_max": {
+      "key": null,
+      "points": {
+        "with_spouse": 22,
+        "without_spouse": 24
+      },
+      "cite": {
+        "source": "criteries-scg",
+        "table": 4,
+        "row": 0,
+        "text": "Niveaux de compétence linguistique canadiens (NCLC) par compétence | Avec un époux ou conjoint de fait (Maximum 22 points) | Sans époux ou conjoint de fait (Maximum 24 points)"
+      }
+    },
+    "canadian_work": [
+      {
+        "key": {
+          "min": 0,
+          "max": 0
+        },
+        "points": {
+          "with_spouse": 0,
+          "without_spouse": 0
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 5,
+          "row": 1,
+          "text": "Aucune ou moins d'un an | 0 | 0"
+        }
+      },
+      {
+        "key": {
+          "min": 1,
+          "max": 1
+        },
+        "points": {
+          "with_spouse": 35,
+          "without_spouse": 40
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 5,
+          "row": 2,
+          "text": "1 an | 35 | 40"
+        }
+      },
+      {
+        "key": {
+          "min": 2,
+          "max": 2
+        },
+        "points": {
+          "with_spouse": 46,
+          "without_spouse": 53
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 5,
+          "row": 3,
+          "text": "2 ans | 46 | 53"
+        }
+      },
+      {
+        "key": {
+          "min": 3,
+          "max": 3
+        },
+        "points": {
+          "with_spouse": 56,
+          "without_spouse": 64
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 5,
+          "row": 4,
+          "text": "3 ans | 56 | 64"
+        }
+      },
+      {
+        "key": {
+          "min": 4,
+          "max": 4
+        },
+        "points": {
+          "with_spouse": 63,
+          "without_spouse": 72
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 5,
+          "row": 5,
+          "text": "4 ans | 63 | 72"
+        }
+      },
+      {
+        "key": {
+          "min": 5,
+          "max": null
+        },
+        "points": {
+          "with_spouse": 70,
+          "without_spouse": 80
+        },
+        "cite": {
+          "source": "criteries-scg",
+          "table": 5,
+          "row": 6,
+          "text": "5 ans ou plus | 70 | 80"
+        }
+      }
+    ],
+    "spouse_max": {
+      "value": 40,
+      "cite": {
+        "source": "criteries-scg",
+        "table": 6,
+        "row": 0,
+        "text": "Facteur | Points (Maximum 40 points)"
+      }
+    },
+    "spouse_education": [
+      {
+        "key": "less_than_secondary",
+        "points": 0,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 1,
+          "text": "Études secondaires non complétées | 0 | n/a"
+        }
+      },
+      {
+        "key": "secondary",
+        "points": 2,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 2,
+          "text": "Diplôme d'études secondaires | 2 | n/a"
+        }
+      },
+      {
+        "key": "one_year_post_secondary",
+        "points": 6,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 3,
+          "text": "Degré, diplôme ou certificat de un an obtenu dans le cadre d'un programme à une université, un collège, une école technique ou de métiers ou un autre institut | 6 | n/a"
+        }
+      },
+      {
+        "key": "two_year_post_secondary",
+        "points": 7,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 4,
+          "text": "Degré, diplôme ou certificat de deux ans obtenu dans le cadre d'un programme à une université, un collège, une école technique ou de métiers ou un autre institut | 7 | n/a"
+        }
+      },
+      {
+        "key": "bachelor_or_three_year",
+        "points": 8,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 5,
+          "text": "Baccalauréat OU autres programmes (trois ans ou plus) à une université, un collège, une école technique ou de métiers ou un autre institut | 8 | n/a"
+        }
+      },
+      {
+        "key": "two_or_more_credentials",
+        "points": 9,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 6,
+          "text": "Au moins deux certificats, diplômes ou degrés. Un doit avoir été obtenu dans le cadre d'un programme d'une durée de trois ans ou plus. | 9 | n/a"
+        }
+      },
+      {
+        "key": "master_or_professional",
+        "points": 10,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 7,
+          "text": "Diplôme d'études universitaires de deuxième cycle OU Diplôme professionnel requis pour la pratique au sein d'une profession décernant des permis de pratique (Pour un diplôme professionnel, le programme d'études doit avoir été en médecine, médecine vétérinaire, dentisterie, optométrie, droit, chiropratique, ou en pharmacie.) | 10 | n/a"
+        }
+      },
+      {
+        "key": "doctorate",
+        "points": 10,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 7,
+          "row": 8,
+          "text": "Diplôme universitaire de troisième cycle (Ph.D.) | 10 | n/a"
+        }
+      }
+    ],
+    "spouse_language": [
+      {
+        "key": {
+          "min": 0,
+          "max": 4
+        },
+        "points": 0,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 8,
+          "row": 1,
+          "text": "NCLC 4 ou moins | 0 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 5,
+          "max": 6
+        },
+        "points": 1,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 8,
+          "row": 2,
+          "text": "NCLC 5 ou 6 | 1 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 7,
+          "max": 8
+        },
+        "points": 3,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 8,
+          "row": 3,
+          "text": "NCLC 7 ou 8 | 3 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 9,
+          "max": null
+        },
+        "points": 5,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 8,
+          "row": 4,
+          "text": "NCLC 9 ou plus | 5 | n/a"
+        }
+      }
+    ],
+    "spouse_canadian_work": [
+      {
+        "key": {
+          "min": 0,
+          "max": 0
+        },
+        "points": 0,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 9,
+          "row": 1,
+          "text": "Aucune ou moins d'un an | 0 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 1,
+          "max": 1
+        },
+        "points": 5,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 9,
+          "row": 2,
+          "text": "1 an | 5 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 2,
+          "max": 2
+        },
+        "points": 7,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 9,
+          "row": 3,
+          "text": "2 ans | 7 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 3,
+          "max": 3
+        },
+        "points": 8,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 9,
+          "row": 4,
+          "text": "3 ans | 8 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 4,
+          "max": 4
+        },
+        "points": 9,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 9,
+          "row": 5,
+          "text": "4 ans | 9 | n/a"
+        }
+      },
+      {
+        "key": {
+          "min": 5,
+          "max": null
+        },
+        "points": 10,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 9,
+          "row": 6,
+          "text": "5 ans ou plus | 10 | n/a"
+        }
+      }
+    ],
+    "transferability": {
+      "education_language": {
+        "lower_min": 7,
+        "upper_min": 9,
+        "rows": [
+          {
+            "key": "secondary_or_less",
+            "lower": 0,
+            "upper": 0,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 13,
+              "row": 1,
+              "text": "Diplôme d'école secondaire ou moins | 0 | 0"
+            }
+          },
+          {
+            "key": "post_secondary",
+            "lower": 13,
+            "upper": 25,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 13,
+              "row": 2,
+              "text": "Diplôme postsecondaire nécessitant au moins une année d'études | 13 | 25"
+            }
+          },
+          {
+            "key": "two_or_more",
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 13,
+              "row": 3,
+              "text": "Deux diplômes postsecondaires ou plus ET au moins l'un d'entre eux a nécessité trois années d'études ou plus | 25 | 50"
+            }
+          },
+          {
+            "key": "master_or_professional",
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 13,
+              "row": 4,
+              "text": "il a obtenu un diplôme d'études universitaires de deuxième cycle ou un diplôme professionnel nécessaire à l'exercice d'une profession délivré à l'égard d'une profession mentionnée dans la liste du niveau de compétence A de la matrice de la Classification nationale des professions et pour laquelle un permis délivré par un organisme provincial de réglementation | 25 | 50"
+            }
+          },
+          {
+            "key": "doctorate",
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 13,
+              "row": 5,
+              "text": "il a obtenu un diplôme d'études universitaires de troisième cycle | 25 | 50"
+            }
+          }
+        ],
+        "cite": {
+          "source": "criteries-scg",
+          "table": 13,
+          "row": 0,
+          "text": "Avec une bonne maîtrise d'une langue officielle (Niveaux de compétence linguistique canadiens [NCLC] 7 ou plus) et un diplôme postsecondaire | Points pour NCLC 7 ou plus dans chacune des compétences dans la première langue officielle, dont au moins l'une d'entre elles est inférieure au niveau 9 (Maximum 25 points) | Points pour NCLC 9 ou plus dans chacune des quatre compétences dans la première langue officielle (Maximum 50 points)"
+        }
+      },
+      "education_canadian_work": {
+        "lower_min": 1,
+        "upper_min": 2,
+        "rows": [
+          {
+            "key": "secondary_or_less",
+            "lower": 0,
+            "upper": 0,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 14,
+              "row": 1,
+              "text": "Diplôme d'école secondaire ou moins | 0 | 0"
+            }
+          },
+          {
+            "key": "post_secondary",
+            "lower": 13,
+            "upper": 25,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 14,
+              "row": 2,
+              "text": "Diplôme postsecondaire nécessitant au moins une année d'études | 13 | 25"
+            }
+          },
+          {
+            "key": "two_or_more",
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 14,
+              "row": 3,
+              "text": "Deux diplômes postsecondaires ou plus ET au moins l'un d'entre eux a nécessité trois années d'études ou plus | 25 | 50"
+            }
+          },
+          {
+            "key": "master_or_professional",
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 14,
+              "row": 4,
+              "text": "il a obtenu un diplôme d'études universitaires de deuxième cycle ou un diplôme professionnel nécessaire à l'exercice d'une profession délivré à l'égard d'une profession mentionnée dans la liste du niveau de compétence A de la matrice de la Classification nationale des professions et pour laquelle un permis délivré par un organisme provincial de réglementation | 25 | 50"
+            }
+          },
+          {
+            "key": "doctorate",
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 14,
+              "row": 5,
+              "text": "il a obtenu un diplôme d'études universitaires de troisième cycle | 25 | 50"
+            }
+          }
+        ],
+        "cite": {
+          "source": "criteries-scg",
+          "table": 14,
+          "row": 0,
+          "text": "Avec une expérience de travail au Canada et un diplôme postsecondaire | Points pour les études + une année d'expérience de travail au Canada (Maximum 25 points) | Points pour les études + deux années ou plus d'expérience de travail au Canada (Maximum 50 points)"
+        }
+      },
+      "foreign_language": {
+        "lower_min": 7,
+        "upper_min": 9,
+        "rows": [
+          {
+            "key": {
+              "min": 0,
+              "max": 0
+            },
+            "lower": 0,
+            "upper": 0,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 15,
+              "row": 1,
+              "text": "Aucune expérience de travail à l'étranger | 0 | 0"
+            }
+          },
+          {
+            "key": {
+              "min": 1,
+              "max": 2
+            },
+            "lower": 13,
+            "upper": 25,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 15,
+              "row": 2,
+              "text": "Une année ou deux années d'expérience de travail à l'étranger | 13 | 25"
+            }
+          },
+          {
+            "key": {
+              "min": 3,
+              "max": null
+            },
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 15,
+              "row": 3,
+              "text": "Trois années ou plus d'expérience de travail à l'étranger | 25 | 50"
+            }
+          }
+        ],
+        "cite": {
+          "source": "criteries-scg",
+          "table": 15,
+          "row": 0,
+          "text": "Années d'expérience | Points pour de l'expérience de travail à l'étranger + NCLC 7 ou plus dans chacune des compétences dans la première langue officielle, dont au moins l'une d'entre elles est inférieure au niveau 9 (Maximum 25 points) | Points pour de l'expérience de travail à l'étranger + NCLC 9 ou plus dans chacune des quatre compétences dans la première langue officielle (Maximum 50 points)"
+        }
+      },
+      "foreign_canadian_work": {
+        "lower_min": 1,
+        "upper_min": 2,
+        "rows": [
+          {
+            "key": {
+              "min": 0,
+              "max": 0
+            },
+            "lower": 0,
+            "upper": 0,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 16,
+              "row": 1,
+              "text": "Aucune expérience de travail à l'étranger | 0 | 0"
+            }
+          },
+          {
+            "key": {
+              "min": 1,
+              "max": 2
+            },
+            "lower": 13,
+            "upper": 25,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 16,
+              "row": 2,
+              "text": "Une année ou deux années d'expérience de travail à l'étranger | 13 | 25"
+            }
+          },
+          {
+            "key": {
+              "min": 3,
+              "max": null
+            },
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 16,
+              "row": 3,
+              "text": "Trois années ou plus d'expérience de travail à l'étranger | 25 | 50"
+            }
+          }
+        ],
+        "cite": {
+          "source": "criteries-scg",
+          "table": 16,
+          "row": 0,
+          "text": "Années d'expérience | Points pour de l'expérience de travail à l'étranger + une année d'expérience de travail au Canada (Maximum 25 points) | Points pour de l'expérience de travail à l'étranger + deux années ou plus d'expérience de travail au Canada (Maximum 50 points)"
+        }
+      },
+      "certificate": {
+        "lower_min": 5,
+        "upper_min": 7,
+        "rows": [
+          {
+            "key": null,
+            "lower": 25,
+            "upper": 50,
+            "cite": {
+              "source": "criteries-scg",
+              "table": 17,
+              "row": 1,
+              "text": "Avec un certificat de compétence | 25 | 50"
+            }
+          }
+        ],
+        "cite": {
+          "source": "criteries-scg",
+          "table": 17,
+          "row": 0,
+          "text": "Certificat de compétence (métier spécialisé) – Avec une bonne maîtrise d'une langue officielle et un certificat de compétence (Niveaux de compétence linguistique canadiens [NCLC] 7 ou plus) | Points pour un certificat de compétence + NCLC 5 ou plus dans chacune des compétences dans la première langue officielle, dont au moins l'une d'entre elles est inférieure au niveau 7 (Maximum 25 points) | Points pour un certificat de compétence NCLC 7 ou plus dans chacune des quatre compétences dans la première langue officielle (Maximum 50 points)"
+        }
+      },
+      "group_max": {
+        "value": 50,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 10,
+          "row": 0,
+          "text": "Scolarité | Points (Maximum 50 points)"
+        }
+      },
+      "max": {
+        "value": 100,
+        "cite": {
+          "source": "criteries-scg",
+          "table": null,
+          "row": null,
+          "text": "transférabilité des compétences : Maximum 100 points"
+        }
+      }
+    },
+    "additional": {
+      "sibling": {
+        "key": null,
+        "points": 15,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 19,
+          "row": 1,
+          "text": "Frère ou sœur vivant au Canada qui est citoyen ou résident permanent du Canada | 15"
+        }
+      },
+      "french_weak_english": {
+        "key": null,
+        "points": 25,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 19,
+          "row": 2,
+          "text": "Si vous obtenez le niveau 7 ou plus des NCLC en français pour les quatre aptitudes et si vous obtenez le niveau 4 ou moins des CLB en anglais (ou si vous n'avez pas passé de test en anglais) | 25"
+        }
+      },
+      "french_strong_english": {
+        "key": null,
+        "points": 50,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 19,
+          "row": 3,
+          "text": "Si vous obtenez le niveau 7 ou plus des NCLC en français pour les quatre aptitudes et si vous obtenez le niveau 5 ou plus des CLB en anglais pour les quatre aptitudes | 50"
+        }
+      },
+      "french_min_nclc": 7,
+      "english_min_clb": 5,
+      "canadian_education_short": {
+        "key": null,
+        "points": 15,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 19,
+          "row": 4,
+          "text": "Études postsecondaires effectuées au Canada – titre de compétence d'un an ou de deux ans | 15"
+        }
+      },
+      "canadian_education_long": {
+        "key": null,
+        "points": 30,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 19,
+          "row": 5,
+          "text": "Études postsecondaires effectuées au Canada – titre de compétence de trois ans ou plus | 30"
+        }
+      },
+      "provincial_nomination": {
+        "key": null,
+        "points": 600,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 19,
+          "row": 6,
+          "text": "Désignation comme candidat d'une province ou d'un territoire | 600"
+        }
+      },
+      "max": {
+        "value": 600,
+        "cite": {
+          "source": "criteries-scg",
+          "table": 19,
+          "row": 0,
+          "text": "Points supplémentaires | Maximum 600 points"
+        }
+      }
+    }
+  },
+  "language": [
+    {
+      "test": "celpip_general",
+      "taken_from": null,
+      "taken_to": null,
+      "rows": [
+        {
+          "clb": 4,
+          "speaking": {
+            "min": 4,
+            "max": null
+          },
+          "listening": {
+            "min": 4,
+            "max": null
+          },
+          "reading": {
+            "min": 4,
+            "max": null
+          },
+          "writing": {
+            "min": 4,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 0,
+            "row": 7,
+            "text": "4 | 4 | 4 | 4 | 4"
+          }
+        },
+        {
+          "clb": 5,
+          "speaking": {
+            "min": 5,
+            "max": null
+          },
+          "listening": {
+            "min": 5,
+            "max": null
+          },
+          "reading": {
+            "min": 5,
+            "max": null
+          },
+          "writing": {
+            "min": 5,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 0,
+            "row": 6,
+            "text": "5 | 5 | 5 | 5 | 5"
+          }
+        },
+        {
+          "clb": 6,
+          "speaking": {
+            "min": 6,
+            "max": null
+          },
+          "listening": {
+            "min": 6,
+            "max": null
+          },
+          "reading": {
+            "min": 6,
+            "max": null
+          },
+          "writing": {
+            "min": 6,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 0,
+            "row": 5,
+            "text": "6 | 6 | 6 | 6 | 6"
+          }
+        },
+        {
+          "clb": 7,
+          "speaking": {
+            "min": 7,
+            "max": null
+          },
+          "listening": {
+            "min": 7,
+            "max": null
+          },
+          "reading": {
+            "min": 7,
+            "max": null
+          },
+          "writing": {
+            "min": 7,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 0,
+            "row": 4,
+            "text": "7 | 7 | 7 | 7 | 7"
+          }
+        },
+        {
+          "clb": 8,
+          "speaking": {
+            "min": 8,
+            "max": null
+          },
+          "listening": {
+            "min": 8,
+            "max": null
+          },
+          "reading": {
+            "min": 8,
+            "max": null
+          },
+          "writing": {
+            "min": 8,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 0,
+            "row": 3,
+            "text": "8 | 8 | 8 | 8 | 8"
+          }
+        },
+        {
+          "clb": 9,
+          "speaking": {
+            "min": 9,
+            "max": null
+          },
+          "listening": {
+            "min": 9,
+            "max": null
+          },
+          "reading": {
+            "min": 9,
+            "max": null
+          },
+          "writing": {
+            "min": 9,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 0,
+            "row": 2,
+            "text": "9 | 9 | 9 | 9 | 9"
+          }
+        },
+        {
+          "clb": 10,
+          "speaking": {
+            "min": 10,
+            "max": null
+          },
+          "listening": {
+            "min": 10,
+            "max": null
+          },
+          "reading": {
+            "min": 10,
+            "max": null
+          },
+          "writing": {
+            "min": 10,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 0,
+            "row": 1,
+            "text": "10 | 10 | 10 | 10 | 10"
+          }
+        }
+      ],
+      "cite": {
+        "source": "equivalences-aip-en",
+        "table": 0,
+        "row": 0,
+        "text": "CLB level | Reading | Writing | Listening | Speaking"
+      }
+    },
+    {
+      "test": "ielts_general",
+      "taken_from": null,
+      "taken_to": null,
+      "rows": [
+        {
+          "clb": 4,
+          "speaking": {
+            "min": 40,
+            "max": null
+          },
+          "listening": {
+            "min": 45,
+            "max": null
+          },
+          "reading": {
+            "min": 35,
+            "max": null
+          },
+          "writing": {
+            "min": 40,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 1,
+            "row": 7,
+            "text": "4 | 3.5 | 4.0 | 4.5 | 4.0"
+          }
+        },
+        {
+          "clb": 5,
+          "speaking": {
+            "min": 50,
+            "max": null
+          },
+          "listening": {
+            "min": 50,
+            "max": null
+          },
+          "reading": {
+            "min": 40,
+            "max": null
+          },
+          "writing": {
+            "min": 50,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 1,
+            "row": 6,
+            "text": "5 | 4.0 | 5.0 | 5.0 | 5.0"
+          }
+        },
+        {
+          "clb": 6,
+          "speaking": {
+            "min": 55,
+            "max": null
+          },
+          "listening": {
+            "min": 55,
+            "max": null
+          },
+          "reading": {
+            "min": 50,
+            "max": null
+          },
+          "writing": {
+            "min": 55,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 1,
+            "row": 5,
+            "text": "6 | 5.0 | 5.5 | 5.5 | 5.5"
+          }
+        },
+        {
+          "clb": 7,
+          "speaking": {
+            "min": 60,
+            "max": null
+          },
+          "listening": {
+            "min": 60,
+            "max": null
+          },
+          "reading": {
+            "min": 60,
+            "max": null
+          },
+          "writing": {
+            "min": 60,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 1,
+            "row": 4,
+            "text": "7 | 6.0 | 6.0 | 6.0 | 6.0"
+          }
+        },
+        {
+          "clb": 8,
+          "speaking": {
+            "min": 65,
+            "max": null
+          },
+          "listening": {
+            "min": 75,
+            "max": null
+          },
+          "reading": {
+            "min": 65,
+            "max": null
+          },
+          "writing": {
+            "min": 65,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 1,
+            "row": 3,
+            "text": "8 | 6.5 | 6.5 | 7.5 | 6.5"
+          }
+        },
+        {
+          "clb": 9,
+          "speaking": {
+            "min": 70,
+            "max": null
+          },
+          "listening": {
+            "min": 80,
+            "max": null
+          },
+          "reading": {
+            "min": 70,
+            "max": null
+          },
+          "writing": {
+            "min": 70,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 1,
+            "row": 2,
+            "text": "9 | 7.0 | 7.0 | 8.0 | 7.0"
+          }
+        },
+        {
+          "clb": 10,
+          "speaking": {
+            "min": 75,
+            "max": null
+          },
+          "listening": {
+            "min": 85,
+            "max": null
+          },
+          "reading": {
+            "min": 80,
+            "max": null
+          },
+          "writing": {
+            "min": 75,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 1,
+            "row": 1,
+            "text": "10 | 8.0 | 7.5 | 8.5 | 7.5"
+          }
+        }
+      ],
+      "cite": {
+        "source": "equivalences-aip-en",
+        "table": 1,
+        "row": 0,
+        "text": "CLB level | Reading | Writing | Listening | Speaking"
+      }
+    },
+    {
+      "test": "pte_core",
+      "taken_from": null,
+      "taken_to": null,
+      "rows": [
+        {
+          "clb": 3,
+          "speaking": {
+            "min": 34,
+            "max": 41
+          },
+          "listening": {
+            "min": 18,
+            "max": 27
+          },
+          "reading": {
+            "min": 24,
+            "max": 32
+          },
+          "writing": {
+            "min": 32,
+            "max": 40
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 2,
+            "row": 8,
+            "text": "3 | 24-32 | 32-40 | 18-27 | 34-41"
+          }
+        },
+        {
+          "clb": 4,
+          "speaking": {
+            "min": 42,
+            "max": 50
+          },
+          "listening": {
+            "min": 28,
+            "max": 38
+          },
+          "reading": {
+            "min": 33,
+            "max": 41
+          },
+          "writing": {
+            "min": 41,
+            "max": 50
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 2,
+            "row": 7,
+            "text": "4 | 33-41 | 41-50 | 28-38 | 42-50"
+          }
+        },
+        {
+          "clb": 5,
+          "speaking": {
+            "min": 51,
+            "max": 58
+          },
+          "listening": {
+            "min": 39,
+            "max": 49
+          },
+          "reading": {
+            "min": 42,
+            "max": 50
+          },
+          "writing": {
+            "min": 51,
+            "max": 59
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 2,
+            "row": 6,
+            "text": "5 | 42-50 | 51-59 | 39-49 | 51-58"
+          }
+        },
+        {
+          "clb": 6,
+          "speaking": {
+            "min": 59,
+            "max": 67
+          },
+          "listening": {
+            "min": 50,
+            "max": 59
+          },
+          "reading": {
+            "min": 51,
+            "max": 59
+          },
+          "writing": {
+            "min": 60,
+            "max": 68
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 2,
+            "row": 5,
+            "text": "6 | 51-59 | 60-68 | 50-59 | 59-67"
+          }
+        },
+        {
+          "clb": 7,
+          "speaking": {
+            "min": 68,
+            "max": 75
+          },
+          "listening": {
+            "min": 60,
+            "max": 70
+          },
+          "reading": {
+            "min": 60,
+            "max": 68
+          },
+          "writing": {
+            "min": 69,
+            "max": 78
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 2,
+            "row": 4,
+            "text": "7 | 60-68 | 69-78 | 60-70 | 68-75"
+          }
+        },
+        {
+          "clb": 8,
+          "speaking": {
+            "min": 76,
+            "max": 83
+          },
+          "listening": {
+            "min": 71,
+            "max": 81
+          },
+          "reading": {
+            "min": 69,
+            "max": 77
+          },
+          "writing": {
+            "min": 79,
+            "max": 87
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 2,
+            "row": 3,
+            "text": "8 | 69-77 | 79-87 | 71-81 | 76-83"
+          }
+        },
+        {
+          "clb": 9,
+          "speaking": {
+            "min": 84,
+            "max": 88
+          },
+          "listening": {
+            "min": 82,
+            "max": 88
+          },
+          "reading": {
+            "min": 78,
+            "max": 87
+          },
+          "writing": {
+            "min": 88,
+            "max": 89
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 2,
+            "row": 2,
+            "text": "9 | 78-87 | 88-89 | 82-88 | 84-88"
+          }
+        },
+        {
+          "clb": 10,
+          "speaking": {
+            "min": 89,
+            "max": 90
+          },
+          "listening": {
+            "min": 89,
+            "max": 90
+          },
+          "reading": {
+            "min": 88,
+            "max": 90
+          },
+          "writing": {
+            "min": 90,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 2,
+            "row": 1,
+            "text": "10 | 88-90 | 90 | 89-90 | 89-90"
+          }
+        }
+      ],
+      "cite": {
+        "source": "equivalences-aip-en",
+        "table": 2,
+        "row": 0,
+        "text": "CLB level | Reading | Writing | Listening | Speaking"
+      }
+    },
+    {
+      "test": "tef_canada",
+      "taken_from": "2023-12-11",
+      "taken_to": null,
+      "rows": [
+        {
+          "clb": 4,
+          "speaking": {
+            "min": 328,
+            "max": 386
+          },
+          "listening": {
+            "min": 306,
+            "max": 351
+          },
+          "reading": {
+            "min": 306,
+            "max": 351
+          },
+          "writing": {
+            "min": 268,
+            "max": 329
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 3,
+            "row": 7,
+            "text": "4 | 306-351 | 268-329 | 306-351 | 328-386"
+          }
+        },
+        {
+          "clb": 5,
+          "speaking": {
+            "min": 387,
+            "max": 421
+          },
+          "listening": {
+            "min": 352,
+            "max": 392
+          },
+          "reading": {
+            "min": 352,
+            "max": 392
+          },
+          "writing": {
+            "min": 330,
+            "max": 378
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 3,
+            "row": 6,
+            "text": "5 | 352-392 | 330-378 | 352-392 | 387-421"
+          }
+        },
+        {
+          "clb": 6,
+          "speaking": {
+            "min": 422,
+            "max": 455
+          },
+          "listening": {
+            "min": 393,
+            "max": 433
+          },
+          "reading": {
+            "min": 393,
+            "max": 433
+          },
+          "writing": {
+            "min": 379,
+            "max": 427
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 3,
+            "row": 5,
+            "text": "6 | 393-433 | 379-427 | 393-433 | 422-455"
+          }
+        },
+        {
+          "clb": 7,
+          "speaking": {
+            "min": 456,
+            "max": 493
+          },
+          "listening": {
+            "min": 434,
+            "max": 461
+          },
+          "reading": {
+            "min": 434,
+            "max": 461
+          },
+          "writing": {
+            "min": 428,
+            "max": 471
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 3,
+            "row": 4,
+            "text": "7 | 434-461 | 428-471 | 434-461 | 456-493"
+          }
+        },
+        {
+          "clb": 8,
+          "speaking": {
+            "min": 494,
+            "max": 517
+          },
+          "listening": {
+            "min": 462,
+            "max": 502
+          },
+          "reading": {
+            "min": 462,
+            "max": 502
+          },
+          "writing": {
+            "min": 472,
+            "max": 511
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 3,
+            "row": 3,
+            "text": "8 | 462-502 | 472-511 | 462-502 | 494-517"
+          }
+        },
+        {
+          "clb": 9,
+          "speaking": {
+            "min": 518,
+            "max": 555
+          },
+          "listening": {
+            "min": 503,
+            "max": 545
+          },
+          "reading": {
+            "min": 503,
+            "max": 545
+          },
+          "writing": {
+            "min": 512,
+            "max": 557
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 3,
+            "row": 2,
+            "text": "9 | 503-545 | 512-557 | 503-545 | 518-555"
+          }
+        },
+        {
+          "clb": 10,
+          "speaking": {
+            "min": 556,
+            "max": 699
+          },
+          "listening": {
+            "min": 546,
+            "max": 699
+          },
+          "reading": {
+            "min": 546,
+            "max": 699
+          },
+          "writing": {
+            "min": 558,
+            "max": 699
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 3,
+            "row": 1,
+            "text": "10 | 546-699 | 558-699 | 546-699 | 556-699"
+          }
+        }
+      ],
+      "cite": {
+        "source": "equivalences-aip-en",
+        "table": 3,
+        "row": 0,
+        "text": "NCLC level | Reading | Writing | Listening | Speaking"
+      }
+    },
+    {
+      "test": "tef_canada",
+      "taken_from": "2019-10-01",
+      "taken_to": "2023-12-10",
+      "rows": [
+        {
+          "clb": 4,
+          "speaking": {
+            "min": 300,
+            "max": 349
+          },
+          "listening": {
+            "min": 300,
+            "max": 349
+          },
+          "reading": {
+            "min": 300,
+            "max": 349
+          },
+          "writing": {
+            "min": 300,
+            "max": 349
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 4,
+            "row": 7,
+            "text": "4 | 300-349 | 300-349 | 300-349 | 300-349"
+          }
+        },
+        {
+          "clb": 5,
+          "speaking": {
+            "min": 350,
+            "max": 399
+          },
+          "listening": {
+            "min": 350,
+            "max": 399
+          },
+          "reading": {
+            "min": 350,
+            "max": 399
+          },
+          "writing": {
+            "min": 350,
+            "max": 399
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 4,
+            "row": 6,
+            "text": "5 | 350-399 | 350-399 | 350-399 | 350-399"
+          }
+        },
+        {
+          "clb": 6,
+          "speaking": {
+            "min": 400,
+            "max": 449
+          },
+          "listening": {
+            "min": 400,
+            "max": 449
+          },
+          "reading": {
+            "min": 400,
+            "max": 449
+          },
+          "writing": {
+            "min": 400,
+            "max": 449
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 4,
+            "row": 5,
+            "text": "6 | 400-449 | 400-449 | 400-449 | 400-449"
+          }
+        },
+        {
+          "clb": 7,
+          "speaking": {
+            "min": 450,
+            "max": 499
+          },
+          "listening": {
+            "min": 450,
+            "max": 499
+          },
+          "reading": {
+            "min": 450,
+            "max": 499
+          },
+          "writing": {
+            "min": 450,
+            "max": 499
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 4,
+            "row": 4,
+            "text": "7 | 450-499 | 450-499 | 450-499 | 450-499"
+          }
+        },
+        {
+          "clb": 8,
+          "speaking": {
+            "min": 500,
+            "max": 532
+          },
+          "listening": {
+            "min": 500,
+            "max": 532
+          },
+          "reading": {
+            "min": 500,
+            "max": 532
+          },
+          "writing": {
+            "min": 500,
+            "max": 532
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 4,
+            "row": 3,
+            "text": "8 | 500-532 | 500-532 | 500-532 | 500-532"
+          }
+        },
+        {
+          "clb": 9,
+          "speaking": {
+            "min": 533,
+            "max": 565
+          },
+          "listening": {
+            "min": 533,
+            "max": 565
+          },
+          "reading": {
+            "min": 533,
+            "max": 565
+          },
+          "writing": {
+            "min": 533,
+            "max": 565
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 4,
+            "row": 2,
+            "text": "9 | 533-565 | 533-565 | 533-565 | 533-565"
+          }
+        },
+        {
+          "clb": 10,
+          "speaking": {
+            "min": 566,
+            "max": 699
+          },
+          "listening": {
+            "min": 566,
+            "max": 699
+          },
+          "reading": {
+            "min": 566,
+            "max": 699
+          },
+          "writing": {
+            "min": 566,
+            "max": 699
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 4,
+            "row": 1,
+            "text": "10 | 566-699 | 566-699 | 566-699 | 566-699"
+          }
+        }
+      ],
+      "cite": {
+        "source": "equivalences-aip-en",
+        "table": 4,
+        "row": 0,
+        "text": "NCLC level | Reading | Writing | Listening | Speaking"
+      }
+    },
+    {
+      "test": "tef_canada",
+      "taken_from": null,
+      "taken_to": "2019-09-29",
+      "rows": [
+        {
+          "clb": 4,
+          "speaking": {
+            "min": 181,
+            "max": 225
+          },
+          "listening": {
+            "min": 145,
+            "max": 180
+          },
+          "reading": {
+            "min": 121,
+            "max": 150
+          },
+          "writing": {
+            "min": 181,
+            "max": 225
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 5,
+            "row": 7,
+            "text": "4 | 121-150 | 181-225 | 145-180 | 181-225"
+          }
+        },
+        {
+          "clb": 5,
+          "speaking": {
+            "min": 226,
+            "max": 270
+          },
+          "listening": {
+            "min": 181,
+            "max": 216
+          },
+          "reading": {
+            "min": 151,
+            "max": 180
+          },
+          "writing": {
+            "min": 226,
+            "max": 270
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 5,
+            "row": 6,
+            "text": "5 | 151-180 | 226-270 | 181-216 | 226-270"
+          }
+        },
+        {
+          "clb": 6,
+          "speaking": {
+            "min": 271,
+            "max": 309
+          },
+          "listening": {
+            "min": 217,
+            "max": 248
+          },
+          "reading": {
+            "min": 181,
+            "max": 206
+          },
+          "writing": {
+            "min": 271,
+            "max": 309
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 5,
+            "row": 5,
+            "text": "6 | 181-206 | 271-309 | 217-248 | 271-309"
+          }
+        },
+        {
+          "clb": 7,
+          "speaking": {
+            "min": 310,
+            "max": 348
+          },
+          "listening": {
+            "min": 249,
+            "max": 279
+          },
+          "reading": {
+            "min": 207,
+            "max": 232
+          },
+          "writing": {
+            "min": 310,
+            "max": 348
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 5,
+            "row": 4,
+            "text": "7 | 207-232 | 310-348 | 249-279 | 310-348"
+          }
+        },
+        {
+          "clb": 8,
+          "speaking": {
+            "min": 349,
+            "max": 370
+          },
+          "listening": {
+            "min": 280,
+            "max": 297
+          },
+          "reading": {
+            "min": 233,
+            "max": 247
+          },
+          "writing": {
+            "min": 349,
+            "max": 370
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 5,
+            "row": 3,
+            "text": "8 | 233-247 | 349-370 | 280-297 | 349-370"
+          }
+        },
+        {
+          "clb": 9,
+          "speaking": {
+            "min": 371,
+            "max": 392
+          },
+          "listening": {
+            "min": 298,
+            "max": 315
+          },
+          "reading": {
+            "min": 248,
+            "max": 262
+          },
+          "writing": {
+            "min": 371,
+            "max": 392
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 5,
+            "row": 2,
+            "text": "9 | 248-262 | 371-392 | 298-315 | 371-392"
+          }
+        },
+        {
+          "clb": 10,
+          "speaking": {
+            "min": 393,
+            "max": 450
+          },
+          "listening": {
+            "min": 316,
+            "max": 360
+          },
+          "reading": {
+            "min": 263,
+            "max": 300
+          },
+          "writing": {
+            "min": 393,
+            "max": 450
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 5,
+            "row": 1,
+            "text": "10 | 263-300 | 393-450 | 316-360 | 393-450"
+          }
+        }
+      ],
+      "cite": {
+        "source": "equivalences-aip-en",
+        "table": 5,
+        "row": 0,
+        "text": "NCLC level | Reading | Writing | Listening | Speaking"
+      }
+    },
+    {
+      "test": "tcf_canada",
+      "taken_from": null,
+      "taken_to": null,
+      "rows": [
+        {
+          "clb": 4,
+          "speaking": {
+            "min": 4,
+            "max": 5
+          },
+          "listening": {
+            "min": 331,
+            "max": 368
+          },
+          "reading": {
+            "min": 342,
+            "max": 374
+          },
+          "writing": {
+            "min": 4,
+            "max": 5
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 6,
+            "row": 7,
+            "text": "4 | 342-374 | 4-5 | 331-368 | 4-5"
+          }
+        },
+        {
+          "clb": 5,
+          "speaking": {
+            "min": 6,
+            "max": null
+          },
+          "listening": {
+            "min": 369,
+            "max": 397
+          },
+          "reading": {
+            "min": 375,
+            "max": 405
+          },
+          "writing": {
+            "min": 6,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 6,
+            "row": 6,
+            "text": "5 | 375-405 | 6 | 369-397 | 6"
+          }
+        },
+        {
+          "clb": 6,
+          "speaking": {
+            "min": 7,
+            "max": 9
+          },
+          "listening": {
+            "min": 398,
+            "max": 457
+          },
+          "reading": {
+            "min": 406,
+            "max": 452
+          },
+          "writing": {
+            "min": 7,
+            "max": 9
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 6,
+            "row": 5,
+            "text": "6 | 406-452 | 7-9 | 398-457 | 7-9"
+          }
+        },
+        {
+          "clb": 7,
+          "speaking": {
+            "min": 10,
+            "max": 11
+          },
+          "listening": {
+            "min": 458,
+            "max": 502
+          },
+          "reading": {
+            "min": 453,
+            "max": 498
+          },
+          "writing": {
+            "min": 10,
+            "max": 11
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 6,
+            "row": 4,
+            "text": "7 | 453-498 | 10-11 | 458-502 | 10-11"
+          }
+        },
+        {
+          "clb": 8,
+          "speaking": {
+            "min": 12,
+            "max": 13
+          },
+          "listening": {
+            "min": 503,
+            "max": 522
+          },
+          "reading": {
+            "min": 499,
+            "max": 523
+          },
+          "writing": {
+            "min": 12,
+            "max": 13
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 6,
+            "row": 3,
+            "text": "8 | 499-523 | 12-13 | 503-522 | 12-13"
+          }
+        },
+        {
+          "clb": 9,
+          "speaking": {
+            "min": 14,
+            "max": 15
+          },
+          "listening": {
+            "min": 523,
+            "max": 548
+          },
+          "reading": {
+            "min": 524,
+            "max": 548
+          },
+          "writing": {
+            "min": 14,
+            "max": 15
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 6,
+            "row": 2,
+            "text": "9 | 524-548 | 14-15 | 523-548 | 14-15"
+          }
+        },
+        {
+          "clb": 10,
+          "speaking": {
+            "min": 16,
+            "max": 20
+          },
+          "listening": {
+            "min": 549,
+            "max": 699
+          },
+          "reading": {
+            "min": 549,
+            "max": 699
+          },
+          "writing": {
+            "min": 16,
+            "max": 20
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 6,
+            "row": 1,
+            "text": "10 | 549-699 | 16-20 | 549-699 | 16-20"
+          }
+        }
+      ],
+      "cite": {
+        "source": "equivalences-aip-en",
+        "table": 6,
+        "row": 0,
+        "text": "NCLC level | Reading | Writing | Listening | Speaking"
+      }
+    }
+  ],
+  "programs": {
+    "fsw": {
+      "experience": {
+        "min_hours": {
+          "value": 1560,
+          "cite": {
+            "source": "fsw",
+            "table": null,
+            "row": null,
+            "text": "au moins une année de travail ou 1 560 heures au total"
+          }
+        },
+        "window_years": {
+          "value": 10,
+          "cite": {
+            "source": "fsw",
+            "table": null,
+            "row": null,
+            "text": "avoir été acquise au cours des 10 dernières années"
+          }
+        },
+        "max_hours_per_week": {
+          "value": 30,
+          "cite": {
+            "source": "fsw",
+            "table": null,
+            "row": null,
+            "text": "au-delà des 30 heures par semaine"
+          }
+        }
+      },
+      "min_clb": {
+        "value": 7,
+        "cite": {
+          "source": "examen-linguistique",
+          "table": 2,
+          "row": 1,
+          "text": "Anglais | CLB 7"
+        }
+      },
+      "first_language": [
+        {
+          "key": {
+            "min": 9,
+            "max": null
+          },
+          "points": 6,
+          "cite": {
+            "source": "fsw",
+            "table": 0,
+            "row": 1,
+            "text": "Niveau 9 des NCLC ou plus | 6 | 6 | 6 | 6"
+          }
+        },
+        {
+          "key": {
+            "min": 8,
+            "max": 8
+          },
+          "points": 5,
+          "cite": {
+            "source": "fsw",
+            "table": 0,
+            "row": 2,
+            "text": "Niveau 8 des NCLC | 5 | 5 | 5 | 5"
+          }
+        },
+        {
+          "key": {
+            "min": 7,
+            "max": 7
+          },
+          "points": 4,
+          "cite": {
+            "source": "fsw",
+            "table": 0,
+            "row": 3,
+            "text": "Niveau 7 des NCLC | 4 | 4 | 4 | 4"
+          }
+        }
+      ],
+      "second_language": {
+        "key": null,
+        "points": 4,
+        "cite": {
+          "source": "fsw",
+          "table": 1,
+          "row": 1,
+          "text": "Au moins le niveau 5 des NCLC pour les 4 compétences | 4"
+        }
+      },
+      "second_language_min": 5,
+      "education": [
+        {
+          "key": "secondary",
+          "points": 5,
+          "cite": {
+            "source": "evaluer-diplomes-etudes",
+            "table": 2,
+            "row": 146,
+            "text": "Certificat de fin d'études secondaires | École secondaire (diplôme d'études secondaires) | 5"
+          }
+        },
+        {
+          "key": "one_year_post_secondary",
+          "points": 15,
+          "cite": {
+            "source": "evaluer-diplomes-etudes",
+            "table": 2,
+            "row": 138,
+            "text": "Certificat de niveau collégial | Degré, diplôme ou certificat de un an obtenu dans le cadre d'un programme à une université, un collège, une école technique ou de métiers ou un autre institut | 15"
+          }
+        },
+        {
+          "key": "two_year_post_secondary",
+          "points": 19,
+          "cite": {
+            "source": "evaluer-diplomes-etudes",
+            "table": 2,
+            "row": 127,
+            "text": "Diplôme collégial | Degré, diplôme ou certificat de deux ans obtenu dans le cadre d'un programme à une université, un collège, une école technique ou de métiers ou un autre institut | 19"
+          }
+        },
+        {
+          "key": "bachelor_or_three_year",
+          "points": 21,
+          "cite": {
+            "source": "evaluer-diplomes-etudes",
+            "table": 2,
+            "row": 1,
+            "text": "Diplôme de baccalauréat avec qualifications acceptables pour l'admissibilité au programme de certification académique du CCCA | Baccalauréat ou autres programmes (trois ans ou plus) à une université, un collège, une école technique ou de métiers ou un autre institut | 21"
+          }
+        },
+        {
+          "key": "two_or_more_credentials",
+          "points": 22,
+          "cite": {
+            "source": "evaluer-diplomes-etudes",
+            "table": 2,
+            "row": 56,
+            "text": "Certificat postbaccalauréat plus un autre certificat, diplôme ou degré nécessitant trois années d'études ou plus | Au moins deux certificats, diplômes ou degrés | 22"
+          }
+        },
+        {
+          "key": "master_or_professional",
+          "points": 23,
+          "cite": {
+            "source": "evaluer-diplomes-etudes",
+            "table": 2,
+            "row": 2,
+            "text": "Diplôme de maîtrise avec qualifications acceptables pour l'admissibilité au programme de certification académique du CCCA | Diplôme universitaire au niveau de la maîtrise | 23"
+          }
+        },
+        {
+          "key": "doctorate",
+          "points": 25,
+          "cite": {
+            "source": "evaluer-diplomes-etudes",
+            "table": 2,
+            "row": 3,
+            "text": "Doctorat | Diplôme universitaire au niveau du doctorat (Ph. D.) | 25"
+          }
+        }
+      ],
+      "work_experience": [
+        {
+          "key": {
+            "min": 1,
+            "max": 1
+          },
+          "points": 9,
+          "cite": {
+            "source": "fsw",
+            "table": 2,
+            "row": 1,
+            "text": "1 an | 9"
+          }
+        },
+        {
+          "key": {
+            "min": 2,
+            "max": 3
+          },
+          "points": 11,
+          "cite": {
+            "source": "fsw",
+            "table": 2,
+            "row": 2,
+            "text": "2 ou 3 ans | 11"
+          }
+        },
+        {
+          "key": {
+            "min": 4,
+            "max": 5
+          },
+          "points": 13,
+          "cite": {
+            "source": "fsw",
+            "table": 2,
+            "row": 3,
+            "text": "4 ou 5 ans | 13"
+          }
+        },
+        {
+          "key": {
+            "min": 6,
+            "max": null
+          },
+          "points": 15,
+          "cite": {
+            "source": "fsw",
+            "table": 2,
+            "row": 4,
+            "text": "6 ans ou plus | 15"
+          }
+        }
+      ],
+      "age": [
+        {
+          "key": {
+            "min": 0,
+            "max": 17
+          },
+          "points": 0,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 1,
+            "text": "Moins de 18 ans | 0"
+          }
+        },
+        {
+          "key": {
+            "min": 18,
+            "max": 35
+          },
+          "points": 12,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 2,
+            "text": "18-35 ans | 12"
+          }
+        },
+        {
+          "key": {
+            "min": 36,
+            "max": 36
+          },
+          "points": 11,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 3,
+            "text": "36 ans | 11"
+          }
+        },
+        {
+          "key": {
+            "min": 37,
+            "max": 37
+          },
+          "points": 10,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 4,
+            "text": "37 ans | 10"
+          }
+        },
+        {
+          "key": {
+            "min": 38,
+            "max": 38
+          },
+          "points": 9,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 5,
+            "text": "38 ans | 9"
+          }
+        },
+        {
+          "key": {
+            "min": 39,
+            "max": 39
+          },
+          "points": 8,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 6,
+            "text": "39 ans | 8"
+          }
+        },
+        {
+          "key": {
+            "min": 40,
+            "max": 40
+          },
+          "points": 7,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 7,
+            "text": "40 ans | 7"
+          }
+        },
+        {
+          "key": {
+            "min": 41,
+            "max": 41
+          },
+          "points": 6,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 8,
+            "text": "41 ans | 6"
+          }
+        },
+        {
+          "key": {
+            "min": 42,
+            "max": 42
+          },
+          "points": 5,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 9,
+            "text": "42 ans | 5"
+          }
+        },
+        {
+          "key": {
+            "min": 43,
+            "max": 43
+          },
+          "points": 4,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 10,
+            "text": "43 ans | 4"
+          }
+        },
+        {
+          "key": {
+            "min": 44,
+            "max": 44
+          },
+          "points": 3,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 11,
+            "text": "44 ans | 3"
+          }
+        },
+        {
+          "key": {
+            "min": 45,
+            "max": 45
+          },
+          "points": 2,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 12,
+            "text": "45 ans | 2"
+          }
+        },
+        {
+          "key": {
+            "min": 46,
+            "max": 46
+          },
+          "points": 1,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 13,
+            "text": "46 ans | 1"
+          }
+        },
+        {
+          "key": {
+            "min": 47,
+            "max": null
+          },
+          "points": 0,
+          "cite": {
+            "source": "fsw",
+            "table": 3,
+            "row": 14,
+            "text": "47 ans et plus | 0"
+          }
+        }
+      ],
+      "arranged_employment": {
+        "value": 10,
+        "cite": {
+          "source": "fsw",
+          "table": null,
+          "row": null,
+          "text": "Emploi réservé au Canada (maximum de 10 points)"
+        }
+      },
+      "adaptability": {
+        "spouse_language": {
+          "key": null,
+          "points": 5,
+          "cite": {
+            "source": "fsw",
+            "table": 4,
+            "row": 1,
+            "text": "Niveau de compétence linguistique de votre époux ou conjoint de fait Votre époux ou conjoint de fait a un niveau de compétence linguistique en français ou en anglais de 4 ou plus des NCLC pour les 4 compétences linguistiques (expression orale, compréhension de l'oral, lecture et écriture). Pour obtenir ces points, vous devez soumettre les résultats de test d'un organisme approuvé obtenus par votre époux ou conjoint de fait lorsque vous présentez votre demande. Les tests de langue sont valides pour 2 ans à compter de la date du résultat du test. Ils doivent être valides le jour où vous présentez votre demande de résidence permanente. | 5"
+          }
+        },
+        "spouse_language_min": 4,
+        "own_canadian_study": {
+          "key": null,
+          "points": 5,
+          "cite": {
+            "source": "fsw",
+            "table": 4,
+            "row": 2,
+            "text": "Vos études antérieures au Canada Vous avez terminé au moins 2 années d'études à temps plein (dans un programme d'au moins 2 ans) dans un établissement d'enseignement secondaire ou postsecondaire au Canada. Par « études à temps plein », on entend au moins 15 heures de cours par semaine. Vous devez avoir maintenu un rendement scolaire jugé satisfaisant par l'établissement durant cette période. | 5"
+          }
+        },
+        "spouse_canadian_study": {
+          "key": null,
+          "points": 5,
+          "cite": {
+            "source": "fsw",
+            "table": 4,
+            "row": 3,
+            "text": "Les études antérieures au Canada de votre époux ou conjoint de fait Votre époux ou conjoint de fait a terminé au moins 2 années d'études à temps plein (dans un programme d'au moins 2 ans) dans un établissement d'enseignement secondaire ou postsecondaire au Canada. Par « études à temps plein », on entend au moins 15 heures de cours par semaine. Votre époux ou conjoint de fait doit avoir maintenu un rendement scolaire jugé satisfaisant par l'établissement durant cette période. | 5"
+          }
+        },
+        "own_canadian_work": {
+          "key": null,
+          "points": 10,
+          "cite": {
+            "source": "fsw",
+            "table": 4,
+            "row": 4,
+            "text": "Votre travail antérieur au Canada Vous avez travaillé pendant au moins un an à temps plein au Canada : dans un emploi inscrit dans la catégorie FEER 0, 1, 2 ou 3 de la CNP au moyen d'un permis de travail valide ou pendant que vous étiez autorisé à travailler au Canada | 10"
+          }
+        },
+        "spouse_canadian_work": {
+          "key": null,
+          "points": 5,
+          "cite": {
+            "source": "fsw",
+            "table": 4,
+            "row": 5,
+            "text": "Le travail antérieur de votre époux ou conjoint de fait au Canada Votre époux ou conjoint de fait a travaillé à temps plein au Canada pendant au moins un an au moyen d'un permis de travail valide ou pendant qu'il était autorisé à travailler au Canada. | 5"
+          }
+        },
+        "arranged_employment": {
+          "key": null,
+          "points": 5,
+          "cite": {
+            "source": "fsw",
+            "table": 4,
+            "row": 6,
+            "text": "Emploi réservé au Canada Vous obtenez des points si vous avez un emploi réservé . | 5"
+          }
+        },
+        "relative_in_canada": {
+          "key": null,
+          "points": 5,
+          "cite": {
+            "source": "fsw",
+            "table": 4,
+            "row": 7,
+            "text": "Membres de la famille au Canada Vous, ou votre époux ou conjoint de fait, avez un membre de la famille qui : vit au Canada est âgé de 18 ans ou plus est citoyen canadien ou résident permanent du Canada Ce membre de la famille doit être : un parent un grand-parent un enfant un petit-enfant votre frère ou sœur ou celui ou celle de votre conjoint (enfant de votre parent ou de celui de votre conjoint) votre oncle ou tante ou celui ou celle de votre conjoint (par le sang ou par alliance) votre neveu ou nièce ou celui ou celle de votre conjoint (petit-enfant de votre parent ou de celui de votre conjoint) | 5"
+          }
+        },
+        "max": {
+          "value": 10,
+          "cite": {
+            "source": "fsw",
+            "table": 4,
+            "row": 0,
+            "text": "Faculté d'adaptation | Maximum de 10 points"
+          }
+        }
+      },
+      "pass_mark": {
+        "value": 67,
+        "cite": {
+          "source": "fsw",
+          "table": null,
+          "row": null,
+          "text": "Si vous obtenez 67 points ou plus"
+        }
+      }
+    },
+    "cec": {
+      "experience": {
+        "min_hours": {
+          "value": 1560,
+          "cite": {
+            "source": "cec",
+            "table": null,
+            "row": null,
+            "text": "au moins une année de travail ou 1 560 heures au total"
+          }
+        },
+        "window_years": {
+          "value": 3,
+          "cite": {
+            "source": "cec",
+            "table": null,
+            "row": null,
+            "text": "heures au total (30 heures par semaine) au cours des 3 années précédant votre demande"
+          }
+        },
+        "max_hours_per_week": {
+          "value": 30,
+          "cite": {
+            "source": "cec",
+            "table": null,
+            "row": null,
+            "text": "heures au total (30 heures par semaine) au cours des"
+          }
+        }
+      },
+      "min_clb_teer_0_1": {
+        "value": 7,
+        "cite": {
+          "source": "examen-linguistique",
+          "table": 1,
+          "row": 1,
+          "text": "FEER 0 or 1 | CLB 7 | NCLC 7"
+        }
+      },
+      "min_clb_teer_2_3": {
+        "value": 5,
+        "cite": {
+          "source": "examen-linguistique",
+          "table": 1,
+          "row": 2,
+          "text": "FEER 2 or 3 | CLB 5 | NCLC 5"
+        }
+      }
+    },
+    "fst": {
+      "experience": {
+        "min_hours": {
+          "value": 3120,
+          "cite": {
+            "source": "fst",
+            "table": null,
+            "row": null,
+            "text": "au moins 2 ans de travail à temps plein (ou 3 120 heures au total)"
+          }
+        },
+        "window_years": {
+          "value": 5,
+          "cite": {
+            "source": "fst",
+            "table": null,
+            "row": null,
+            "text": "dans un métier spécialisé au cours des 5 années précédant votre demande"
+          }
+        },
+        "max_hours_per_week": {
+          "value": 30,
+          "cite": {
+            "source": "fst",
+            "table": null,
+            "row": null,
+            "text": "au-delà des 30 heures par semaine"
+          }
+        }
+      },
+      "trades": [
+        {
+          "prefix": "72",
+          "except": [
+            "726"
+          ]
+        },
+        {
+          "prefix": "73",
+          "except": []
+        },
+        {
+          "prefix": "82",
+          "except": []
+        },
+        {
+          "prefix": "83",
+          "except": []
+        },
+        {
+          "prefix": "92",
+          "except": []
+        },
+        {
+          "prefix": "93",
+          "except": [
+            "932"
+          ]
+        },
+        {
+          "prefix": "6320",
+          "except": []
+        },
+        {
+          "prefix": "62200",
+          "except": []
+        }
+      ],
+      "trades_cite": {
+        "source": "fst",
+        "table": null,
+        "row": null,
+        "text": "Groupes majeurs 72 (à l'exception du sous-groupe majeur 726), 73 , 82 , 83 , 92 , ou 93 (à l'exception du sous-groupe majeur 932) Sous-groupe 6320 Groupe de base 62200"
+      },
+      "min_clb_speaking_listening": {
+        "value": 5,
+        "cite": {
+          "source": "examen-linguistique",
+          "table": 3,
+          "row": 1,
+          "text": "Anglais | Expression orale et compréhension de l'oral | CLB 5"
+        }
+      },
+      "min_clb_reading_writing": {
+        "value": 4,
+        "cite": {
+          "source": "examen-linguistique",
+          "table": 3,
+          "row": 2,
+          "text": "Anglais | Compréhension de l'écrit et expression écrite | CLB 4"
+        }
+      }
+    },
+    "funds": {
+      "rows": [
+        {
+          "family_size": 1,
+          "amount_cad": 15263,
+          "cite": {
+            "source": "preuve-fonds",
+            "table": 0,
+            "row": 1,
+            "text": "1 | 15 263 $"
+          }
+        },
+        {
+          "family_size": 2,
+          "amount_cad": 19001,
+          "cite": {
+            "source": "preuve-fonds",
+            "table": 0,
+            "row": 2,
+            "text": "2 | 19 001 $"
+          }
+        },
+        {
+          "family_size": 3,
+          "amount_cad": 23360,
+          "cite": {
+            "source": "preuve-fonds",
+            "table": 0,
+            "row": 3,
+            "text": "3 | 23 360 $"
+          }
+        },
+        {
+          "family_size": 4,
+          "amount_cad": 28362,
+          "cite": {
+            "source": "preuve-fonds",
+            "table": 0,
+            "row": 4,
+            "text": "4 | 28 362 $"
+          }
+        },
+        {
+          "family_size": 5,
+          "amount_cad": 32168,
+          "cite": {
+            "source": "preuve-fonds",
+            "table": 0,
+            "row": 5,
+            "text": "5 | 32 168 $"
+          }
+        },
+        {
+          "family_size": 6,
+          "amount_cad": 36280,
+          "cite": {
+            "source": "preuve-fonds",
+            "table": 0,
+            "row": 6,
+            "text": "6 | 36 280 $"
+          }
+        },
+        {
+          "family_size": 7,
+          "amount_cad": 40392,
+          "cite": {
+            "source": "preuve-fonds",
+            "table": 0,
+            "row": 7,
+            "text": "7 | 40 392 $"
+          }
+        }
+      ],
+      "per_extra_member_cad": 4112,
+      "extra_cite": {
+        "source": "preuve-fonds",
+        "table": 0,
+        "row": 8,
+        "text": "Si plus de 7 personnes, pour chaque membre de la famille supplémentaire, ajoutez | 4 112 $"
+      },
+      "updated": "7 julliet 2025"
+    }
+  }
+}

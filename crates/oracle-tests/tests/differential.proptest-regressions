@@ -1,0 +1,8 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc cbda4f649605e145fef7d7ce050a477d18eaaffcaaf220ee8206f3da05cf1eb7 # shrinks to a = Applicant { marital_status: Annulled, spouse: None, age: 17, education: LessThanSecondary, canadian_education: None, first_language: Some(LanguageTest { test: CelpipGeneral, test_date: IsoDate("2025-06-01"), speaking: 0, listening: 0, reading: 0, writing: 3 }), second_language: Some(LanguageTest { test: TefCanada, test_date: IsoDate("2025-06-01"), speaking: 3, listening: 12, reading: 78, writing: 137 }), canadian_work_years: 2, canadian_work_by_noc: [], foreign_work_years: 1, certificate_of_qualification: false, job_offer: None, provincial_nomination: false, sibling_in_canada: true, settlement_funds_cad: None, family_size: None }
+cc b7171e471f5dde437e65e09359d7d1877c985c07c29d8e0283cdc319ebf5da51 # shrinks to a = Applicant { marital_status: Annulled, spouse: None, age: 19, education: LessThanSecondary, canadian_education: None, first_language: Some(LanguageTest { test: TefCanada, test_date: IsoDate("2025-06-01"), speaking: 505, listening: 464, reading: 619, writing: 437 }), second_language: Some(LanguageTest { test: PteCore, test_date: IsoDate("2025-06-01"), speaking: 51, listening: 39, reading: 42, writing: 51 }), canadian_work_years: 4, canadian_work_by_noc: [], foreign_work_years: 4, certificate_of_qualification: true, job_offer: None, provincial_nomination: false, sibling_in_canada: true, settlement_funds_cad: None, family_size: None }

@@ -1,0 +1,34 @@
+[package]
+name = "vault"
+description = "Encrypted local storage: SQLCipher DB, Argon2id-wrapped key in the OS keychain, recovery phrase, migrations with encrypted backup"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+audit = { path = "../audit" }
+rusqlite = { version = "=0.40.2", features = ["bundled-sqlcipher-vendored-openssl"] }
+argon2 = "=0.6.0"
+aes-gcm = "=0.11.1"
+hkdf = "=0.13.0"
+sha2 = "=0.11.1"
+getrandom = "=0.4.3"
+zeroize = { version = "=1.9.1", features = ["derive"] }
+bip39 = "=3.0.0"
+keyring-core = "=1.0.1"
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+
+[target.'cfg(target_os = "macos")'.dependencies]
+apple-native-keyring-store = { version = "=1.0.2", features = ["keychain"] }
+
+[target.'cfg(windows)'.dependencies]
+windows-native-keyring-store = "=1.1.0"
+
+[dev-dependencies]
+tempfile = "=3.27.0"
+
+[lints]
+workspace = true

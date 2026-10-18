@@ -1,0 +1,24 @@
+[workspace]
+resolver = "3"
+members = ["crates/applicant", "crates/rules-engine", "crates/grid-parser", "crates/oracle-tests", "crates/vault", "crates/audit", "crates/net", "src-tauri"]
+# The app shell embeds ui/dist at compile time; build it explicitly
+# (`npm --prefix ui run build && cargo build -p lawyertool`).
+default-members = ["crates/applicant", "crates/rules-engine", "crates/grid-parser", "crates/oracle-tests", "crates/vault", "crates/audit", "crates/net"]
+
+[workspace.package]
+edition = "2024"
+version = "0.1.0"
+license = "UNLICENSED"
+publish = false
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"

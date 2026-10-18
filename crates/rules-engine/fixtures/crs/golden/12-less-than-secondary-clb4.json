@@ -1,0 +1,125 @@
+{
+  "applicant": {
+    "age": 29,
+    "canadian_education": null,
+    "canadian_work_by_noc": [],
+    "canadian_work_years": 0,
+    "certificate_of_qualification": false,
+    "education": "less_than_secondary",
+    "eligibility": {
+      "authorized_to_work_in_canada": null,
+      "canadian_study_two_years": null,
+      "credential": null,
+      "family_size": null,
+      "fsw_arranged_employment": null,
+      "intends_to_live_in_quebec": null,
+      "relative_in_canada": null,
+      "settlement_funds_cad": null,
+      "spouse_canadian_study_two_years": null,
+      "spouse_canadian_work_one_year": null,
+      "work_history": []
+    },
+    "first_language": {
+      "listening": 45,
+      "reading": 35,
+      "speaking": 40,
+      "test": "ielts_general",
+      "test_date": "2025-06-01",
+      "writing": 40
+    },
+    "foreign_work_years": 0,
+    "job_offer": null,
+    "marital_status": "never_married",
+    "provincial_nomination": false,
+    "second_language": null,
+    "sibling_in_canada": false,
+    "spouse": null
+  },
+  "calculator": {
+    "core": 134,
+    "spouse": 0,
+    "skill": 0,
+    "bonus": 0,
+    "total": 134
+  },
+  "description": "Less than secondary, IELTS CLB 4, no work",
+  "form": [
+    [
+      "q1",
+      "F"
+    ],
+    [
+      "q3",
+      "M"
+    ],
+    [
+      "q4",
+      "A"
+    ],
+    [
+      "q4b",
+      "A"
+    ],
+    [
+      "q5i",
+      "A"
+    ],
+    [
+      "q5i-a",
+      "B"
+    ],
+    [
+      "q5i-b-speaking",
+      "B"
+    ],
+    [
+      "q5i-b-listening",
+      "B"
+    ],
+    [
+      "q5i-b-reading",
+      "B"
+    ],
+    [
+      "q5i-b-writing",
+      "B"
+    ],
+    [
+      "q5ii",
+      "C"
+    ],
+    [
+      "q6i",
+      "A"
+    ],
+    [
+      "q6ii",
+      "A"
+    ],
+    [
+      "q7",
+      "A"
+    ],
+    [
+      "q8",
+      "A"
+    ],
+    [
+      "q9",
+      "A"
+    ],
+    [
+      "q10i",
+      "A"
+    ]
+  ],
+  "grid": "crs-2026-10-16",
+  "id": "12-less-than-secondary-clb4",
+  "recorded": {
+    "on": "2026-10-18",
+    "by": "live calculator, Chrome (claude-in-chrome)",
+    "url": "https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/verifier-note.html",
+    "calculator_js_sha256": "61392e6266be6d976735305982eeb72ce30296f086ebf1b5dc802a305639a65a"
+  },
+  "adjustments": []
+}
