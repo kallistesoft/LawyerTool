@@ -323,6 +323,21 @@ fn clients_crud_and_encrypted() {
         Err(Error::Invalid(_))
     ));
 
+    let long = vault::Identity {
+        full_name: "x".repeat(201),
+        email: None,
+        phone: None,
+        file_reference: None,
+    };
+    assert!(matches!(
+        v.client_save(None, &long, "{}", "x"),
+        Err(Error::Invalid(_))
+    ));
+    assert!(matches!(
+        v.client_save(None, &who, &" ".repeat(300 * 1024), "x"),
+        Err(Error::Invalid(_))
+    ));
+
     assert!(v.client_delete(id2).unwrap());
     assert!(!v.client_delete(id2).unwrap());
     v.lock();

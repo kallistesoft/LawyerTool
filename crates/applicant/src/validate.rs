@@ -31,6 +31,8 @@ pub enum ValidationError {
     SecondWithoutFirst,
     #[error("family size must be at least 1")]
     FamilySize,
+    #[error("too many {what} (at most {max})")]
+    TooMany { what: &'static str, max: usize },
     #[error("work period {index}: {reason}")]
     WorkPeriod { index: usize, reason: &'static str },
     #[error(
@@ -38,6 +40,10 @@ pub enum ValidationError {
     )]
     CanadianWorkMismatch { months: u16, years: u8 },
 }
+
+/// List limits: far above any real file, bounded for hostile imports.
+pub const MAX_WORK_PERIODS: usize = 100;
+pub const MAX_NOC_ROWS: usize = 50;
 
 /// Youngest age at which skilled work is plausibly counted.
 const MIN_WORK_AGE: u8 = 15;
@@ -104,6 +110,18 @@ impl Applicant {
             }
         }
 
+        for (what, n, max) in [
+            (
+                "work periods",
+                self.eligibility.work_history.len(),
+                MAX_WORK_PERIODS,
+            ),
+            ("NOC rows", self.canadian_work_by_noc.len(), MAX_NOC_ROWS),
+        ] {
+            if n > max {
+                errs.push(ValidationError::TooMany { what, max });
+            }
+        }
         for (i, w) in self.eligibility.work_history.iter().enumerate() {
             if w.end < w.start {
                 errs.push(ValidationError::WorkPeriod {

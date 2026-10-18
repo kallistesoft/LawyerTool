@@ -100,7 +100,11 @@ pub fn open(path: &Path, dek: &Secret) -> Result<Connection, Error> {
     // path allocates again, recursing until the stack overflows (CI,
     // 2026-10-18). Keys are wiped by Zeroize; swap is covered by the required
     // full-disk encryption.
-    conn.execute_batch("PRAGMA foreign_keys = ON; PRAGMA secure_delete = ON;")?;
+    // temp_store = MEMORY: SQLite's temporary sort/index files never reach the
+    // disk (brief rule 9: no sensitive data in temp files).
+    conn.execute_batch(
+        "PRAGMA foreign_keys = ON; PRAGMA secure_delete = ON; PRAGMA temp_store = MEMORY;",
+    )?;
     Ok(conn)
 }
 
@@ -263,5 +267,9 @@ mod memory_security {
             .query_row("PRAGMA cipher_memory_security", [], |r| r.get(0))
             .unwrap();
         assert_eq!(v, "0");
+        let t: i64 = conn
+            .query_row("PRAGMA temp_store", [], |r| r.get(0))
+            .unwrap();
+        assert_eq!(t, 2, "temp_store = MEMORY");
     }
 }

@@ -34,6 +34,18 @@ pub struct ClientSummary {
     pub updated_at: String,
 }
 
+/// Input limits (characters / bytes): generous for real data, small enough
+/// that a hostile or corrupted import cannot bloat the vault.
+pub const MAX_NAME: usize = 200;
+pub const MAX_EMAIL: usize = 254;
+pub const MAX_PHONE: usize = 40;
+pub const MAX_FILE_REFERENCE: usize = 64;
+pub const MAX_PROFILE_BYTES: usize = 256 * 1024;
+
+fn too_long(v: &Option<String>, max: usize) -> bool {
+    v.as_ref().is_some_and(|s| s.chars().count() > max)
+}
+
 impl Vault {
     /// Inserts (`id = None`) or updates a client. Returns its id.
     pub fn client_save(
@@ -45,6 +57,16 @@ impl Vault {
     ) -> Result<i64, Error> {
         if identity.full_name.trim().is_empty() {
             return Err(Error::Invalid("client name is required"));
+        }
+        if identity.full_name.chars().count() > MAX_NAME
+            || too_long(&identity.email, MAX_EMAIL)
+            || too_long(&identity.phone, MAX_PHONE)
+            || too_long(&identity.file_reference, MAX_FILE_REFERENCE)
+        {
+            return Err(Error::Invalid("identity field too long"));
+        }
+        if profile.len() > MAX_PROFILE_BYTES {
+            return Err(Error::Invalid("profile too large"));
         }
         let c = self.conn();
         match id {
