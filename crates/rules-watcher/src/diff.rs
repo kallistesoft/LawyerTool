@@ -2,11 +2,11 @@
 
 use std::collections::BTreeMap;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 /// One value that differs between the approved grid and the candidate.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Change {
     /// Readable path, rows identified by their key (e.g. `age[18]/without_spouse`).
     pub path: String,
@@ -129,7 +129,7 @@ pub fn grid_changes(approved: &Value, candidate: &Value) -> Vec<Change> {
     out
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum SentenceChange {
     Added(String),

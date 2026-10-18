@@ -119,6 +119,7 @@ export interface Assessment {
   grid_id: string | null
   crs: Outcome<CrsResult>
   eligibility: Outcome<ProgramResult[]>
+  draws: { number: string; date: string; name: string; invitations: number; min_crs: number }[]
 }
 
 // --- labels (French UI) ---

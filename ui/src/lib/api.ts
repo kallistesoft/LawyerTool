@@ -77,3 +77,29 @@ export const deidPreview = (id: number, on: string | null) =>
 /** Opens the native "Save as" dialog; refused until every review flag is checked. Returns the path or null (cancelled). */
 export const exportReport = (id: number, on: string | null, format: 'pdf' | 'docx', reviewed: string[]) =>
   invoke<string | null>('export_report', { request: { id, on, format, reviewed } })
+
+export interface DrawRow { number: string; date: string; name: string; invitations: number; min_crs: number; first_seen: string }
+export interface WatchRun { at: string; ok: boolean; summary: string }
+export interface GridChange { path: string; before: string | null; after: string | null; source_text: string | null }
+export type SentenceChange = { added: string } | { removed: string }
+export interface Pending {
+  base_grid: string
+  changes: GridChange[]
+  part_errors: string[]
+  prose: { source: string; changes: SentenceChange[] }[]
+  alerts: string[]
+}
+export interface WatchStatus {
+  last_run: WatchRun | null
+  last_ok: WatchRun | null
+  stale: boolean
+  running: boolean
+  pending: [string, Pending] | null
+  draws: DrawRow[]
+  grids: [string, string][]
+}
+export const watchStatus = () => invoke<WatchStatus>('watch_status')
+export const watchCheckNow = () => invoke<unknown>('watch_check_now')
+export const watchApprove = (note: string | null) => invoke<string[]>('watch_approve', { note })
+export const watchReject = () => invoke<void>('watch_reject')
+export const onWatchUpdated = (f: () => void): Promise<UnlistenFn> => listen('watch-updated', f)

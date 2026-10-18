@@ -22,6 +22,10 @@
     "allow-assess",
     "allow-deid-preview",
     "allow-export-report",
+    "allow-watch-status",
+    "allow-watch-check-now",
+    "allow-watch-approve",
+    "allow-watch-reject",
     "core:event:allow-listen",
     "core:event:allow-unlisten"
   ]

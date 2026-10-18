@@ -211,6 +211,10 @@ IRCC changes the CRS grid on 2026-11-03, so M0 has to support two grid versions 
 - Review screen with source answers and cited rules → lawyer edits and approves → PDF/Word export.
 
 ## M2b: Daily watcher
+**Status 2026-10-18:** built without the Claude parts.
+- `rules-watcher` crate, vault v4 storage, daily run while unlocked plus "check now", the review screen with approve/reject, and draws in assessments;
+- prose pages get a sentence diff only, until the Claude integration.
+
 **Sources** (checked 2026-10-18):
 | Source | Role | Extraction |
 |---|---|---|
@@ -253,6 +257,11 @@ IRCC changes the CRS grid on 2026-11-03, so M0 has to support two grid versions 
 
 ## Development phase (decided 2026-10-18)
 Work happens in **dev-only mode**: debug builds with the automatic test vault, plus the installed "LawyerTool Dev" app that is rebuilt after each change (README).
+
+**Deferred until later (decided 2026-10-18): all Claude integration.**
+- the drafted note, the normalization of imported answers, and the watcher's prose extraction;
+- this also defers API key ownership, commercial terms and ZDR;
+- everything else works without a key. The de-identified payload and its preview are ready, see M2.
 
 **Very last step, before any real release:**
 - switch on the updater: signing key, GitHub secrets, update host, `plugins.updater` config (docs/releasing.md);

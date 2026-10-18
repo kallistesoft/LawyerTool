@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-watch-approve"
+description = "Enables the watch_approve command without any pre-configured scope."
+commands.allow = ["watch_approve"]
+
+[[permission]]
+identifier = "deny-watch-approve"
+description = "Denies the watch_approve command without any pre-configured scope."
+commands.deny = ["watch_approve"]

@@ -14,6 +14,7 @@ mod clients;
 mod crypto;
 mod db;
 mod keystore;
+mod watch;
 
 use std::path::{Path, PathBuf};
 
@@ -26,6 +27,7 @@ pub use crypto::KdfParams;
 use crypto::{PassphraseSlot, Secret, Wrapped};
 pub use db::schema_version;
 pub use keystore::{KeyStore, MemoryKeyStore, OsKeyStore};
+pub use watch::{DrawRow, SnapshotRow, WatchRun, WatchState};
 
 /// Minimum passphrase length (characters).
 pub const MIN_PASSPHRASE_CHARS: usize = 12;
