@@ -31,6 +31,8 @@ pub enum ValidationError {
     SecondWithoutFirst,
     #[error("family size must be at least 1")]
     FamilySize,
+    #[error("work period {index}: {reason}")]
+    WorkPeriod { index: usize, reason: &'static str },
     #[error(
         "Canadian work by occupation totals {months} months but canadian_work_years is {years}"
     )]
@@ -102,7 +104,22 @@ impl Applicant {
             }
         }
 
-        if self.family_size == Some(0) {
+        for (i, w) in self.eligibility.work_history.iter().enumerate() {
+            if w.end < w.start {
+                errs.push(ValidationError::WorkPeriod {
+                    index: i,
+                    reason: "ends before it starts",
+                });
+            }
+            if w.hours_per_week == 0 || w.hours_per_week > 120 {
+                errs.push(ValidationError::WorkPeriod {
+                    index: i,
+                    reason: "hours per week out of range",
+                });
+            }
+        }
+
+        if self.eligibility.family_size == Some(0) {
             errs.push(ValidationError::FamilySize);
         }
 

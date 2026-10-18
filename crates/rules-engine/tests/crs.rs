@@ -48,8 +48,7 @@ fn base() -> Applicant {
         job_offer: None,
         provincial_nomination: false,
         sibling_in_canada: false,
-        settlement_funds_cad: None,
-        family_size: None,
+        eligibility: EligibilityFacts::default(),
     }
 }
 

@@ -176,8 +176,7 @@ fn applicant() -> impl Strategy<Value = Applicant> {
                     }),
                     provincial_nomination: pnp,
                     sibling_in_canada: sib,
-                    settlement_funds_cad: None,
-                    family_size: None,
+                    eligibility: EligibilityFacts::default(),
                 }
             },
         )
@@ -270,8 +269,7 @@ fn harness_reproduces_known_profile() {
         job_offer: None,
         provincial_nomination: false,
         sibling_in_canada: false,
-        settlement_funds_cad: None,
-        family_size: None,
+        eligibility: EligibilityFacts::default(),
     };
     assert_eq!(
         oracle(&a),

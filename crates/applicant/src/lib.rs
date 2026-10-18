@@ -191,11 +191,81 @@ pub struct Applicant {
     /// Sibling 18+ in Canada who is a citizen or PR (q10i).
     pub sibling_in_canada: bool,
 
-    // Eligibility-only facts (not asked by the CRS calculator).
-    /// Settlement funds available, whole CAD. `None` = unknown.
+    /// Facts used only for program eligibility (not asked by the CRS
+    /// calculator). Every unknown (`None`) makes the matching requirement
+    /// "needs input" instead of a guess.
+    #[serde(default)]
+    pub eligibility: EligibilityFacts,
+}
+
+/// How the main credential is documented (FSW minimum education).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum Credential {
+    /// Canadian secondary or post-secondary credential.
+    Canadian,
+    /// Foreign credential with an educational credential assessment (ECA/EDE).
+    ForeignWithEca,
+    /// Foreign credential, no assessment yet.
+    ForeignWithoutEca,
+}
+
+/// One job, for minimum work-experience requirements.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct WorkPeriod {
+    pub noc: Noc,
+    pub in_canada: bool,
+    /// First and last day worked, inclusive.
+    pub start: IsoDate,
+    pub end: IsoDate,
+    pub hours_per_week: u8,
+    /// Paid by wages or commission (volunteer work and unpaid internships don't count).
+    pub paid: bool,
+    pub self_employed: bool,
+    /// Enrolled full time in studies while working.
+    pub full_time_student: bool,
+    /// Canadian work: legally authorized under temporary resident status.
+    pub authorized: bool,
+    /// FST: qualified to practise the trade where the work was done.
+    #[serde(default)]
+    pub qualified_in_trade: Option<bool>,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EligibilityFacts {
+    #[serde(default)]
+    pub work_history: Vec<WorkPeriod>,
+    #[serde(default)]
+    pub credential: Option<Credential>,
+    /// Two years of full-time study in Canada, in a program of 2+ years.
+    #[serde(default)]
+    pub canadian_study_two_years: Option<bool>,
+    #[serde(default)]
+    pub spouse_canadian_study_two_years: Option<bool>,
+    /// Spouse worked full time in Canada for at least a year, authorized.
+    #[serde(default)]
+    pub spouse_canadian_work_one_year: Option<bool>,
+    /// Parent, grandparent, child, grandchild, sibling, aunt/uncle or
+    /// niece/nephew (of the applicant or spouse), 18+, citizen or PR,
+    /// living in Canada.
+    #[serde(default)]
+    pub relative_in_canada: Option<bool>,
+    /// Currently authorized to work in Canada (funds exemption with an offer).
+    #[serde(default)]
+    pub authorized_to_work_in_canada: Option<bool>,
+    /// FSW arranged-employment points: one of the four situations on the FSW
+    /// page applies. Determined by the lawyer.
+    #[serde(default)]
+    pub fsw_arranged_employment: Option<bool>,
+    #[serde(default)]
+    pub intends_to_live_in_quebec: Option<bool>,
+    /// Settlement funds available, whole CAD.
     #[serde(default)]
     pub settlement_funds_cad: Option<u32>,
-    /// Family members counted for the funds requirement, applicant included.
+    /// Family members for the funds requirement, applicant included (spouse
+    /// and dependent children count even if not coming).
     #[serde(default)]
     pub family_size: Option<u8>,
 }

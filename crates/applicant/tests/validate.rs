@@ -29,8 +29,7 @@ fn single() -> Applicant {
         job_offer: None,
         provincial_nomination: false,
         sibling_in_canada: false,
-        settlement_funds_cad: None,
-        family_size: None,
+        eligibility: EligibilityFacts::default(),
     }
 }
 
@@ -178,4 +177,26 @@ fn dates() {
     assert_eq!(d("1997-10-19").years_until(&d("2026-10-18")), 28);
     assert_eq!(d("1997-10-18").years_until(&d("2026-10-18")), 29);
     assert_eq!(d("2026-10-18").years_until(&d("2026-10-17")), 0);
+}
+
+#[test]
+fn day_numbers() {
+    let d = |s| IsoDate::parse(s).unwrap();
+    assert_eq!(d("1970-01-01").to_days(), 0);
+    assert_eq!(
+        d("2000-03-01").to_days() - d("2000-02-28").to_days(),
+        2,
+        "leap year"
+    );
+    for s in [
+        "1900-01-01",
+        "1999-12-31",
+        "2024-02-29",
+        "2026-10-18",
+        "2100-03-01",
+    ] {
+        assert_eq!(IsoDate::from_days(d(s).to_days()), Some(d(s)), "{s}");
+    }
+    assert_eq!(d("2026-10-18").minus_years(10), d("2016-10-18"));
+    assert_eq!(d("2028-02-29").minus_years(1), d("2027-02-28"));
 }
