@@ -135,6 +135,26 @@ fn json_roundtrip_rejects_unknown_fields() {
 }
 
 #[test]
+fn list_limits() {
+    let mut a = single();
+    a.canadian_work_by_noc = (0..51)
+        .map(|_| NocMonths {
+            noc: Noc::parse("21231").unwrap(),
+            months: 0,
+        })
+        .collect();
+    a.canadian_work_years = 0;
+    assert!(
+        a.validate()
+            .unwrap_err()
+            .contains(&ValidationError::TooMany {
+                what: "NOC rows",
+                max: 50
+            })
+    );
+}
+
+#[test]
 fn noc_codes() {
     let teer = |s| Noc::parse(s).unwrap().offer_category();
     assert_eq!(teer("00012"), JobOfferNoc::Teer0Major00);

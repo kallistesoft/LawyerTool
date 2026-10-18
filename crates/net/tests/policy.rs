@@ -60,6 +60,16 @@ fn redirects() {
 }
 
 #[test]
+fn content_types() {
+    use net::content_type_allowed as ok;
+    assert!(ok(Some("text/html; charset=UTF-8"), &["text/html"]));
+    assert!(ok(Some("TEXT/HTML"), &["text/html"]));
+    assert!(!ok(Some("application/octet-stream"), &["text/html"]));
+    assert!(!ok(None, &["application/json"]));
+    assert!(ok(None, &[]), "no restriction");
+}
+
+#[test]
 fn size_cap() {
     let mut c = Capped::new(10);
     c.push(b"12345").unwrap();

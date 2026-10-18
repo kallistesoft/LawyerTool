@@ -228,16 +228,34 @@ pub struct Fetched {
     pub result: Result<Vec<u8>, String>,
 }
 
+/// Media types each kind of source must come back as.
+pub fn accepted_types(s: &Source) -> Vec<&'static str> {
+    if s.url.ends_with(".js") {
+        vec![
+            "application/javascript",
+            "text/javascript",
+            "application/x-javascript",
+        ]
+    } else if s.url.ends_with(".json") {
+        vec!["application/json", "text/json"]
+    } else {
+        vec!["text/html"]
+    }
+}
+
+fn request(s: &Source, u: url::Url) -> net::Request {
+    let mut r = net::Request::get(u, audit::DataCategory::PublicRulesFetch);
+    r.accept = accepted_types(s);
+    r
+}
+
 /// Fetches every source through the audited, allowlisted client.
 pub async fn fetch_all(client: &net::Client) -> Vec<Fetched> {
     let mut out = Vec::new();
     for s in SOURCES {
         let result = match url::Url::parse(s.url) {
             Err(e) => Err(e.to_string()),
-            Ok(u) => match client
-                .send(net::Request::get(u, audit::DataCategory::PublicRulesFetch))
-                .await
-            {
+            Ok(u) => match client.send(request(s, u)).await {
                 Ok(r) if r.status == 200 => Ok(r.body),
                 Ok(r) => Err(format!("HTTP {}", r.status)),
                 Err(e) => Err(e.to_string()),
