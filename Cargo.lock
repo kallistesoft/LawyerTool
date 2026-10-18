@@ -2050,6 +2050,8 @@ dependencies = [
  "serde_json",
  "tauri",
  "tauri-build",
+ "vault",
+ "zeroize",
 ]
 
 [[package]]

@@ -17,6 +17,8 @@ tauri-build = { version = "=2.7.3", features = [] }
 tauri = { version = "=2.12.4", features = [] }
 serde.workspace = true
 serde_json.workspace = true
+vault = { path = "../crates/vault" }
+zeroize = "=1.9.1"
 
 [lints]
 workspace = true

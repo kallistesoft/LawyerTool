@@ -1,0 +1,239 @@
+//! Vault session: unlock/lock state, idle auto-lock, and the vault commands.
+
+use std::path::PathBuf;
+use std::sync::Mutex;
+use std::time::{Duration, Instant};
+
+use serde::Serialize;
+use tauri::{AppHandle, Emitter, Manager, State};
+use vault::{KdfParams, KeyStore, OsKeyStore, Paths, Vault};
+use zeroize::Zeroizing;
+
+/// Auto-lock after this much inactivity.
+pub const DEFAULT_IDLE: Duration = Duration::from_secs(5 * 60);
+/// Event sent to the window when the vault locks.
+pub const LOCKED_EVENT: &str = "vault-locked";
+
+/// Idle tracking, kept separate from Tauri so it can be unit-tested.
+#[derive(Debug)]
+pub struct Idle {
+    last: Instant,
+    timeout: Duration,
+}
+
+impl Idle {
+    pub fn new(timeout: Duration, now: Instant) -> Self {
+        Self { last: now, timeout }
+    }
+
+    pub fn touch(&mut self, now: Instant) {
+        self.last = now;
+    }
+
+    pub fn expired(&self, now: Instant) -> bool {
+        now.saturating_duration_since(self.last) >= self.timeout
+    }
+}
+
+pub struct Session {
+    paths: Paths,
+    vault: Mutex<Option<Vault>>,
+    idle: Mutex<Idle>,
+}
+
+impl Session {
+    pub fn new(db: PathBuf, timeout: Duration) -> Self {
+        Self {
+            paths: Paths::new(db),
+            vault: Mutex::new(None),
+            idle: Mutex::new(Idle::new(timeout, Instant::now())),
+        }
+    }
+
+    fn touch(&self) {
+        if let Ok(mut i) = self.idle.lock() {
+            i.touch(Instant::now());
+        }
+    }
+
+    /// Drops the open vault (closes the DB, wipes the key). Returns whether it was open.
+    pub fn lock(&self) -> bool {
+        self.vault
+            .lock()
+            .map(|mut v| v.take().is_some())
+            .unwrap_or(false)
+    }
+
+    fn is_unlocked(&self) -> bool {
+        self.vault.lock().map(|v| v.is_some()).unwrap_or(false)
+    }
+
+    fn set(&self, v: Vault) -> Result<(), CommandError> {
+        *self.vault.lock().map_err(|_| CommandError::internal())? = Some(v);
+        self.touch();
+        Ok(())
+    }
+}
+
+/// Error sent to the frontend: a stable code and a user-facing message.
+/// Never contains passphrases, keys or client data.
+#[derive(Debug, Serialize)]
+pub struct CommandError {
+    code: &'static str,
+    message: String,
+}
+
+impl CommandError {
+    fn internal() -> Self {
+        Self {
+            code: "internal",
+            message: "Erreur interne.".into(),
+        }
+    }
+}
+
+impl From<vault::Error> for CommandError {
+    fn from(e: vault::Error) -> Self {
+        use vault::Error::*;
+        let (code, message) = match &e {
+            WeakPassphrase => ("weak_passphrase", format!("La phrase de passe doit contenir au moins {} caractères.", vault::MIN_PASSPHRASE_CHARS)),
+            WrongPassphrase => ("wrong_passphrase", "Phrase de passe incorrecte.".into()),
+            WrongRecoveryPhrase => ("wrong_recovery_phrase", "Phrase de récupération incorrecte.".into()),
+            KeychainEntryMissing => ("keychain_missing", "Aucune clé pour ce coffre dans le trousseau de cet ordinateur : utilisez la phrase de récupération.".into()),
+            NotFound(_) => ("not_found", "Aucun coffre n'existe encore.".into()),
+            AlreadyExists(_) => ("already_exists", "Un coffre existe déjà.".into()),
+            NewerSchema { .. } => ("newer_schema", e.to_string()),
+            _ => ("vault_error", "Le coffre n'a pas pu être ouvert.".into()),
+        };
+        Self { code, message }
+    }
+}
+
+type Res<T> = Result<T, CommandError>;
+
+fn kdf() -> KdfParams {
+    KdfParams::DEFAULT
+}
+
+/// Runs slow work (Argon2id, SQLCipher) off the main thread.
+async fn blocking<T: Send + 'static>(f: impl FnOnce() -> Res<T> + Send + 'static) -> Res<T> {
+    tauri::async_runtime::spawn_blocking(f)
+        .await
+        .map_err(|_| CommandError::internal())?
+}
+
+#[derive(Serialize)]
+pub struct Status {
+    exists: bool,
+    unlocked: bool,
+    idle_minutes: u64,
+}
+
+#[tauri::command]
+pub fn vault_status(s: State<'_, Session>) -> Status {
+    let idle_minutes = s.idle.lock().map(|i| i.timeout.as_secs() / 60).unwrap_or(0);
+    Status {
+        exists: s.paths.exists(),
+        unlocked: s.is_unlocked(),
+        idle_minutes,
+    }
+}
+
+#[derive(Serialize)]
+pub struct Created {
+    recovery_phrase: String,
+}
+
+#[tauri::command]
+pub async fn vault_create(app: AppHandle, passphrase: String) -> Res<Created> {
+    let passphrase = Zeroizing::new(passphrase);
+    let paths = app.state::<Session>().paths.clone();
+    let (v, phrase) = blocking(move || {
+        Ok(Vault::create(
+            &paths,
+            &OsKeyStore as &dyn KeyStore,
+            &passphrase,
+            kdf(),
+        )?)
+    })
+    .await?;
+    app.state::<Session>().set(v)?;
+    // Shown once by the frontend, never stored.
+    Ok(Created {
+        recovery_phrase: phrase.as_str().to_owned(),
+    })
+}
+
+#[tauri::command]
+pub async fn vault_unlock(app: AppHandle, passphrase: String) -> Res<()> {
+    let passphrase = Zeroizing::new(passphrase);
+    let paths = app.state::<Session>().paths.clone();
+    let v = blocking(move || Ok(Vault::unlock(&paths, &OsKeyStore, &passphrase)?)).await?;
+    app.state::<Session>().set(v)
+}
+
+#[tauri::command]
+pub async fn vault_recover(app: AppHandle, phrase: String, new_passphrase: String) -> Res<()> {
+    let (phrase, new_passphrase) = (Zeroizing::new(phrase), Zeroizing::new(new_passphrase));
+    let paths = app.state::<Session>().paths.clone();
+    let v = blocking(move || {
+        Ok(Vault::recover(
+            &paths,
+            &OsKeyStore,
+            &phrase,
+            &new_passphrase,
+            kdf(),
+        )?)
+    })
+    .await?;
+    app.state::<Session>().set(v)
+}
+
+#[tauri::command]
+pub fn vault_lock(app: AppHandle, s: State<'_, Session>) {
+    if s.lock() {
+        let _ = app.emit(LOCKED_EVENT, ());
+    }
+}
+
+/// Called by the frontend on user input (throttled), to defer auto-lock.
+#[tauri::command]
+pub fn activity(s: State<'_, Session>) {
+    if s.is_unlocked() {
+        s.touch();
+    }
+}
+
+/// Locks the vault after the idle timeout and tells the window.
+pub fn spawn_idle_watch(app: AppHandle) {
+    std::thread::spawn(move || {
+        loop {
+            std::thread::sleep(Duration::from_secs(5));
+            let s = app.state::<Session>();
+            let expired = s
+                .idle
+                .lock()
+                .map(|i| i.expired(Instant::now()))
+                .unwrap_or(true);
+            if expired && s.lock() {
+                let _ = app.emit(LOCKED_EVENT, ());
+            }
+        }
+    });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn idle_expiry() {
+        let t0 = Instant::now();
+        let mut i = Idle::new(Duration::from_secs(300), t0);
+        assert!(!i.expired(t0 + Duration::from_secs(299)));
+        assert!(i.expired(t0 + Duration::from_secs(300)));
+        i.touch(t0 + Duration::from_secs(200));
+        assert!(!i.expired(t0 + Duration::from_secs(499)));
+        assert!(i.expired(t0 + Duration::from_secs(500)));
+    }
+}
