@@ -21,6 +21,7 @@
     "allow-client-delete",
     "allow-assess",
     "allow-deid-preview",
+    "allow-export-report",
     "core:event:allow-listen",
     "core:event:allow-unlisten"
   ]

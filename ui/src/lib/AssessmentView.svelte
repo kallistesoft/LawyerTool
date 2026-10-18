@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { assess, deidPreview, errorMessage, type Redaction } from './api'
+  import { assess, deidPreview, errorMessage, exportReport, type Redaction } from './api'
   import { PROGRAM, type Assessment, type Check, type Cite, type CrsResult, type Flag, type Section } from './model'
 
   let { id, onEdit, onBack }: { id: number; onEdit: (id: number) => void; onBack: () => void } = $props()
@@ -18,6 +18,18 @@
       preview = await deidPreview(id, on)
     } catch (e) {
       previewError = errorMessage(e)
+    }
+  }
+
+  let exported: string | null = $state(null)
+  let exportError: string | null = $state(null)
+  async function doExport(format: 'pdf' | 'docx') {
+    exportError = null
+    exported = null
+    try {
+      exported = await exportReport(id, on, format, Object.keys(reviewed).filter((k) => reviewed[k]))
+    } catch (e) {
+      exportError = errorMessage(e)
     }
   }
 
@@ -132,6 +144,16 @@
     {:else if result && 'Err' in result.eligibility}
       <p class="error">{result.eligibility.Err}</p>
     {/if}
+    <h3>Exporter l’évaluation</h3>
+    <p class="hint">Rapport brouillon pour l’avocat, avec les sources citées. Le fichier exporté n’est pas chiffré.</p>
+    <div class="row">
+      <button disabled={!allReviewed} onclick={() => doExport('pdf')}>Exporter en PDF</button>
+      <button disabled={!allReviewed} onclick={() => doExport('docx')}>Exporter en Word</button>
+    </div>
+    {#if !allReviewed}<p class="hint">Cochez d’abord chaque point de révision obligatoire.</p>{/if}
+    {#if exported}<p>Enregistré : {exported}</p>{/if}
+    {#if exportError}<p class="error">{exportError}</p>{/if}
+
     <h3>Envoi à Claude</h3>
     <p class="hint">
       Pour rédiger la note, seul ce contenu serait transmis : profil et résultats, sans nom, coordonnées ni numéros

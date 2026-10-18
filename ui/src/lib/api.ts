@@ -73,3 +73,7 @@ export interface Redaction { path: string; kind: string; placeholder: string }
 /** The exact (de-identified) JSON that would be sent to Claude. Sends nothing. */
 export const deidPreview = (id: number, on: string | null) =>
   invoke<{ payload: string; bytes: number; redactions: Redaction[] }>('deid_preview', { id, on })
+
+/** Opens the native "Save as" dialog; refused until every review flag is checked. Returns the path or null (cancelled). */
+export const exportReport = (id: number, on: string | null, format: 'pdf' | 'docx', reviewed: string[]) =>
+  invoke<string | null>('export_report', { request: { id, on, format, reviewed } })

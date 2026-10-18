@@ -16,6 +16,7 @@ fn main() {
             "client_delete",
             "assess",
             "deid_preview",
+            "export_report",
             "update_check",
             "update_install",
         ]),

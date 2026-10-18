@@ -3,6 +3,7 @@
 mod clients;
 #[cfg(debug_assertions)]
 mod dev;
+mod export;
 mod session;
 mod updates;
 
@@ -51,7 +52,7 @@ fn new_session(dir: &std::path::Path) -> Result<session::Session, Box<dyn std::e
 
 pub fn run() {
     let context = tauri::generate_context!();
-    let mut builder = tauri::Builder::default();
+    let mut builder = tauri::Builder::default().plugin(tauri_plugin_dialog::init());
     // Registered only once the public key and endpoint are configured
     // (see docs/releasing.md); the plugin refuses to start without them.
     if updates::configured(&context.config().plugins) {
@@ -86,6 +87,7 @@ pub fn run() {
             clients::client_delete,
             clients::assess,
             clients::deid_preview,
+            export::export_report,
             updates::update_check,
             updates::update_install,
         ])
