@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Rebuild and reinstall "LawyerTool Dev" after code changes (macOS dev machines).
+# Skip with: LAWYERTOOL_NO_DEV_INSTALL=1 git ...
+[ -n "${LAWYERTOOL_NO_DEV_INSTALL:-}" ] && exit 0
+[ "$(uname)" = "Darwin" ] || exit 0
+# post-checkout: only on branch switches (3rd arg = 1), not file checkouts.
+[ "$(basename "$0")" = "post-checkout" ] && [ "${3:-1}" != "1" ] && exit 0
+exec "$(git rev-parse --show-toplevel)/scripts/install-dev.sh" --background

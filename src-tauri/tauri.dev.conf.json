@@ -1,0 +1,10 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "LawyerTool Dev",
+  "identifier": "ca.lawyertool.desktop.dev",
+  "app": {
+    "windows": [
+      { "label": "main", "title": "LawyerTool Dev (données de test)", "width": 1200, "height": 800, "minWidth": 900, "minHeight": 600 }
+    ]
+  }
+}
