@@ -1,7 +1,7 @@
 //! Vault session: unlock/lock state, idle auto-lock, and the vault commands.
 
 use std::path::PathBuf;
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
 use serde::Serialize;
@@ -147,7 +147,7 @@ pub struct Status {
 }
 
 #[tauri::command]
-pub fn vault_status(s: State<'_, Session>) -> Status {
+pub fn vault_status(s: State<'_, Arc<Session>>) -> Status {
     let idle_minutes = s.idle.lock().map(|i| i.timeout.as_secs() / 60).unwrap_or(0);
     Status {
         exists: s.paths.exists(),
@@ -164,7 +164,7 @@ pub struct Created {
 #[tauri::command]
 pub async fn vault_create(app: AppHandle, passphrase: String) -> Res<Created> {
     let passphrase = Zeroizing::new(passphrase);
-    let paths = app.state::<Session>().paths.clone();
+    let paths = app.state::<Arc<Session>>().paths.clone();
     let (v, phrase) = blocking(move || {
         Ok(Vault::create(
             &paths,
@@ -174,7 +174,7 @@ pub async fn vault_create(app: AppHandle, passphrase: String) -> Res<Created> {
         )?)
     })
     .await?;
-    app.state::<Session>().set(v)?;
+    app.state::<Arc<Session>>().set(v)?;
     // Shown once by the frontend, never stored.
     Ok(Created {
         recovery_phrase: phrase.as_str().to_owned(),
@@ -184,15 +184,15 @@ pub async fn vault_create(app: AppHandle, passphrase: String) -> Res<Created> {
 #[tauri::command]
 pub async fn vault_unlock(app: AppHandle, passphrase: String) -> Res<()> {
     let passphrase = Zeroizing::new(passphrase);
-    let paths = app.state::<Session>().paths.clone();
+    let paths = app.state::<Arc<Session>>().paths.clone();
     let v = blocking(move || Ok(Vault::unlock(&paths, &OsKeyStore, &passphrase)?)).await?;
-    app.state::<Session>().set(v)
+    app.state::<Arc<Session>>().set(v)
 }
 
 #[tauri::command]
 pub async fn vault_recover(app: AppHandle, phrase: String, new_passphrase: String) -> Res<()> {
     let (phrase, new_passphrase) = (Zeroizing::new(phrase), Zeroizing::new(new_passphrase));
-    let paths = app.state::<Session>().paths.clone();
+    let paths = app.state::<Arc<Session>>().paths.clone();
     let v = blocking(move || {
         Ok(Vault::recover(
             &paths,
@@ -203,11 +203,11 @@ pub async fn vault_recover(app: AppHandle, phrase: String, new_passphrase: Strin
         )?)
     })
     .await?;
-    app.state::<Session>().set(v)
+    app.state::<Arc<Session>>().set(v)
 }
 
 #[tauri::command]
-pub fn vault_lock(app: AppHandle, s: State<'_, Session>) {
+pub fn vault_lock(app: AppHandle, s: State<'_, Arc<Session>>) {
     if s.lock() {
         let _ = app.emit(LOCKED_EVENT, ());
     }
@@ -215,7 +215,7 @@ pub fn vault_lock(app: AppHandle, s: State<'_, Session>) {
 
 /// Called by the frontend on user input (throttled), to defer auto-lock.
 #[tauri::command]
-pub fn activity(s: State<'_, Session>) {
+pub fn activity(s: State<'_, Arc<Session>>) {
     if s.is_unlocked() {
         s.touch();
     }
@@ -226,7 +226,7 @@ pub fn spawn_idle_watch(app: AppHandle) {
     std::thread::spawn(move || {
         loop {
             std::thread::sleep(Duration::from_secs(5));
-            let s = app.state::<Session>();
+            let s = app.state::<Arc<Session>>();
             let expired = s
                 .idle
                 .lock()

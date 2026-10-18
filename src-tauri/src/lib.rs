@@ -2,6 +2,8 @@
 
 mod session;
 
+use std::sync::Arc;
+
 use serde::Serialize;
 use tauri::Manager;
 
@@ -24,10 +26,17 @@ pub fn run() {
         .setup(|app| {
             let dir = app.path().app_data_dir()?;
             std::fs::create_dir_all(&dir)?;
-            app.manage(session::Session::new(
+            let session = Arc::new(session::Session::new(
                 dir.join("lawyertool.db"),
                 session::DEFAULT_IDLE,
             ));
+            // The only HTTP client; every call is audited into the vault.
+            let client = net::Client::new(
+                net::Allowlist::new(session::ALLOWED_HOSTS.iter().copied()),
+                session.clone(),
+            )?;
+            app.manage(session);
+            app.manage(client);
             session::spawn_idle_watch(app.handle().clone());
             Ok(())
         })
