@@ -80,6 +80,15 @@ impl Session {
             .unwrap_or(false)
     }
 
+    /// A setting from the vault's `meta` table (`None` if locked or unset).
+    pub fn setting(&self, key: &str) -> Option<String> {
+        let guard = self.vault.lock().ok()?;
+        let v = guard.as_ref()?;
+        v.conn()
+            .query_row("SELECT value FROM meta WHERE key = ?1", [key], |r| r.get(0))
+            .ok()
+    }
+
     fn is_unlocked(&self) -> bool {
         self.vault.lock().map(|v| v.is_some()).unwrap_or(false)
     }
@@ -240,20 +249,39 @@ pub fn activity(s: State<'_, Arc<Session>>) {
     }
 }
 
-/// Locks the vault after the idle timeout and tells the window.
+/// How often the idle watch wakes up.
+const TICK: Duration = Duration::from_secs(5);
+/// A wall-clock jump larger than this between two ticks means the computer
+/// slept (or its clock moved): lock, to be safe.
+const SLEEP_GAP: Duration = Duration::from_secs(30);
+
+/// `true` if the wall clock advanced much more than one tick: the process was
+/// suspended (system sleep). Works the same on macOS and Windows.
+pub fn slept(prev: std::time::SystemTime, now: std::time::SystemTime) -> bool {
+    match now.duration_since(prev) {
+        Ok(d) => d > SLEEP_GAP,
+        Err(_) => true, // clock went backwards: treat as suspicious
+    }
+}
+
+/// Locks the vault after the idle timeout or a system sleep, and tells the window.
 pub fn spawn_idle_watch(app: AppHandle) {
     std::thread::spawn(move || {
+        let mut last_wall = std::time::SystemTime::now();
         loop {
-            std::thread::sleep(Duration::from_secs(5));
+            std::thread::sleep(TICK);
+            let now_wall = std::time::SystemTime::now();
+            let woke_from_sleep = slept(last_wall, now_wall);
+            last_wall = now_wall;
             let s = app.state::<Arc<Session>>();
             if s.dev {
                 continue;
             }
-            let expired = s
-                .idle
-                .lock()
-                .map(|i| i.expired(Instant::now()))
-                .unwrap_or(true);
+            let expired = woke_from_sleep
+                || s.idle
+                    .lock()
+                    .map(|i| i.expired(Instant::now()))
+                    .unwrap_or(true);
             if expired && s.lock() {
                 let _ = app.emit(LOCKED_EVENT, ());
             }
@@ -264,6 +292,15 @@ pub fn spawn_idle_watch(app: AppHandle) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn sleep_detection() {
+        let t = std::time::SystemTime::UNIX_EPOCH + Duration::from_secs(1_000_000);
+        assert!(!slept(t, t + Duration::from_secs(5)));
+        assert!(!slept(t, t + Duration::from_secs(30)));
+        assert!(slept(t, t + Duration::from_secs(31)), "laptop lid closed");
+        assert!(slept(t, t - Duration::from_secs(1)), "clock moved back");
+    }
 
     #[test]
     fn idle_expiry() {
