@@ -36,6 +36,16 @@ pub enum Flag {
     ExpiredLanguageTest { which: &'static str },
     /// A value comes from a ruling on a divergence between official sources.
     KnownDivergence { id: String },
+    /// The lawyer must review this point before the note can be approved.
+    ManualReview { id: String, reason: &'static str },
+}
+
+impl Flag {
+    /// Whether the review screen must block approval until the lawyer
+    /// acknowledges this flag.
+    pub fn blocks_approval(&self) -> bool {
+        matches!(self, Flag::ManualReview { .. })
+    }
 }
 
 /// One awarded item, with the grid rows it came from.
@@ -366,6 +376,12 @@ pub fn score(grid: &Grid, a: &Applicant, assessed_on: &IsoDate) -> Result<CrsRes
             .is_some_and(|t| t.test == TestKind::PteCore);
         if strong && fol_test.test.language() == OfficialLanguage::French && pte_second {
             flags.push(Flag::KnownDivergence { id: "D-004".into() });
+            flags.push(Flag::ManualReview {
+                id: "D-004".into(),
+                reason: "French bonus: 50 points awarded per the criteria page (French NCLC 7+, \
+                         English PTE Core CLB 5+); the official calculator shows 25 for PTE Core. \
+                         Confirm before relying on this score.",
+            });
         }
     }
     let additional = additional.close(Some(x.max.value));

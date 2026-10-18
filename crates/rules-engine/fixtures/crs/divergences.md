@@ -73,7 +73,7 @@ the case is flagged for manual review.
 
 ## D-004: French bonus with PTE Core as the English second language
 
-- **Status:** PENDING ruling
+- **Status:** RULED 2026-10-18: 50 points, with mandatory lawyer review
 - **Found:** 2026-10-18, by the differential fuzz (shrunk profile seed in
   `crates/oracle-tests/tests/differential.proptest-regressions`), then confirmed in the source.
 - **Criteria page** (additional points): "NCLC 7 ou plus en français pour les
@@ -84,7 +84,11 @@ the case is flagged for manual review.
   is option `E` on that list, so it always falls through to 25.
 - **Impact:** French-first applicant, PTE Core English result at CLB 5+ on all
   skills: the calculator gives 25 instead of 50 (−25 points).
-- **Proposed ruling:** follow the criteria page (50). The calculator code
-  simply predates PTE Core being added to the list.
-- **Engine until ruled:** gives 50 and flags `D-004`. The oracle harness
-  corrects the calculator's result by +25 (capped at 600) for this pattern.
+- **Ruling** (project owner, 2026-10-18; re-confirm in M4): follow the
+  criteria page (50). The calculator code simply predates PTE Core being
+  added to the list.
+- **Engine:** gives 50 and raises two flags: `KnownDivergence(D-004)` and
+  `ManualReview(D-004)`. A `ManualReview` flag blocks approval of the note
+  until the lawyer has reviewed it (enforced by the review screen, M2).
+- **Oracle:** the harness corrects the calculator's result by +25 (capped at
+  600) for this pattern.
