@@ -65,6 +65,16 @@ In CI, a `cargo tree` check fails the build if:
 - `rules-engine` depends on I/O or network crates;
 - `rules-watcher` depends on `vault` or `deid`.
 
+### Rule change on 2026-11-03 (found 2026-10-18 in `modifications.html`)
+IRCC changes the CRS grid on 2026-11-03, so M0 has to support two grid versions from the start:
+- **`crs-2026-10-16`** (current) is what the calculator implements today. Job-offer points are 0, because the code for them is commented out in `scg-outil-udit.js`.
+- **`crs-2026-11-03`** (pending) adds a new **labour market integration** factor, worth up to 140 points with a spouse or 150 without. It is the *greater* of two options:
+  - **Canadian work:** points for how long the person worked (the current 70/80 table), plus high-wage occupation points for at least 12 months of qualifying experience: 70 for occupations whose median wage is at least 2× the national median, 40 at 1.5×, 20 at 1.3×.
+  - **Qualifying job offer in a high-wage occupation:** 100 at ≥2×, 70 at 1.5× to under 2×, 50 at 1.3× to under 1.5×.
+  - Skill transferability does not change. An LMIA is no longer required. High-wage occupations are listed by NOC code on `salaire-eleve.html`.
+- **Impact on the Applicant model:** Canadian work and the job offer now carry a NOC code and a number of months, and the engine looks up the high-wage tier from the grid. Job offers still matter for FSW/FST eligibility (any TEER 0–3 job, not only high-wage ones).
+- **Oracle:** golden profiles for `crs-2026-11-03` can be checked against the live calculator only once IRCC updates it, probably on 2026-11-03. Until then they are checked against the announcement tables, and marked `oracle: pending`.
+
 ### Steps (one reviewable commit each)
 1. **Applicant model** (`crates/applicant`):
    - Fields mirror the calculator's questions (form markup saved in `fixtures/sources/`): marital status and spouse status, age, education, language tests, work experience, certificate, job offer, nomination, sibling, Canadian education, and the spouse's factors.
