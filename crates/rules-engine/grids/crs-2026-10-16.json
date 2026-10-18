@@ -7,6 +7,12 @@
       "url": "https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/verifier-note/criteries-scg.html",
       "sha256": "c4a492adfa2cad679c2e797cc4391d7d2231198ad8b6e08c8483f37ad2080961",
       "fetched": "2026-10-18"
+    },
+    {
+      "id": "equivalences-aip-en",
+      "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/atlantic-immigration/language-testing.html",
+      "sha256": "cdbc513a16992dd2cd0b4c6ea0edde725b2195096ac28928d12b5d2246846fa4",
+      "fetched": "2026-10-18"
     }
   ],
   "crs": {
@@ -1325,5 +1331,1348 @@
         }
       }
     }
-  }
+  },
+  "language": [
+    {
+      "test": "celpip_general",
+      "taken_from": null,
+      "taken_to": null,
+      "rows": [
+        {
+          "clb": 4,
+          "speaking": {
+            "min": 4,
+            "max": null
+          },
+          "listening": {
+            "min": 4,
+            "max": null
+          },
+          "reading": {
+            "min": 4,
+            "max": null
+          },
+          "writing": {
+            "min": 4,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 0,
+            "row": 7,
+            "text": "4 | 4 | 4 | 4 | 4"
+          }
+        },
+        {
+          "clb": 5,
+          "speaking": {
+            "min": 5,
+            "max": null
+          },
+          "listening": {
+            "min": 5,
+            "max": null
+          },
+          "reading": {
+            "min": 5,
+            "max": null
+          },
+          "writing": {
+            "min": 5,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 0,
+            "row": 6,
+            "text": "5 | 5 | 5 | 5 | 5"
+          }
+        },
+        {
+          "clb": 6,
+          "speaking": {
+            "min": 6,
+            "max": null
+          },
+          "listening": {
+            "min": 6,
+            "max": null
+          },
+          "reading": {
+            "min": 6,
+            "max": null
+          },
+          "writing": {
+            "min": 6,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 0,
+            "row": 5,
+            "text": "6 | 6 | 6 | 6 | 6"
+          }
+        },
+        {
+          "clb": 7,
+          "speaking": {
+            "min": 7,
+            "max": null
+          },
+          "listening": {
+            "min": 7,
+            "max": null
+          },
+          "reading": {
+            "min": 7,
+            "max": null
+          },
+          "writing": {
+            "min": 7,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 0,
+            "row": 4,
+            "text": "7 | 7 | 7 | 7 | 7"
+          }
+        },
+        {
+          "clb": 8,
+          "speaking": {
+            "min": 8,
+            "max": null
+          },
+          "listening": {
+            "min": 8,
+            "max": null
+          },
+          "reading": {
+            "min": 8,
+            "max": null
+          },
+          "writing": {
+            "min": 8,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 0,
+            "row": 3,
+            "text": "8 | 8 | 8 | 8 | 8"
+          }
+        },
+        {
+          "clb": 9,
+          "speaking": {
+            "min": 9,
+            "max": null
+          },
+          "listening": {
+            "min": 9,
+            "max": null
+          },
+          "reading": {
+            "min": 9,
+            "max": null
+          },
+          "writing": {
+            "min": 9,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 0,
+            "row": 2,
+            "text": "9 | 9 | 9 | 9 | 9"
+          }
+        },
+        {
+          "clb": 10,
+          "speaking": {
+            "min": 10,
+            "max": null
+          },
+          "listening": {
+            "min": 10,
+            "max": null
+          },
+          "reading": {
+            "min": 10,
+            "max": null
+          },
+          "writing": {
+            "min": 10,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 0,
+            "row": 1,
+            "text": "10 | 10 | 10 | 10 | 10"
+          }
+        }
+      ],
+      "cite": {
+        "source": "equivalences-aip-en",
+        "table": 0,
+        "row": 0,
+        "text": "CLB level | Reading | Writing | Listening | Speaking"
+      }
+    },
+    {
+      "test": "ielts_general",
+      "taken_from": null,
+      "taken_to": null,
+      "rows": [
+        {
+          "clb": 4,
+          "speaking": {
+            "min": 40,
+            "max": null
+          },
+          "listening": {
+            "min": 45,
+            "max": null
+          },
+          "reading": {
+            "min": 35,
+            "max": null
+          },
+          "writing": {
+            "min": 40,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 1,
+            "row": 7,
+            "text": "4 | 3.5 | 4.0 | 4.5 | 4.0"
+          }
+        },
+        {
+          "clb": 5,
+          "speaking": {
+            "min": 50,
+            "max": null
+          },
+          "listening": {
+            "min": 50,
+            "max": null
+          },
+          "reading": {
+            "min": 40,
+            "max": null
+          },
+          "writing": {
+            "min": 50,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 1,
+            "row": 6,
+            "text": "5 | 4.0 | 5.0 | 5.0 | 5.0"
+          }
+        },
+        {
+          "clb": 6,
+          "speaking": {
+            "min": 55,
+            "max": null
+          },
+          "listening": {
+            "min": 55,
+            "max": null
+          },
+          "reading": {
+            "min": 50,
+            "max": null
+          },
+          "writing": {
+            "min": 55,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 1,
+            "row": 5,
+            "text": "6 | 5.0 | 5.5 | 5.5 | 5.5"
+          }
+        },
+        {
+          "clb": 7,
+          "speaking": {
+            "min": 60,
+            "max": null
+          },
+          "listening": {
+            "min": 60,
+            "max": null
+          },
+          "reading": {
+            "min": 60,
+            "max": null
+          },
+          "writing": {
+            "min": 60,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 1,
+            "row": 4,
+            "text": "7 | 6.0 | 6.0 | 6.0 | 6.0"
+          }
+        },
+        {
+          "clb": 8,
+          "speaking": {
+            "min": 65,
+            "max": null
+          },
+          "listening": {
+            "min": 75,
+            "max": null
+          },
+          "reading": {
+            "min": 65,
+            "max": null
+          },
+          "writing": {
+            "min": 65,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 1,
+            "row": 3,
+            "text": "8 | 6.5 | 6.5 | 7.5 | 6.5"
+          }
+        },
+        {
+          "clb": 9,
+          "speaking": {
+            "min": 70,
+            "max": null
+          },
+          "listening": {
+            "min": 80,
+            "max": null
+          },
+          "reading": {
+            "min": 70,
+            "max": null
+          },
+          "writing": {
+            "min": 70,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 1,
+            "row": 2,
+            "text": "9 | 7.0 | 7.0 | 8.0 | 7.0"
+          }
+        },
+        {
+          "clb": 10,
+          "speaking": {
+            "min": 75,
+            "max": null
+          },
+          "listening": {
+            "min": 85,
+            "max": null
+          },
+          "reading": {
+            "min": 80,
+            "max": null
+          },
+          "writing": {
+            "min": 75,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 1,
+            "row": 1,
+            "text": "10 | 8.0 | 7.5 | 8.5 | 7.5"
+          }
+        }
+      ],
+      "cite": {
+        "source": "equivalences-aip-en",
+        "table": 1,
+        "row": 0,
+        "text": "CLB level | Reading | Writing | Listening | Speaking"
+      }
+    },
+    {
+      "test": "pte_core",
+      "taken_from": null,
+      "taken_to": null,
+      "rows": [
+        {
+          "clb": 3,
+          "speaking": {
+            "min": 34,
+            "max": 41
+          },
+          "listening": {
+            "min": 18,
+            "max": 27
+          },
+          "reading": {
+            "min": 24,
+            "max": 32
+          },
+          "writing": {
+            "min": 32,
+            "max": 40
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 2,
+            "row": 8,
+            "text": "3 | 24-32 | 32-40 | 18-27 | 34-41"
+          }
+        },
+        {
+          "clb": 4,
+          "speaking": {
+            "min": 42,
+            "max": 50
+          },
+          "listening": {
+            "min": 28,
+            "max": 38
+          },
+          "reading": {
+            "min": 33,
+            "max": 41
+          },
+          "writing": {
+            "min": 41,
+            "max": 50
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 2,
+            "row": 7,
+            "text": "4 | 33-41 | 41-50 | 28-38 | 42-50"
+          }
+        },
+        {
+          "clb": 5,
+          "speaking": {
+            "min": 51,
+            "max": 58
+          },
+          "listening": {
+            "min": 39,
+            "max": 49
+          },
+          "reading": {
+            "min": 42,
+            "max": 50
+          },
+          "writing": {
+            "min": 51,
+            "max": 59
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 2,
+            "row": 6,
+            "text": "5 | 42-50 | 51-59 | 39-49 | 51-58"
+          }
+        },
+        {
+          "clb": 6,
+          "speaking": {
+            "min": 59,
+            "max": 67
+          },
+          "listening": {
+            "min": 50,
+            "max": 59
+          },
+          "reading": {
+            "min": 51,
+            "max": 59
+          },
+          "writing": {
+            "min": 60,
+            "max": 68
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 2,
+            "row": 5,
+            "text": "6 | 51-59 | 60-68 | 50-59 | 59-67"
+          }
+        },
+        {
+          "clb": 7,
+          "speaking": {
+            "min": 68,
+            "max": 75
+          },
+          "listening": {
+            "min": 60,
+            "max": 70
+          },
+          "reading": {
+            "min": 60,
+            "max": 68
+          },
+          "writing": {
+            "min": 69,
+            "max": 78
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 2,
+            "row": 4,
+            "text": "7 | 60-68 | 69-78 | 60-70 | 68-75"
+          }
+        },
+        {
+          "clb": 8,
+          "speaking": {
+            "min": 76,
+            "max": 83
+          },
+          "listening": {
+            "min": 71,
+            "max": 81
+          },
+          "reading": {
+            "min": 69,
+            "max": 77
+          },
+          "writing": {
+            "min": 79,
+            "max": 87
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 2,
+            "row": 3,
+            "text": "8 | 69-77 | 79-87 | 71-81 | 76-83"
+          }
+        },
+        {
+          "clb": 9,
+          "speaking": {
+            "min": 84,
+            "max": 88
+          },
+          "listening": {
+            "min": 82,
+            "max": 88
+          },
+          "reading": {
+            "min": 78,
+            "max": 87
+          },
+          "writing": {
+            "min": 88,
+            "max": 89
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 2,
+            "row": 2,
+            "text": "9 | 78-87 | 88-89 | 82-88 | 84-88"
+          }
+        },
+        {
+          "clb": 10,
+          "speaking": {
+            "min": 89,
+            "max": 90
+          },
+          "listening": {
+            "min": 89,
+            "max": 90
+          },
+          "reading": {
+            "min": 88,
+            "max": 90
+          },
+          "writing": {
+            "min": 90,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 2,
+            "row": 1,
+            "text": "10 | 88-90 | 90 | 89-90 | 89-90"
+          }
+        }
+      ],
+      "cite": {
+        "source": "equivalences-aip-en",
+        "table": 2,
+        "row": 0,
+        "text": "CLB level | Reading | Writing | Listening | Speaking"
+      }
+    },
+    {
+      "test": "tef_canada",
+      "taken_from": "2023-12-11",
+      "taken_to": null,
+      "rows": [
+        {
+          "clb": 4,
+          "speaking": {
+            "min": 328,
+            "max": 386
+          },
+          "listening": {
+            "min": 306,
+            "max": 351
+          },
+          "reading": {
+            "min": 306,
+            "max": 351
+          },
+          "writing": {
+            "min": 268,
+            "max": 329
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 3,
+            "row": 7,
+            "text": "4 | 306-351 | 268-329 | 306-351 | 328-386"
+          }
+        },
+        {
+          "clb": 5,
+          "speaking": {
+            "min": 387,
+            "max": 421
+          },
+          "listening": {
+            "min": 352,
+            "max": 392
+          },
+          "reading": {
+            "min": 352,
+            "max": 392
+          },
+          "writing": {
+            "min": 330,
+            "max": 378
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 3,
+            "row": 6,
+            "text": "5 | 352-392 | 330-378 | 352-392 | 387-421"
+          }
+        },
+        {
+          "clb": 6,
+          "speaking": {
+            "min": 422,
+            "max": 455
+          },
+          "listening": {
+            "min": 393,
+            "max": 433
+          },
+          "reading": {
+            "min": 393,
+            "max": 433
+          },
+          "writing": {
+            "min": 379,
+            "max": 427
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 3,
+            "row": 5,
+            "text": "6 | 393-433 | 379-427 | 393-433 | 422-455"
+          }
+        },
+        {
+          "clb": 7,
+          "speaking": {
+            "min": 456,
+            "max": 493
+          },
+          "listening": {
+            "min": 434,
+            "max": 461
+          },
+          "reading": {
+            "min": 434,
+            "max": 461
+          },
+          "writing": {
+            "min": 428,
+            "max": 471
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 3,
+            "row": 4,
+            "text": "7 | 434-461 | 428-471 | 434-461 | 456-493"
+          }
+        },
+        {
+          "clb": 8,
+          "speaking": {
+            "min": 494,
+            "max": 517
+          },
+          "listening": {
+            "min": 462,
+            "max": 502
+          },
+          "reading": {
+            "min": 462,
+            "max": 502
+          },
+          "writing": {
+            "min": 472,
+            "max": 511
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 3,
+            "row": 3,
+            "text": "8 | 462-502 | 472-511 | 462-502 | 494-517"
+          }
+        },
+        {
+          "clb": 9,
+          "speaking": {
+            "min": 518,
+            "max": 555
+          },
+          "listening": {
+            "min": 503,
+            "max": 545
+          },
+          "reading": {
+            "min": 503,
+            "max": 545
+          },
+          "writing": {
+            "min": 512,
+            "max": 557
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 3,
+            "row": 2,
+            "text": "9 | 503-545 | 512-557 | 503-545 | 518-555"
+          }
+        },
+        {
+          "clb": 10,
+          "speaking": {
+            "min": 556,
+            "max": 699
+          },
+          "listening": {
+            "min": 546,
+            "max": 699
+          },
+          "reading": {
+            "min": 546,
+            "max": 699
+          },
+          "writing": {
+            "min": 558,
+            "max": 699
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 3,
+            "row": 1,
+            "text": "10 | 546-699 | 558-699 | 546-699 | 556-699"
+          }
+        }
+      ],
+      "cite": {
+        "source": "equivalences-aip-en",
+        "table": 3,
+        "row": 0,
+        "text": "NCLC level | Reading | Writing | Listening | Speaking"
+      }
+    },
+    {
+      "test": "tef_canada",
+      "taken_from": "2019-10-01",
+      "taken_to": "2023-12-10",
+      "rows": [
+        {
+          "clb": 4,
+          "speaking": {
+            "min": 300,
+            "max": 349
+          },
+          "listening": {
+            "min": 300,
+            "max": 349
+          },
+          "reading": {
+            "min": 300,
+            "max": 349
+          },
+          "writing": {
+            "min": 300,
+            "max": 349
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 4,
+            "row": 7,
+            "text": "4 | 300-349 | 300-349 | 300-349 | 300-349"
+          }
+        },
+        {
+          "clb": 5,
+          "speaking": {
+            "min": 350,
+            "max": 399
+          },
+          "listening": {
+            "min": 350,
+            "max": 399
+          },
+          "reading": {
+            "min": 350,
+            "max": 399
+          },
+          "writing": {
+            "min": 350,
+            "max": 399
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 4,
+            "row": 6,
+            "text": "5 | 350-399 | 350-399 | 350-399 | 350-399"
+          }
+        },
+        {
+          "clb": 6,
+          "speaking": {
+            "min": 400,
+            "max": 449
+          },
+          "listening": {
+            "min": 400,
+            "max": 449
+          },
+          "reading": {
+            "min": 400,
+            "max": 449
+          },
+          "writing": {
+            "min": 400,
+            "max": 449
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 4,
+            "row": 5,
+            "text": "6 | 400-449 | 400-449 | 400-449 | 400-449"
+          }
+        },
+        {
+          "clb": 7,
+          "speaking": {
+            "min": 450,
+            "max": 499
+          },
+          "listening": {
+            "min": 450,
+            "max": 499
+          },
+          "reading": {
+            "min": 450,
+            "max": 499
+          },
+          "writing": {
+            "min": 450,
+            "max": 499
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 4,
+            "row": 4,
+            "text": "7 | 450-499 | 450-499 | 450-499 | 450-499"
+          }
+        },
+        {
+          "clb": 8,
+          "speaking": {
+            "min": 500,
+            "max": 532
+          },
+          "listening": {
+            "min": 500,
+            "max": 532
+          },
+          "reading": {
+            "min": 500,
+            "max": 532
+          },
+          "writing": {
+            "min": 500,
+            "max": 532
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 4,
+            "row": 3,
+            "text": "8 | 500-532 | 500-532 | 500-532 | 500-532"
+          }
+        },
+        {
+          "clb": 9,
+          "speaking": {
+            "min": 533,
+            "max": 565
+          },
+          "listening": {
+            "min": 533,
+            "max": 565
+          },
+          "reading": {
+            "min": 533,
+            "max": 565
+          },
+          "writing": {
+            "min": 533,
+            "max": 565
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 4,
+            "row": 2,
+            "text": "9 | 533-565 | 533-565 | 533-565 | 533-565"
+          }
+        },
+        {
+          "clb": 10,
+          "speaking": {
+            "min": 566,
+            "max": 699
+          },
+          "listening": {
+            "min": 566,
+            "max": 699
+          },
+          "reading": {
+            "min": 566,
+            "max": 699
+          },
+          "writing": {
+            "min": 566,
+            "max": 699
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 4,
+            "row": 1,
+            "text": "10 | 566-699 | 566-699 | 566-699 | 566-699"
+          }
+        }
+      ],
+      "cite": {
+        "source": "equivalences-aip-en",
+        "table": 4,
+        "row": 0,
+        "text": "NCLC level | Reading | Writing | Listening | Speaking"
+      }
+    },
+    {
+      "test": "tef_canada",
+      "taken_from": null,
+      "taken_to": "2019-09-29",
+      "rows": [
+        {
+          "clb": 4,
+          "speaking": {
+            "min": 181,
+            "max": 225
+          },
+          "listening": {
+            "min": 145,
+            "max": 180
+          },
+          "reading": {
+            "min": 121,
+            "max": 150
+          },
+          "writing": {
+            "min": 181,
+            "max": 225
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 5,
+            "row": 7,
+            "text": "4 | 121-150 | 181-225 | 145-180 | 181-225"
+          }
+        },
+        {
+          "clb": 5,
+          "speaking": {
+            "min": 226,
+            "max": 270
+          },
+          "listening": {
+            "min": 181,
+            "max": 216
+          },
+          "reading": {
+            "min": 151,
+            "max": 180
+          },
+          "writing": {
+            "min": 226,
+            "max": 270
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 5,
+            "row": 6,
+            "text": "5 | 151-180 | 226-270 | 181-216 | 226-270"
+          }
+        },
+        {
+          "clb": 6,
+          "speaking": {
+            "min": 271,
+            "max": 309
+          },
+          "listening": {
+            "min": 217,
+            "max": 248
+          },
+          "reading": {
+            "min": 181,
+            "max": 206
+          },
+          "writing": {
+            "min": 271,
+            "max": 309
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 5,
+            "row": 5,
+            "text": "6 | 181-206 | 271-309 | 217-248 | 271-309"
+          }
+        },
+        {
+          "clb": 7,
+          "speaking": {
+            "min": 310,
+            "max": 348
+          },
+          "listening": {
+            "min": 249,
+            "max": 279
+          },
+          "reading": {
+            "min": 207,
+            "max": 232
+          },
+          "writing": {
+            "min": 310,
+            "max": 348
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 5,
+            "row": 4,
+            "text": "7 | 207-232 | 310-348 | 249-279 | 310-348"
+          }
+        },
+        {
+          "clb": 8,
+          "speaking": {
+            "min": 349,
+            "max": 370
+          },
+          "listening": {
+            "min": 280,
+            "max": 297
+          },
+          "reading": {
+            "min": 233,
+            "max": 247
+          },
+          "writing": {
+            "min": 349,
+            "max": 370
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 5,
+            "row": 3,
+            "text": "8 | 233-247 | 349-370 | 280-297 | 349-370"
+          }
+        },
+        {
+          "clb": 9,
+          "speaking": {
+            "min": 371,
+            "max": 392
+          },
+          "listening": {
+            "min": 298,
+            "max": 315
+          },
+          "reading": {
+            "min": 248,
+            "max": 262
+          },
+          "writing": {
+            "min": 371,
+            "max": 392
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 5,
+            "row": 2,
+            "text": "9 | 248-262 | 371-392 | 298-315 | 371-392"
+          }
+        },
+        {
+          "clb": 10,
+          "speaking": {
+            "min": 393,
+            "max": 450
+          },
+          "listening": {
+            "min": 316,
+            "max": 360
+          },
+          "reading": {
+            "min": 263,
+            "max": 300
+          },
+          "writing": {
+            "min": 393,
+            "max": 450
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 5,
+            "row": 1,
+            "text": "10 | 263-300 | 393-450 | 316-360 | 393-450"
+          }
+        }
+      ],
+      "cite": {
+        "source": "equivalences-aip-en",
+        "table": 5,
+        "row": 0,
+        "text": "NCLC level | Reading | Writing | Listening | Speaking"
+      }
+    },
+    {
+      "test": "tcf_canada",
+      "taken_from": null,
+      "taken_to": null,
+      "rows": [
+        {
+          "clb": 4,
+          "speaking": {
+            "min": 4,
+            "max": 5
+          },
+          "listening": {
+            "min": 331,
+            "max": 368
+          },
+          "reading": {
+            "min": 342,
+            "max": 374
+          },
+          "writing": {
+            "min": 4,
+            "max": 5
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 6,
+            "row": 7,
+            "text": "4 | 342-374 | 4-5 | 331-368 | 4-5"
+          }
+        },
+        {
+          "clb": 5,
+          "speaking": {
+            "min": 6,
+            "max": null
+          },
+          "listening": {
+            "min": 369,
+            "max": 397
+          },
+          "reading": {
+            "min": 375,
+            "max": 405
+          },
+          "writing": {
+            "min": 6,
+            "max": null
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 6,
+            "row": 6,
+            "text": "5 | 375-405 | 6 | 369-397 | 6"
+          }
+        },
+        {
+          "clb": 6,
+          "speaking": {
+            "min": 7,
+            "max": 9
+          },
+          "listening": {
+            "min": 398,
+            "max": 457
+          },
+          "reading": {
+            "min": 406,
+            "max": 452
+          },
+          "writing": {
+            "min": 7,
+            "max": 9
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 6,
+            "row": 5,
+            "text": "6 | 406-452 | 7-9 | 398-457 | 7-9"
+          }
+        },
+        {
+          "clb": 7,
+          "speaking": {
+            "min": 10,
+            "max": 11
+          },
+          "listening": {
+            "min": 458,
+            "max": 502
+          },
+          "reading": {
+            "min": 453,
+            "max": 498
+          },
+          "writing": {
+            "min": 10,
+            "max": 11
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 6,
+            "row": 4,
+            "text": "7 | 453-498 | 10-11 | 458-502 | 10-11"
+          }
+        },
+        {
+          "clb": 8,
+          "speaking": {
+            "min": 12,
+            "max": 13
+          },
+          "listening": {
+            "min": 503,
+            "max": 522
+          },
+          "reading": {
+            "min": 499,
+            "max": 523
+          },
+          "writing": {
+            "min": 12,
+            "max": 13
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 6,
+            "row": 3,
+            "text": "8 | 499-523 | 12-13 | 503-522 | 12-13"
+          }
+        },
+        {
+          "clb": 9,
+          "speaking": {
+            "min": 14,
+            "max": 15
+          },
+          "listening": {
+            "min": 523,
+            "max": 548
+          },
+          "reading": {
+            "min": 524,
+            "max": 548
+          },
+          "writing": {
+            "min": 14,
+            "max": 15
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 6,
+            "row": 2,
+            "text": "9 | 524-548 | 14-15 | 523-548 | 14-15"
+          }
+        },
+        {
+          "clb": 10,
+          "speaking": {
+            "min": 16,
+            "max": 20
+          },
+          "listening": {
+            "min": 549,
+            "max": 699
+          },
+          "reading": {
+            "min": 549,
+            "max": 699
+          },
+          "writing": {
+            "min": 16,
+            "max": 20
+          },
+          "cite": {
+            "source": "equivalences-aip-en",
+            "table": 6,
+            "row": 1,
+            "text": "10 | 549-699 | 16-20 | 549-699 | 16-20"
+          }
+        }
+      ],
+      "cite": {
+        "source": "equivalences-aip-en",
+        "table": 6,
+        "row": 0,
+        "text": "NCLC level | Reading | Writing | Listening | Speaking"
+      }
+    }
+  ]
 }

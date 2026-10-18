@@ -12,6 +12,8 @@ pub struct Table {
     pub heading: String,
     /// `<caption>` text, empty if none.
     pub caption: String,
+    /// `<summary>` texts of the enclosing `<details>` blocks, outermost first.
+    pub context: Vec<String>,
     /// Normalized cell text, header row first.
     pub rows: Vec<Vec<String>>,
 }
@@ -41,6 +43,22 @@ fn sel(s: &str) -> Selector {
     Selector::parse(s).expect("valid selector")
 }
 
+fn details_path(el: ElementRef) -> Vec<String> {
+    let mut path: Vec<String> = el
+        .ancestors()
+        .filter_map(ElementRef::wrap)
+        .filter(|a| a.value().name() == "details")
+        .filter_map(|d| {
+            d.children()
+                .filter_map(ElementRef::wrap)
+                .find(|c| c.value().name() == "summary")
+                .map(text_of)
+        })
+        .collect();
+    path.reverse();
+    path
+}
+
 impl Page {
     pub fn parse(source: &str, html: &str) -> Result<Self, ParseError> {
         let doc = Html::parse_document(html);
@@ -63,6 +81,7 @@ impl Page {
                     index,
                     heading: heading.clone(),
                     caption,
+                    context: details_path(el),
                     rows,
                 });
             } else {

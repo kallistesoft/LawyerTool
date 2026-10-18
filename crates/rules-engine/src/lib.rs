@@ -4,4 +4,5 @@
 //! approved grid snapshot passed in by the caller.
 
 pub mod grid;
+pub mod language;
 pub mod rulings;

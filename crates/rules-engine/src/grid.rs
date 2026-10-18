@@ -4,45 +4,10 @@
 //! lawyer, and stored as a versioned snapshot. Every value carries a [`Cite`]
 //! pointing back to the exact table row it came from, so notes can quote it.
 
-use applicant::EducationLevel;
+use applicant::{EducationLevel, Skill, TestKind};
 use serde::{Deserialize, Serialize};
 
-/// `YYYY-MM-DD`. Lexicographic order is chronological order.
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
-#[serde(try_from = "String", into = "String")]
-pub struct IsoDate(String);
-
-impl IsoDate {
-    pub fn parse(s: &str) -> Option<Self> {
-        let b = s.as_bytes();
-        let ok = b.len() == 10
-            && b[4] == b'-'
-            && b[7] == b'-'
-            && b.iter()
-                .enumerate()
-                .all(|(i, c)| i == 4 || i == 7 || c.is_ascii_digit());
-        let month: u8 = s.get(5..7)?.parse().ok()?;
-        let day: u8 = s.get(8..10)?.parse().ok()?;
-        (ok && (1..=12).contains(&month) && (1..=31).contains(&day)).then(|| Self(s.to_owned()))
-    }
-
-    pub fn as_str(&self) -> &str {
-        &self.0
-    }
-}
-
-impl TryFrom<String> for IsoDate {
-    type Error = String;
-    fn try_from(s: String) -> Result<Self, String> {
-        Self::parse(&s).ok_or_else(|| format!("invalid date {s:?}, expected YYYY-MM-DD"))
-    }
-}
-
-impl From<IsoDate> for String {
-    fn from(d: IsoDate) -> String {
-        d.0
-    }
-}
+pub use applicant::IsoDate;
 
 /// Where a value came from: source id, table and row index in that page's
 /// `<main>` (0-based, header row included; `None` for running text), and the
@@ -279,6 +244,57 @@ pub struct Grid {
     pub effective_from: IsoDate,
     pub sources: Vec<Source>,
     pub crs: Crs,
+    /// Test score → CLB/NCLC conversion tables.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub language: Vec<EquivalencyTable>,
+}
+
+/// Inclusive raw-score band; `max: None` = open-ended (top row of a table
+/// that gives a single threshold, e.g. CELPIP "10").
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ScoreBand {
+    pub min: u16,
+    pub max: Option<u16>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct EquivalencyRow {
+    pub clb: u8,
+    pub speaking: ScoreBand,
+    pub listening: ScoreBand,
+    pub reading: ScoreBand,
+    pub writing: ScoreBand,
+    pub cite: Cite,
+}
+
+impl EquivalencyRow {
+    pub fn band(&self, skill: Skill) -> ScoreBand {
+        match skill {
+            Skill::Speaking => self.speaking,
+            Skill::Listening => self.listening,
+            Skill::Reading => self.reading,
+            Skill::Writing => self.writing,
+        }
+    }
+}
+
+/// One test's conversion table, valid for tests taken in
+/// `taken_from..=taken_to` (open ends = unbounded).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct EquivalencyTable {
+    pub test: TestKind,
+    pub taken_from: Option<IsoDate>,
+    pub taken_to: Option<IsoDate>,
+    /// Ascending by CLB.
+    pub rows: Vec<EquivalencyRow>,
+    pub cite: Cite,
+}
+
+impl EquivalencyTable {
+    pub fn applies_to(&self, date: &IsoDate) -> bool {
+        self.taken_from.as_ref().is_none_or(|f| f <= date)
+            && self.taken_to.as_ref().is_none_or(|t| date <= t)
+    }
 }
 
 /// Picks the grid in force on `date`: the latest `effective_from` not after it.

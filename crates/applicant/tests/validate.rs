@@ -5,6 +5,7 @@ use applicant::*;
 fn ielts(s: u16, l: u16, r: u16, w: u16) -> LanguageTest {
     LanguageTest {
         test: TestKind::IeltsGeneral,
+        test_date: IsoDate::parse("2026-01-15").unwrap(),
         speaking: s,
         listening: l,
         reading: r,
@@ -115,6 +116,7 @@ fn second_language_must_differ() {
 
     a.second_language = Some(LanguageTest {
         test: TestKind::TcfCanada,
+        test_date: IsoDate::parse("2026-01-15").unwrap(),
         speaking: 12,
         listening: 503,
         reading: 499,
@@ -163,4 +165,17 @@ fn canadian_work_by_noc_must_match_years() {
             years: 1
         }])
     );
+}
+
+#[test]
+fn dates() {
+    let d = |s| IsoDate::parse(s).unwrap();
+    assert!(IsoDate::parse("2026-02-29").is_none());
+    assert!(IsoDate::parse("2028-02-29").is_some());
+    assert!(IsoDate::parse("2026-04-31").is_none());
+    assert_eq!(d("2028-02-29").plus_years(2), d("2030-02-28"));
+    assert_eq!(d("2024-10-18").plus_years(2), d("2026-10-18"));
+    assert_eq!(d("1997-10-19").years_until(&d("2026-10-18")), 28);
+    assert_eq!(d("1997-10-18").years_until(&d("2026-10-18")), 29);
+    assert_eq!(d("2026-10-18").years_until(&d("2026-10-17")), 0);
 }

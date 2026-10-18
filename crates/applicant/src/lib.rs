@@ -7,8 +7,11 @@
 //! Language results are stored as raw test scores, never as CLB/NCLC levels:
 //! conversion belongs to the rules engine, driven by an approved grid snapshot.
 
+mod date;
 mod language;
 mod validate;
+
+pub use date::IsoDate;
 
 pub use language::{LanguageTest, OfficialLanguage, Skill, TestKind};
 pub use validate::ValidationError;

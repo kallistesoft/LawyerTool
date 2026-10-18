@@ -6,7 +6,7 @@
 
 use std::path::Path;
 
-use grid_parser::{Page, parse_crs, parse_high_wage, parse_labour_market};
+use grid_parser::{Page, parse_crs, parse_equivalency, parse_high_wage, parse_labour_market};
 use rules_engine::grid::{Grid, IsoDate, Source};
 
 const DIR: &str = concat!(
@@ -35,6 +35,12 @@ const SOURCES: &[(&str, &str, &str, &str)] = &[
         "/verifier-note/salaire-eleve.html",
         "a7a15b38f9ab6ce6cc977046105b92516ed0def3153f7abda76621beda06238c",
     ),
+    (
+        "equivalences-aip-en",
+        "equivalences-aip-en.html",
+        "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/atlantic-immigration/language-testing.html",
+        "cdbc513a16992dd2cd0b4c6ea0edde725b2195096ac28928d12b5d2246846fa4",
+    ),
 ];
 
 type Res<T> = Result<T, Box<dyn std::error::Error>>;
@@ -48,7 +54,11 @@ fn load(id: &str) -> Res<(Page, Source)> {
     let html = std::fs::read_to_string(Path::new(DIR).join(file))?;
     let source = Source {
         id: id.into(),
-        url: format!("{BASE}{path}"),
+        url: if path.starts_with("https://") {
+            (*path).to_owned()
+        } else {
+            format!("{BASE}{path}")
+        },
         sha256: (*sha).into(),
         fetched: date("2026-10-18")?,
     };
@@ -68,7 +78,10 @@ fn main() -> Res<()> {
     let dir = Path::new(&dir);
 
     let (page, source) = load("criteries-scg")?;
-    let v0 = parse_crs(&page, "crs-2026-10-16", date("2026-10-16")?, source)?;
+    let mut v0 = parse_crs(&page, "crs-2026-10-16", date("2026-10-16")?, source)?;
+    let (equiv, equiv_src) = load("equivalences-aip-en")?;
+    v0.language = parse_equivalency(&equiv)?;
+    v0.sources.push(equiv_src);
     write(dir, &v0)?;
 
     // 2026-11-03: same criteria-page grid plus the labour market factor.

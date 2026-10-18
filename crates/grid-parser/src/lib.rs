@@ -5,10 +5,12 @@
 //! keeps the last approved grid in force.
 
 mod crs;
+mod equivalency;
 mod labour;
 mod page;
 
 pub use crs::parse_crs;
+pub use equivalency::parse_equivalency;
 pub use labour::{parse_high_wage, parse_labour_market};
 pub use page::{Page, norm};
 
