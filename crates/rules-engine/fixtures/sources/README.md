@@ -11,10 +11,17 @@ by hand-editing.
 | `scg-outil-udit.js` | https://ircc.canada.ca/francais/immigrer/qualifie/scg-outil-udit.js | `61392e6266be6d976735305982eeb72ce30296f086ebf1b5dc802a305639a65a` |
 | `modifications.html` | https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/modifications.html | `9729a26925f1ceed605766636b212c0ae1a6785ed0b638667dc1ad63e155a718` |
 | `salaire-eleve.html` | https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/verifier-note/salaire-eleve.html | `a7a15b38f9ab6ce6cc977046105b92516ed0def3153f7abda76621beda06238c` |
+| `examen-linguistique.html` | https://www.canada.ca/fr/immigration-refugies-citoyennete/services/immigrer-canada/entree-express/documents/examen-linguistique.html | `75bd233a859f96e9bc403a5b6deb8ea332c3f54c167c3c46caf2c959acb8e8fd` |
+| `equivalences-aip-en.html` | https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/atlantic-immigration/language-testing.html | `cdbc513a16992dd2cd0b4c6ea0edde725b2195096ac28928d12b5d2246846fa4` |
 | `ee_rounds_123_fr.json` | https://www.canada.ca/content/dam/ircc/documents/json/ee_rounds_123_fr.json | `6c6468ad045d0bd7e0ef2fc308b02efeed7510b25dddbec5ddb7f31d26c47b57` |
 
 `criteries-scg.html` is the reference grid. `scg-outil-udit.js` is the
 calculator logic, used only as a test oracle (never executed by the app).
 
-Still to add (M0 step 2): FSW / CEC / FST criteria pages and the language test
-equivalency charts.
+`equivalences-aip-en.html` is used for language test → CLB/NCLC conversion: it
+is the only IRCC page found with one static table per test, including the three
+TEF Canada scales by test date (see D-003). The French version of that page
+returned 404 on 2026-10-18. `examen-linguistique.html` (Express Entry) also has
+the CEC / FSW / FST language minimums.
+
+Still to add: FSW / CEC / FST criteria pages.

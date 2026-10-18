@@ -39,3 +39,29 @@ the case is flagged for manual review.
   re-confirm against the Ministerial Instructions during the pilot (M4).
 - **Engine:** `rulings::apply` adds the row `NCLC 4 → 0 / 0` to the second
   language table, cited as `ruling:D-002`.
+
+## D-003: TEF Canada score scale depends on the test date
+
+- **Status:** PENDING ruling
+- **Found:** 2026-10-18
+- **Express Entry pages** (`examen-linguistique.html` and the calculator
+  `scg-outil-udit.js`): one TEF table only, e.g. NCLC 7 = speaking 310–348,
+  listening 249–279, reading 207–232, writing 310–348. This is the scale for
+  tests taken **before 2019-09-30**.
+- **IRCC Atlantic Immigration page** (`equivalences-aip-en.html`): three TEF
+  tables by test date:
+  - after 2023-12-10: e.g. NCLC 7 = reading 434–461, writing 428–471,
+    listening 434–461, speaking 456–493 (0–699 scale);
+  - 2019-10-01 to 2023-12-10: NCLC 7 = 450–499 for all four skills;
+  - before 2019-09-30: same as the Express Entry pages.
+- **Impact:** Express Entry results are valid for 2 years, so every valid TEF
+  result today is on the post-2023 scale. Converting a real current TEF score
+  with the Express Entry table would give a wrong NCLC (or an impossible score).
+- **Proposed ruling:** convert TEF by test date using the three tables. The
+  CRS points are then looked up by NCLC, which is how the calculator works
+  anyway (its options are NCLC rows), so CRS points are unaffected. Record the
+  test date on every language result.
+- **Gaps on 2019-09-30 → 2019-10-01 and on 2023-12-10 itself:** a test dated
+  exactly 2023-12-10 matches two tables. Proposed: treat 2023-12-10 as the
+  older scale ("between October 1, 2019 and December 10, 2023"), and refuse
+  dates in the one-day gap (2019-09-30 is "before"; nothing for none).
