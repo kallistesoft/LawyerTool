@@ -1,6 +1,9 @@
 [workspace]
 resolver = "3"
-members = ["crates/applicant", "crates/rules-engine", "crates/grid-parser", "crates/oracle-tests"]
+members = ["crates/applicant", "crates/rules-engine", "crates/grid-parser", "crates/oracle-tests", "src-tauri"]
+# The app shell embeds ui/dist at compile time; build it explicitly
+# (`npm --prefix ui run build && cargo build -p lawyertool`).
+default-members = ["crates/applicant", "crates/rules-engine", "crates/grid-parser", "crates/oracle-tests"]
 
 [workspace.package]
 edition = "2024"
