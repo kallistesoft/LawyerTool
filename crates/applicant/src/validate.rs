@@ -4,41 +4,83 @@ use crate::{Applicant, LanguageTest, Skill};
 /// refuses to score invalid applicants rather than guessing.
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum ValidationError {
-    #[error("spouse details given but marital status has no partner")]
+    #[error(
+        "des renseignements sur l’époux sont saisis alors que l’état matrimonial n’en prévoit pas"
+    )]
     SpouseWithoutPartner,
-    #[error("married/common-law applicant is missing spouse details")]
+    #[error("demandeur marié ou en union de fait : renseignements sur l’époux manquants")]
     MissingSpouse,
-    #[error("spouse is scored but spouse education is missing")]
+    #[error("l’époux est pris en compte mais son niveau de scolarité manque")]
     MissingSpouseEducation,
-    #[error("age {0} is out of range")]
+    #[error("âge hors limites : {0}")]
     Age(u8),
-    #[error("{field}: {years} years of work is impossible at age {age}")]
+    #[error(
+        "{} : {years} années de travail impossibles à {age} ans",
+        field_fr(field)
+    )]
     WorkYears {
         field: &'static str,
         years: u8,
         age: u8,
     },
-    #[error("{who} {skill:?} score {score} is invalid for {test:?}")]
+    #[error(
+        "{} : résultat {score} en {skill} invalide pour le test {test}",
+        who_fr(who)
+    )]
     LanguageScore {
         who: &'static str,
         test: crate::TestKind,
         skill: Skill,
         score: u16,
     },
-    #[error("second language test must be in the other official language")]
+    #[error("le test de deuxième langue doit porter sur l’autre langue officielle")]
     SecondLanguageSameAsFirst,
-    #[error("second language test given without a first language test")]
+    #[error("test de deuxième langue saisi sans test de première langue")]
     SecondWithoutFirst,
-    #[error("family size must be at least 1")]
+    #[error("la taille de la famille doit être d’au moins 1")]
     FamilySize,
-    #[error("too many {what} (at most {max})")]
+    #[error("trop de {} (au plus {max})", what_fr(what))]
     TooMany { what: &'static str, max: usize },
-    #[error("work period {index}: {reason}")]
+    #[error("période de travail n° {} : {}", index + 1, reason_fr(reason))]
     WorkPeriod { index: usize, reason: &'static str },
     #[error(
-        "Canadian work by occupation totals {months} months but canadian_work_years is {years}"
+        "le travail au Canada par profession totalise {months} mois, mais {years} années de travail au Canada sont déclarées"
     )]
     CanadianWorkMismatch { months: u16, years: u8 },
+}
+
+// Internal keys (stable, used by tests) -> French wording.
+fn field_fr(k: &str) -> &str {
+    match k {
+        "canadian_work_years" => "expérience de travail au Canada",
+        "foreign_work_years" => "expérience de travail à l’étranger",
+        other => other,
+    }
+}
+
+fn who_fr(k: &str) -> &str {
+    match k {
+        "first language" => "première langue",
+        "second language" => "deuxième langue",
+        "spouse" => "langue de l’époux",
+        other => other,
+    }
+}
+
+fn what_fr(k: &str) -> &str {
+    match k {
+        "work periods" => "périodes de travail",
+        "NOC rows" => "lignes CNP",
+        other => other,
+    }
+}
+
+fn reason_fr(k: &str) -> &str {
+    match k {
+        "ends before it starts" => "la fin précède le début",
+        "hours per week out of range" => "heures par semaine hors limites",
+        other => other,
+    }
 }
 
 /// List limits: far above any real file, bounded for hostile imports.

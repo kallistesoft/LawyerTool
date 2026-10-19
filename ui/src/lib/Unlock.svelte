@@ -24,7 +24,7 @@
   }
 </script>
 
-<form onsubmit={unlock}>
+<form novalidate onsubmit={unlock}>
   <h2>Coffre verrouillé</h2>
   <label>
     Phrase de passe

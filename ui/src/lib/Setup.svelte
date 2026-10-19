@@ -24,7 +24,7 @@
   }
 </script>
 
-<form onsubmit={create}>
+<form novalidate onsubmit={create}>
   <h2>Créer le coffre chiffré</h2>
   <p>
     Les dossiers clients sont chiffrés sur cet ordinateur. La phrase de passe déverrouille le coffre ; elle n'est

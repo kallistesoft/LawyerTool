@@ -27,13 +27,13 @@ fn allowlist_policy() {
     );
     for (url, why) in [
         ("http://www.canada.ca/x", "https"),
-        ("https://canada.ca/x", "not on the allowlist"),
-        ("https://evil.www.canada.ca/x", "not on the allowlist"),
-        ("https://www.canada.ca.evil.com/x", "not on the allowlist"),
+        ("https://canada.ca/x", "liste autorisée"),
+        ("https://evil.www.canada.ca/x", "liste autorisée"),
+        ("https://www.canada.ca.evil.com/x", "liste autorisée"),
         ("https://www.canada.ca:8443/x", "port"),
-        ("https://user:pw@www.canada.ca/x", "credentials"),
-        ("https://192.0.2.1/x", "IP address"),
-        ("https://[2001:db8::1]/x", "IP address"),
+        ("https://user:pw@www.canada.ca/x", "identifiants"),
+        ("https://192.0.2.1/x", "adresse IP"),
+        ("https://[2001:db8::1]/x", "adresse IP"),
         ("ftp://www.canada.ca/x", "https"),
     ] {
         let e = a.check(&u(url)).unwrap_err();
@@ -97,7 +97,7 @@ async fn blocked_requests_are_audited_without_connecting() {
     assert_eq!(r.host, "example.com", "host only: no path or query string");
     assert_eq!(r.category, DataCategory::DeidentifiedClientData);
     assert_eq!(r.source_file.as_deref(), Some("reponses-client.xlsx"));
-    assert!(r.reason.as_deref().unwrap().contains("allowlist"));
+    assert!(r.reason.as_deref().unwrap().contains("liste autorisée"));
 }
 
 /// Real HTTPS fetch of an allowlisted official page: run with --include-ignored.

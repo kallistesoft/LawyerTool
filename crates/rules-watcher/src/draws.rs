@@ -40,10 +40,11 @@ fn number<T: std::str::FromStr>(s: &str) -> Option<T> {
 /// Parses the feed, newest first. Malformed rows are an error (never guessed);
 /// the checks match the plan: draw numbers unique, CRS within 0–1200.
 pub fn parse_draws(json: &[u8]) -> Result<Vec<Draw>, String> {
-    let feed: Feed = serde_json::from_slice(json).map_err(|e| format!("draws feed: {e}"))?;
+    let feed: Feed =
+        serde_json::from_slice(json).map_err(|e| format!("flux des tirages illisible : {e}"))?;
     let mut out = Vec::with_capacity(feed.rounds.len());
     for r in feed.rounds {
-        let bad = |what: &str| format!("draw {:?}: bad {what}", r.draw_number);
+        let bad = |what: &str| format!("tirage {:?} : {what} invalide", r.draw_number);
         let d = Draw {
             number: {
                 let n = r.draw_number.trim();
@@ -52,7 +53,7 @@ pub fn parse_draws(json: &[u8]) -> Result<Vec<Draw>, String> {
                 if ok {
                     n.to_owned()
                 } else {
-                    return Err(bad("number"));
+                    return Err(bad("numéro"));
                 }
             },
             date: applicant::IsoDate::parse(&r.draw_date)
@@ -60,10 +61,10 @@ pub fn parse_draws(json: &[u8]) -> Result<Vec<Draw>, String> {
                 .as_str()
                 .to_owned(),
             name: r.draw_name.trim().to_owned(),
-            invitations: number(&r.draw_size).ok_or_else(|| bad("size"))?,
+            invitations: number(&r.draw_size).ok_or_else(|| bad("nombre d’invitations"))?,
             min_crs: number::<u16>(&r.draw_crs)
                 .filter(|c| *c <= 1200)
-                .ok_or_else(|| bad("CRS"))?,
+                .ok_or_else(|| bad("note SCG"))?,
         };
         out.push(d);
     }
@@ -78,7 +79,7 @@ pub fn parse_draws(json: &[u8]) -> Result<Vec<Draw>, String> {
     out.sort_by_key(|d| std::cmp::Reverse(key(d)));
     let mut seen = std::collections::HashSet::new();
     if !out.iter().all(|d| seen.insert(d.number.clone())) {
-        return Err("draws feed: duplicate draw numbers".into());
+        return Err("flux des tirages : numéros de tirage en double".into());
     }
     Ok(out)
 }

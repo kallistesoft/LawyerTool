@@ -56,17 +56,19 @@ impl Vault {
         now: &str,
     ) -> Result<i64, Error> {
         if identity.full_name.trim().is_empty() {
-            return Err(Error::Invalid("client name is required"));
+            return Err(Error::Invalid("le nom du client est obligatoire"));
         }
         if identity.full_name.chars().count() > MAX_NAME
             || too_long(&identity.email, MAX_EMAIL)
             || too_long(&identity.phone, MAX_PHONE)
             || too_long(&identity.file_reference, MAX_FILE_REFERENCE)
         {
-            return Err(Error::Invalid("identity field too long"));
+            return Err(Error::Invalid(
+                "un champ d’identité est trop long (nom 200, courriel 254, téléphone 40, dossier 64 caractères au plus)",
+            ));
         }
         if profile.len() > MAX_PROFILE_BYTES {
-            return Err(Error::Invalid("profile too large"));
+            return Err(Error::Invalid("profil trop volumineux"));
         }
         let c = self.conn();
         match id {
@@ -85,7 +87,7 @@ impl Vault {
                     params![id, now, identity.full_name.trim(), identity.email, identity.phone, identity.file_reference, profile],
                 )?;
                 if n == 0 {
-                    Err(Error::Invalid("no such client"))
+                    Err(Error::Invalid("client introuvable"))
                 } else {
                     Ok(id)
                 }

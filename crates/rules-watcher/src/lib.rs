@@ -164,7 +164,9 @@ pub struct Candidate {
 }
 
 fn page(bodies: &BTreeMap<&str, Vec<u8>>, id: &'static str) -> Result<Page, String> {
-    let body = bodies.get(id).ok_or_else(|| format!("{id}: not fetched"))?;
+    let body = bodies
+        .get(id)
+        .ok_or_else(|| format!("{id} : page non récupérée"))?;
     Page::parse(id, &String::from_utf8_lossy(body)).map_err(|e| format!("{id}: {e}"))
 }
 
@@ -204,7 +206,7 @@ pub fn build_candidate(bodies: &BTreeMap<&str, Vec<u8>>) -> Candidate {
             education: &education,
             funds: &funds,
         })
-        .map_err(|e| format!("program pages: {e}"))
+        .map_err(|e| format!("pages des programmes : {e}"))
     })();
     // The labour-market tables live in the announcement page.
     let labour_market = page(bodies, "modifications").and_then(|p| {

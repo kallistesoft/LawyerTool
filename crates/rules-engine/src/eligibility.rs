@@ -71,9 +71,9 @@ impl ProgramResult {
 
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum EligibilityError {
-    #[error("applicant record is invalid: {0:?}")]
+    #[error("profil du demandeur invalide : {}", crate::crs::join(.0))]
     Invalid(Vec<ValidationError>),
-    #[error("grid {0} has no program rules")]
+    #[error("la grille {0} ne contient pas les règles des programmes")]
     NoProgramRules(String),
 }
 
@@ -183,7 +183,7 @@ fn first_language(grid: &Grid, a: &Applicant, on: &IsoDate) -> Result<Clb, Requi
         return Err(req(
             "language",
             Check::NotMet,
-            "no approved language test",
+            "aucun test de langue reconnu",
             vec![],
         ));
     };
@@ -192,7 +192,7 @@ fn first_language(grid: &Grid, a: &Applicant, on: &IsoDate) -> Result<Clb, Requi
             "language",
             Check::NotMet,
             format!(
-                "test of {} is not valid on {}",
+                "le test du {} n’est plus valide le {}",
                 t.test_date.as_str(),
                 on.as_str()
             ),
@@ -203,7 +203,7 @@ fn first_language(grid: &Grid, a: &Applicant, on: &IsoDate) -> Result<Clb, Requi
         req(
             "language",
             Check::NeedsInput,
-            "language result could not be converted",
+            "le résultat du test de langue n’a pas pu être converti en NCLC",
             vec![],
         )
     })
@@ -214,19 +214,19 @@ fn quebec(a: &Applicant) -> Requirement {
         Some(true) => req(
             "outside_quebec",
             Check::NotMet,
-            "intends to live in Quebec (Quebec selects its own workers)",
+            "compte s’établir au Québec (le Québec sélectionne ses propres travailleurs)",
             vec![],
         ),
         Some(false) => req(
             "outside_quebec",
             Check::Met,
-            "plans to live outside Quebec",
+            "compte s’établir hors du Québec",
             vec![],
         ),
         None => req(
             "outside_quebec",
             Check::NeedsInput,
-            "intended province unknown",
+            "province de destination inconnue",
             vec![],
         ),
     }
@@ -236,7 +236,7 @@ fn admissibility() -> Requirement {
     req(
         "admissible",
         Check::LawyerCheck,
-        "admissible to Canada (security, criminality, medical)",
+        "admissibilité au Canada (sécurité, criminalité, santé)",
         vec![],
     )
 }
@@ -245,7 +245,7 @@ fn duties() -> Requirement {
     req(
         "noc_duties",
         Check::LawyerCheck,
-        "duties match the NOC lead statement and most main duties for each job counted",
+        "les fonctions correspondent à l’énoncé principal et à la plupart des fonctions principales de la CNP pour chaque emploi compté",
         vec![],
     )
 }
@@ -257,7 +257,7 @@ fn funds(f: &Funds, a: &Applicant) -> Requirement {
         return req(
             "funds",
             Check::Met,
-            "exempt: authorized to work in Canada with a valid job offer",
+            "dispensé : autorisé à travailler au Canada avec une offre d’emploi valide",
             vec![],
         );
     }
@@ -265,7 +265,7 @@ fn funds(f: &Funds, a: &Applicant) -> Requirement {
         return req(
             "funds",
             Check::NeedsInput,
-            "family size and settlement funds needed",
+            "taille de la famille et fonds d’établissement requis",
             vec![],
         );
     };
@@ -273,7 +273,7 @@ fn funds(f: &Funds, a: &Applicant) -> Requirement {
         return req(
             "funds",
             Check::NeedsInput,
-            "family size out of table",
+            "taille de la famille hors du tableau",
             vec![],
         );
     };
@@ -288,19 +288,19 @@ fn funds(f: &Funds, a: &Applicant) -> Requirement {
         (true, _) => req(
             "funds",
             Check::Met,
-            format!("{have} $ ≥ {need} $ required for {size}"),
+            format!("{have} $ ≥ {need} $ requis pour {size} personne(s)"),
             cites,
         ),
         (false, true) => req(
             "funds",
             Check::NeedsInput,
-            format!("{have} $ < {need} $; exempt if authorized to work in Canada"),
+            format!("{have} $ < {need} $ ; dispensé si autorisé à travailler au Canada"),
             cites,
         ),
         (false, false) => req(
             "funds",
             Check::NotMet,
-            format!("{have} $ < {need} $ required for {size}"),
+            format!("{have} $ < {need} $ requis pour {size} personne(s)"),
             cites,
         ),
     }
@@ -475,7 +475,7 @@ fn fsw(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
         reqs.push(req(
             "experience",
             Check::NeedsInput,
-            "work history needed",
+            "antécédents de travail requis",
             exp_cites(&f.experience),
         ));
     } else {
@@ -493,7 +493,7 @@ fn fsw(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
                 "experience",
                 Check::Met,
                 format!(
-                    "{h} h in NOC {noc} within {} years",
+                    "{h} h dans la CNP {noc} au cours des {} dernières années",
                     f.experience.window_years.value
                 ),
                 exp_cites(&f.experience),
@@ -502,7 +502,7 @@ fn fsw(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
                 "experience",
                 Check::NotMet,
                 format!(
-                    "best single TEER 0–3 occupation: {} h (needs {min} h)",
+                    "meilleure profession FEER 0–3 : {} h ({min} h requises)",
                     best.map_or(0, |b| b.1)
                 ),
                 exp_cites(&f.experience),
@@ -516,7 +516,10 @@ fn fsw(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
             reqs.push(req(
                 "language",
                 Check::Met,
-                format!("CLB/NCLC {} or more on all skills", f.min_clb.value),
+                format!(
+                    "NCLC {} ou plus dans toutes les compétences",
+                    f.min_clb.value
+                ),
                 vec![f.min_clb.cite.clone()],
             ));
             Some(c)
@@ -526,7 +529,7 @@ fn fsw(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
                 "language",
                 Check::NotMet,
                 format!(
-                    "lowest skill CLB/NCLC {} (needs {})",
+                    "compétence la plus faible : NCLC {} ({} requis)",
                     c.min(),
                     f.min_clb.value
                 ),
@@ -544,25 +547,25 @@ fn fsw(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
         (EducationLevel::LessThanSecondary, _) => req(
             "education",
             Check::NotMet,
-            "secondary diploma or higher required",
+            "diplôme d’études secondaires ou supérieur requis",
             vec![],
         ),
         (_, Some(Credential::Canadian | Credential::ForeignWithEca)) => req(
             "education",
             Check::Met,
-            "Canadian credential or foreign credential with an ECA",
+            "diplôme canadien ou diplôme étranger avec une évaluation (EDE)",
             vec![],
         ),
         (_, Some(Credential::ForeignWithoutEca)) => req(
             "education",
             Check::NotMet,
-            "foreign credential needs an educational credential assessment (ECA)",
+            "le diplôme étranger doit faire l’objet d’une évaluation des diplômes d’études (EDE)",
             vec![],
         ),
         (_, None) => req(
             "education",
             Check::NeedsInput,
-            "credential type (Canadian / foreign with ECA) needed",
+            "type de diplôme requis (canadien / étranger avec EDE)",
             vec![],
         ),
     });
@@ -574,7 +577,7 @@ fn fsw(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
             "selection_points",
             Check::Met,
             format!(
-                "{}–{} / 100 (pass mark {})",
+                "{}–{} / 100 (note de passage {})",
                 points.min, points.max, points.pass_mark
             ),
             cites,
@@ -584,7 +587,7 @@ fn fsw(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
             "selection_points",
             Check::NotMet,
             format!(
-                "at most {} / 100 (pass mark {})",
+                "au plus {} / 100 (note de passage {})",
                 points.max, points.pass_mark
             ),
             cites,
@@ -594,7 +597,7 @@ fn fsw(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
             "selection_points",
             Check::NeedsInput,
             format!(
-                "{}–{} / 100 depending on unknown facts (pass mark {})",
+                "{}–{} / 100 selon les renseignements manquants (note de passage {})",
                 points.min, points.max, points.pass_mark
             ),
             cites,
@@ -644,7 +647,7 @@ fn cec(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
         reqs.push(req(
             "experience",
             Check::NeedsInput,
-            "work history needed",
+            "antécédents de travail requis",
             exp_cites(rule),
         ));
     } else {
@@ -656,7 +659,7 @@ fn cec(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
         reqs.push(req(
             "experience",
             check,
-            format!("{total} h of authorized, paid TEER 0–3 work in Canada within {} years (needs {min} h; self-employment and full-time-student work excluded)", rule.window_years.value),
+            format!("{total} h de travail autorisé et rémunéré FEER 0–3 au Canada au cours des {} dernières années ({min} h requises ; travail autonome et travail pendant des études à temps plein exclus)", rule.window_years.value),
             exp_cites(rule),
         ));
         reqs.push(duties());
@@ -672,17 +675,17 @@ fn cec(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
     ];
     reqs.push(match first_language(grid, a, on) {
         Err(r) => r,
-        Ok(l) if l.all_at_least(hi) => req("language", Check::Met, format!("CLB/NCLC {hi}+ on all skills"), cites),
+        Ok(l) if l.all_at_least(hi) => req("language", Check::Met, format!("NCLC {hi} ou plus dans toutes les compétences"), cites),
         Ok(l) if l.all_at_least(lo) && teer23 >= min => {
-            req("language", Check::Met, format!("CLB/NCLC {lo}+ with TEER 2–3 experience"), cites)
+            req("language", Check::Met, format!("NCLC {lo} ou plus avec une expérience FEER 2–3"), cites)
         }
         Ok(l) if l.all_at_least(lo) && total >= min && teer23 > 0 => req(
             "language",
             Check::LawyerCheck,
-            format!("CLB/NCLC {} meets CEC only for TEER 2–3 experience; qualifying experience mixes TEER 0–1 and 2–3", l.min()),
+            format!("NCLC {} : suffisant pour la CEC seulement avec une expérience FEER 2–3 ; l’expérience admissible combine FEER 0–1 et 2–3", l.min()),
             cites,
         ),
-        Ok(l) => req("language", Check::NotMet, format!("lowest skill CLB/NCLC {} (needs {lo} for TEER 2–3, {hi} for TEER 0–1)", l.min()), cites),
+        Ok(l) => req("language", Check::NotMet, format!("compétence la plus faible : NCLC {} ({lo} requis pour FEER 2–3, {hi} pour FEER 0–1)", l.min()), cites),
     });
     reqs.push(quebec(a));
     reqs.push(admissibility());
@@ -712,7 +715,7 @@ fn fst(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
         reqs.push(req(
             "experience",
             Check::NeedsInput,
-            "work history needed",
+            "antécédents de travail requis",
             cites,
         ));
     } else {
@@ -722,7 +725,7 @@ fn fst(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
                     "experience",
                     Check::Met,
                     format!(
-                        "{h} h in skilled trade NOC {noc} within {} years",
+                        "{h} h dans le métier spécialisé CNP {noc} au cours des {} dernières années",
                         t.experience.window_years.value
                     ),
                     cites,
@@ -731,14 +734,14 @@ fn fst(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
                     .iter()
                     .any(|w| w.noc.as_str() == noc && w.qualified_in_trade.is_none())
                 {
-                    reqs.push(req("qualified_in_trade", Check::LawyerCheck, "confirm the applicant was qualified to practise the trade where the work was done", vec![]));
+                    reqs.push(req("qualified_in_trade", Check::LawyerCheck, "confirmer que le demandeur était qualifié pour exercer le métier là où le travail a été effectué", vec![]));
                 }
             }
             best => reqs.push(req(
                 "experience",
                 Check::NotMet,
                 format!(
-                    "best skilled-trade occupation: {} h (needs {min} h in one trade NOC)",
+                    "meilleur métier spécialisé : {} h ({min} h requises dans une même CNP)",
                     best.map_or(0, |b| b.1)
                 ),
                 cites,
@@ -748,9 +751,9 @@ fn fst(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
     }
 
     reqs.push(if a.job_offer.is_some() || a.certificate_of_qualification {
-        req("offer_or_certificate", Check::Met, "valid job offer or certificate of qualification", vec![])
+        req("offer_or_certificate", Check::Met, "offre d’emploi valide ou certificat de compétence", vec![])
     } else {
-        req("offer_or_certificate", Check::NotMet, "needs a valid full-time job offer (1 year+) or a Canadian certificate of qualification in the trade", vec![])
+        req("offer_or_certificate", Check::NotMet, "offre d’emploi à temps plein valide (1 an ou plus) ou certificat de compétence canadien dans le métier requis", vec![])
     });
 
     let (sl, rw) = (
@@ -767,7 +770,7 @@ fn fst(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
             req(
                 "language",
                 Check::Met,
-                format!("speaking/listening {sl}+, reading/writing {rw}+"),
+                format!("oral (expression, compréhension) {sl} ou plus, écrit (lecture, écriture) {rw} ou plus"),
                 cites,
             )
         }
@@ -775,7 +778,7 @@ fn fst(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
             "language",
             Check::NotMet,
             format!(
-                "CLB/NCLC S{} L{} R{} W{} (needs speaking/listening {sl}, reading/writing {rw})",
+                "NCLC expression orale {}, compréhension de l’oral {}, compréhension de l’écrit {}, expression écrite {} (requis : oral {sl}, écrit {rw})",
                 l.speaking, l.listening, l.reading, l.writing
             ),
             cites,

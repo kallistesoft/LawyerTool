@@ -18,49 +18,49 @@ pub use programs::{ProgramPages, parse_programs};
 
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum ParseError {
-    #[error("page has no <main> element")]
+    #[error("la page n’a pas d’élément <main>")]
     NoMain,
-    #[error("page has too many tables")]
+    #[error("la page contient trop de tableaux")]
     TooManyTables,
-    #[error("table not found: {0}")]
+    #[error("tableau introuvable : {0}")]
     TableNotFound(&'static str),
-    #[error("{count} tables match {what}, expected exactly one")]
+    #[error("{count} tableaux correspondent à « {what} », un seul attendu")]
     AmbiguousTable { what: &'static str, count: usize },
-    #[error("{what} (table {table}): row {row} does not have {expected} cells")]
+    #[error("{what} (tableau {table}) : la ligne {row} n’a pas {expected} cellules")]
     Shape {
         what: &'static str,
         table: u16,
         row: usize,
         expected: usize,
     },
-    #[error("{what} (table {table}): unexpected row {row}: {text:?}")]
+    #[error("{what} (tableau {table}) : ligne {row} inattendue : {text:?}")]
     UnexpectedRow {
         what: &'static str,
         table: u16,
         row: u16,
         text: String,
     },
-    #[error("{what}: expected row {label:?} not found")]
+    #[error("{what} : ligne attendue {label:?} introuvable")]
     MissingRow {
         what: &'static str,
         label: &'static str,
     },
-    #[error("{what} (table {table}): row {row}: not a number: {text:?}")]
+    #[error("{what} (tableau {table}) : ligne {row} : nombre invalide : {text:?}")]
     BadNumber {
         what: &'static str,
         table: u16,
         row: u16,
         text: String,
     },
-    #[error("{what} (table {table}): row {row}: unrecognized label {text:?}")]
+    #[error("{what} (tableau {table}) : ligne {row} : libellé non reconnu {text:?}")]
     BadLabel {
         what: &'static str,
         table: u16,
         row: u16,
         text: String,
     },
-    #[error("running text not found: {0}")]
+    #[error("texte attendu introuvable : {0}")]
     TextNotFound(&'static str),
-    #[error("{what}: values disagree: {detail}")]
+    #[error("{what} : valeurs contradictoires : {detail}")]
     Inconsistent { what: &'static str, detail: String },
 }

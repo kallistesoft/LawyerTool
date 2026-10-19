@@ -27,7 +27,7 @@
   }
 </script>
 
-<form onsubmit={recover}>
+<form novalidate onsubmit={recover}>
   <h2>Récupération</h2>
   <p>Saisissez les 24 mots, puis choisissez une nouvelle phrase de passe pour cet ordinateur.</p>
   <label>
