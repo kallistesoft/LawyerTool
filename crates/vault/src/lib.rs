@@ -13,6 +13,7 @@
 mod clients;
 mod crypto;
 mod db;
+mod imports;
 mod keystore;
 mod watch;
 
@@ -26,6 +27,7 @@ pub use clients::{ClientRecord, ClientSummary, Identity};
 pub use crypto::KdfParams;
 use crypto::{PassphraseSlot, Secret, Wrapped};
 pub use db::schema_version;
+pub use imports::{ImportOutcome, ImportRow};
 pub use keystore::{KeyStore, MemoryKeyStore, OsKeyStore};
 pub use watch::{DrawRow, SnapshotRow, WatchRun, WatchState};
 
@@ -84,6 +86,16 @@ impl Paths {
     pub fn exists(&self) -> bool {
         self.db.exists() && self.keys().exists()
     }
+}
+
+/// `<file>.keys` next to a backup file. Appends rather than replaces the
+/// extension: `x.backup-v2` -> `x.backup-v2.keys`. (Replacing it turned
+/// `lawyertool.backup-v2` into `lawyertool.keys`, the live key file, which
+/// copying onto itself emptied.)
+pub fn sidecar_keys(file: &Path) -> PathBuf {
+    let mut name = file.as_os_str().to_owned();
+    name.push(".keys");
+    PathBuf::from(name)
 }
 
 #[derive(Serialize, Deserialize)]
@@ -221,6 +233,44 @@ impl Vault {
         Ok((vault, phrase))
     }
 
+    /// Rebuilds a missing or damaged key file from this computer's keychain
+    /// entry (`vault_id` + passphrase). The old recovery phrase no longer
+    /// works: a new one is returned, to be written down again.
+    pub fn rebuild_keyfile(
+        paths: &Paths,
+        store: &dyn KeyStore,
+        vault_id: &str,
+        passphrase: &str,
+    ) -> Result<(Self, RecoveryPhrase), Error> {
+        if !paths.db.exists() {
+            return Err(Error::NotFound(paths.db.clone()));
+        }
+        if read_keyfile(paths).is_ok() {
+            return Err(Error::AlreadyExists(paths.keys()));
+        }
+        let raw = store.get(vault_id)?.ok_or(Error::KeychainEntryMissing)?;
+        let slot: PassphraseSlot =
+            serde_json::from_slice(&raw).map_err(|_| Error::Corrupt("keychain entry"))?;
+        let kek = crypto::passphrase_kek(passphrase, &slot.salt, slot.kdf)?;
+        let dek = crypto::unwrap(&kek, &slot.wrapped, vault_id, "passphrase")
+            .ok_or(Error::WrongPassphrase)?;
+        // Proves the key opens this database before touching the key file.
+        drop(db::open(&paths.db, &dek)?);
+        let recovery = Secret::random()?;
+        let rkek = crypto::recovery_kek(&recovery, vault_id)?;
+        let keyfile = KeyFile {
+            version: 1,
+            vault_id: vault_id.to_owned(),
+            recovery: crypto::wrap(&rkek, &dek, vault_id, "recovery")?,
+        };
+        std::fs::write(
+            paths.keys(),
+            serde_json::to_vec_pretty(&keyfile).map_err(|_| Error::Corrupt("key file"))?,
+        )?;
+        let phrase = RecoveryPhrase::from_secret(&recovery)?;
+        Ok((Self::open_with(paths, dek, vault_id.to_owned())?, phrase))
+    }
+
     /// Unlocks with the passphrase (keychain entry required).
     pub fn unlock(paths: &Paths, store: &dyn KeyStore, passphrase: &str) -> Result<Self, Error> {
         let keyfile = read_keyfile(paths)?;
@@ -259,7 +309,11 @@ impl Vault {
         let mut conn = db::open(&paths.db, &dek)?;
         let migration_backup = db::migrate(&mut conn, &paths.db, &dek)?;
         if let Some(b) = &migration_backup {
-            std::fs::copy(paths.keys(), b.with_extension("keys"))?;
+            let dest = sidecar_keys(b);
+            if dest == paths.keys() {
+                return Err(Error::Corrupt("backup key path"));
+            }
+            std::fs::copy(paths.keys(), dest)?;
         }
         Ok(Self {
             conn,
@@ -280,11 +334,13 @@ impl Vault {
         store_passphrase_slot(store, &self.vault_id, &self.dek, new_passphrase, kdf)
     }
 
-    /// Encrypted backup: `<dest>` (database, same key) and `<dest>.keys`.
+    /// Encrypted backup: `<dest>` (database, same key) and its `.keys` file.
     /// Restoring needs both files and the recovery phrase.
     pub fn backup(&self, dest: &Path) -> Result<(), Error> {
-        let keys = dest.with_extension("keys");
-        if keys.exists() {
+        // `<dest>` opens as a vault on restore, so its keys sit where
+        // `Paths::keys` looks: `x.db` -> `x.keys`.
+        let keys = Paths::new(dest).keys();
+        if keys.exists() || keys == self.paths.keys() {
             return Err(Error::AlreadyExists(keys));
         }
         db::export(&self.conn, dest, &self.dek)?;

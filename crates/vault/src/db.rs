@@ -75,6 +75,16 @@ pub const MIGRATIONS: &[&str] = &[
         created_at TEXT NOT NULL,
         payload TEXT NOT NULL
     ) STRICT;",
+    // v5: form files seen in the input folder (by content fingerprint; the
+    // file content itself is never stored here).
+    "CREATE TABLE imports (
+        fingerprint TEXT PRIMARY KEY,
+        file_name TEXT NOT NULL,
+        imported_at TEXT NOT NULL,
+        client_id INTEGER REFERENCES clients (id) ON DELETE SET NULL,
+        outcome TEXT NOT NULL,
+        message TEXT NOT NULL
+    ) STRICT;",
 ];
 
 pub fn schema_version() -> u32 {

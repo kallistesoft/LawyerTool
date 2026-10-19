@@ -442,3 +442,109 @@ fn watcher_storage() {
     assert!(v.snapshot_save(&snap).is_err(), "snapshot ids are unique");
     assert_eq!(v.snapshot_list().unwrap(), vec![snap]);
 }
+
+#[test]
+fn imports_are_tracked_by_fingerprint() {
+    let (_dir, paths, store) = setup();
+    let (v, _) = Vault::create(&paths, &store, PASS, KDF).unwrap();
+    assert!(v.import_get("abc").unwrap().is_none());
+    let mut row = vault::ImportRow {
+        fingerprint: "abc".into(),
+        file_name: "reponses.xlsx".into(),
+        imported_at: "2026-10-18T10:00:00Z".into(),
+        client_id: None,
+        outcome: vault::ImportOutcome::Failed,
+        message: "format pending".into(),
+    };
+    v.import_record(&row).unwrap();
+    assert_eq!(
+        v.import_get("abc").unwrap().unwrap().outcome,
+        vault::ImportOutcome::Failed
+    );
+    let who = vault::Identity {
+        full_name: "Test".into(),
+        email: None,
+        phone: None,
+        file_reference: None,
+    };
+    let id = v.client_save(None, &who, "{}", "x").unwrap();
+    row.client_id = Some(id);
+    row.outcome = vault::ImportOutcome::Imported;
+    v.import_record(&row).unwrap();
+    assert_eq!(v.import_get("abc").unwrap().unwrap(), row);
+    // Deleting the client keeps the import record (no re-import), unlinked.
+    assert!(v.client_delete(id).unwrap());
+    assert_eq!(v.import_get("abc").unwrap().unwrap().client_id, None);
+
+    v.meta_set("input_dir", "/x").unwrap();
+    v.meta_delete("input_dir").unwrap();
+    assert_eq!(v.meta_get("input_dir").unwrap(), None);
+}
+
+/// Regression: the migration backup used to overwrite (empty) the live key
+/// file, so the vault could never be opened again after an upgrade.
+#[test]
+fn migration_keeps_the_key_file_and_backs_it_up() {
+    let (_dir, paths, store) = setup();
+    let (v, _) = Vault::create(&paths, &store, PASS, KDF).unwrap();
+    write_marker(&v);
+    // Pretend the database predates the last migration.
+    let last = vault::schema_version();
+    v.conn()
+        .execute_batch(&format!(
+            "DROP TABLE imports; PRAGMA user_version = {};",
+            last - 1
+        ))
+        .unwrap();
+    drop(v);
+    let keys_before = std::fs::read(paths.keys()).unwrap();
+
+    let v = Vault::unlock(&paths, &store, PASS).unwrap();
+    let backup = v.migration_backup.clone().expect("migration backup");
+    assert_eq!(
+        std::fs::read(paths.keys()).unwrap(),
+        keys_before,
+        "live key file untouched"
+    );
+    assert_eq!(
+        std::fs::read(vault::sidecar_keys(&backup)).unwrap(),
+        keys_before
+    );
+    assert_eq!(read_marker(&v), MARKER);
+    drop(v);
+    // And it still opens afterwards.
+    let v = Vault::unlock(&paths, &store, PASS).unwrap();
+    assert_eq!(v.schema_version().unwrap(), last);
+}
+
+#[test]
+fn an_emptied_key_file_is_rebuilt_from_the_keychain() {
+    let (_dir, paths, store) = setup();
+    let (v, _) = Vault::create(&paths, &store, PASS, KDF).unwrap();
+    write_marker(&v);
+    drop(v);
+    let id: String =
+        serde_json::from_slice::<serde_json::Value>(&std::fs::read(paths.keys()).unwrap()).unwrap()
+            ["vault_id"]
+            .as_str()
+            .unwrap()
+            .to_owned();
+    std::fs::write(paths.keys(), b"").unwrap();
+    assert!(matches!(
+        Vault::unlock(&paths, &store, PASS),
+        Err(Error::Corrupt(_))
+    ));
+    assert!(matches!(
+        Vault::rebuild_keyfile(&paths, &store, &id, "wrong passphrase!"),
+        Err(Error::WrongPassphrase)
+    ));
+
+    let (v, phrase) = Vault::rebuild_keyfile(&paths, &store, &id, PASS).unwrap();
+    assert_eq!(read_marker(&v), MARKER);
+    drop(v);
+    // Normal unlock works again, and the new recovery phrase is valid.
+    drop(Vault::unlock(&paths, &store, PASS).unwrap());
+    let store2 = MemoryKeyStore::default();
+    let v = Vault::recover(&paths, &store2, phrase.as_str(), "another passphrase", KDF).unwrap();
+    assert_eq!(read_marker(&v), MARKER);
+}

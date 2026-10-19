@@ -74,7 +74,20 @@ pub fn open(dir: &Path) -> Result<Vault, Error> {
     let paths = Paths::new(db_path(dir));
     let store = FileKeyStore(dir.join("dev-keystore.json"));
     if paths.exists() {
-        Vault::unlock(&paths, &store, DEV_PASSPHRASE)
+        match Vault::unlock(&paths, &store, DEV_PASSPHRASE) {
+            // Key file emptied by the v0.1.6-v0.1.11 migration bug: rebuild
+            // it from the dev keystore (single vault).
+            Err(Error::Corrupt("key file")) => {
+                let ids: Vec<String> = store.load().into_keys().collect();
+                match ids.as_slice() {
+                    [id] => {
+                        Vault::rebuild_keyfile(&paths, &store, id, DEV_PASSPHRASE).map(|(v, _)| v)
+                    }
+                    _ => Err(Error::Corrupt("key file")),
+                }
+            }
+            other => other,
+        }
     } else {
         // The recovery phrase of a dev vault is not needed: discard it.
         Vault::create(
