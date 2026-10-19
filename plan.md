@@ -3,7 +3,7 @@
 ## Context
 `~/Desktop/LawyerTool` holds a standalone Tauri desktop app (macOS and Windows) for Canadian immigration lawyers. It screens client eligibility from form answers, computes the score deterministically from official rules, and has Claude draft an explanatory note for the lawyer to review. The brief is in `CLAUDE.md`; its decisions are final unless revised below.
 
-The repo has only an initial commit, so this plan sets the build order. Version 1 targets **Express Entry**: program eligibility plus the CRS score. The most important thing to prove early is that the engine's scores match the official IRCC calculator. That is why the engine and its test oracle come first, before the security plumbing. The engine handles no client data, so it doesn't need that plumbing yet.
+This plan set the build order (the repo started with only the brief). Version 1 targets **Express Entry**: program eligibility plus the CRS score. The most important thing to prove early is that the engine's scores match the official IRCC calculator. That is why the engine and its test oracle come first, before the security plumbing. The engine handles no client data, so it doesn't need that plumbing yet.
 
 ## Glossary
 - **Score (note SCG / CRS score):** the points total, 0–1200, computed by `rules-engine`.
@@ -35,18 +35,34 @@ The repo has only an initial commit, so this plan sets the build order. Version 
   - The main AI value stays the client explanatory note (M2).
 
 ## Roadmap
-| Milestone | Content | Estimate |
+| Milestone | Content | Status (2026-10-18, v0.1.15) |
 |---|---|---|
-| **M0** | Engine + oracle: Applicant model, CRS + eligibility + language conversion, grid parser, golden profiles, JS-oracle fuzzing | 2–3 wks |
-| **M1** | Security skeleton: Tauri lockdown, CI, vault + recovery key, auto-lock, net + audit, updater, signing | 2–3 wks |
-| **M2** | Client flow: import, de-identification, Claude note, review + export | 3–4 wks |
-| **M2b** | Daily watcher: fetch, parse, diff/approval, draws feed, Claude for prose/fallback | 2 wks |
-| **M3** | Hardening (hostile inputs, injection, audits, independent review) | 2 wks |
-| **M4** | Pilot against the lawyer's manual analyses | 2–3 wks |
+| **M0** | Engine + oracle: Applicant model, CRS + eligibility + language conversion, grid parser, golden profiles, JS-oracle fuzzing | **Done.** 29 golden profiles match; fuzz 3 × 5,000, 0 unexplained mismatches; rulings D-001…D-004 recorded |
+| **M1** | Security skeleton: Tauri lockdown, CI, vault + recovery key, auto-lock, net + audit, updater, signing | **Done**, except updater activation and signing (last step) and the clean-machine VM test |
+| **M2** | Client flow: import, de-identification, Claude note, review + export | **Partly done.** De-identification + preview, review gate, PDF/Word export, input/output folders done. Waiting: form parser (needs a sample export). Deferred: Claude note |
+| **M2b** | Daily watcher: fetch, parse, diff/approval, draws feed, Claude for prose/fallback | **Done** without the Claude parts |
+| **M3** | Hardening (hostile inputs, injection, audits, independent review) | **Done**, except the independent review (brief ready: `docs/security-review.md`) |
+| **M4** | Pilot against the lawyer's manual analyses | **Next** |
+
+### Done outside the milestones
+- **Settings screen (v0.1.13):** input folder for form results (read on demand, one level, `.xlsx`/`.csv`, never modified, SHA-256 tracking) and output folder for reviewed reports (never overwritten). Brief rule on files revised in `CLAUDE.md`.
+- **French everywhere (v0.1.14):** every message, error and label shown in the app; a test fails if a score label has no French translation.
+- **UI redesign (v0.1.15):** sidebar, light/dark design system, client list with score / program badges / review status (`client_overview`), assessment page with the key results first, form with section index and sticky save bar; dates in local time.
+- **Vault fix (v0.1.12):** a migration backup used to empty the live key file; fixed, with a rebuild from the keychain and regression tests.
+
+### Next steps
+1. **2026-11-03:** IRCC switches to the grid with the labour-market factor. When its calculator is updated, re-record the golden profiles marked `oracle: pending` and check that the watcher picked up the change.
+2. **Form import:** write the parser as soon as a sample export (fake data) arrives.
+3. **M4 pilot:** compare with the lawyer's own analyses on low-risk real cases.
+4. **Independent security review** with `docs/security-review.md`.
+5. To decide: match imported forms to existing clients (email or file number) instead of always creating a new client.
+6. **Last step:** updater activation, Apple notarization, Windows signing, clean-machine VM test.
 
 ---
 
 ## M0: Engine + oracle (do first)
+**Status 2026-10-18:** done. Golden profiles for the 2026-11-03 grid remain `oracle: pending` until IRCC updates its calculator.
+
 
 ### Layout (Cargo workspace; created now and used by every milestone)
 ```
@@ -149,6 +165,8 @@ IRCC changes the CRS grid on 2026-11-03, so M0 has to support two grid versions 
 ---
 
 ## M1: Security skeleton
+**Status 2026-10-18:** done; updater dormant and signing pending (last step); clean-machine VM test not run yet.
+
 1. **Setup:**
    - Install rustup (stable + clippy + rustfmt), `cargo install tauri-cli --locked`, and fnm with Node LTS.
    - Note: the vendored OpenSSL build needs Perl on Windows CI. GitHub's runners have Strawberry Perl.
@@ -202,7 +220,9 @@ IRCC changes the CRS grid on 2026-11-03, so M0 has to support two grid versions 
 
 ---
 
-## M2: Client flow (outline; detailed when M1 lands)
+## M2: Client flow
+**Status 2026-10-18:** de-identification and preview, mandatory review gate, PDF/Word export, input and output folders done; form parser waiting for a sample; Claude note deferred.
+
 - Import from the input folder chosen in Paramètres (read on demand, one level, `.xlsx`/`.csv`, files never modified; tracked by SHA-256 so nothing is imported twice) into `Applicant`; reviewed reports go to the output folder. The format is still to be decided; the parser for it maps onto the canonical model.
 - Optional Claude normalization of messy free-text answers (e.g. "BSc 2015, 4 yrs"). Claude **proposes** field values; the lawyer confirms them.
 - De-identification with a preview of what will be sent.
@@ -269,8 +289,25 @@ Work happens in **dev-only mode**: debug builds with the automatic test vault, p
 
 The updater code is merged but dormant until then.
 
-## Open questions (not blocking M0)
-Client form export format (a sample with fake data), API key ownership, update host location.
+**GitHub Actions disabled (2026-10-18, to save plan minutes).** Meanwhile:
+- `scripts/ci-local.sh` gates every commit (same checks as CI, **without Windows**);
+- `scripts/post-merge-bump.sh` bumps the version, tags and pushes after each merge;
+- re-enable with `gh workflow enable ci.yml` (and `release-version.yml`, `release.yml`) before any release, to get the Windows checks back.
+
+## M3: Hardening
+**Status 2026-10-18:** done, except the independent review.
+- supply chain: `cargo audit` 0 vulnerabilities (Linux-only warnings accepted), one runtime npm dependency;
+- storage: SQLite temp files in memory, input size limits;
+- IPC: frozen permission/CSP test, `docs/ipc-surface.md`;
+- hostile pages and feeds: parser and draws fuzzing, lookalike digits fail loudly, content-type allowlist;
+- de-identification: invisible characters, homoglyphs, spaced names, spelled-out emails, property test;
+- docs: threat model v2, `docs/security-review.md`.
+
+## Open questions
+- Client form export format: a sample with fake data is needed for the importer.
+- Matching imported forms to existing clients (email / file number)?
+- API key ownership (when the Claude integration resumes).
+- Update host location (last step).
 
 ## Verification
 - **M0:**
