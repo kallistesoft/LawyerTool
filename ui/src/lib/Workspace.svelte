@@ -2,21 +2,28 @@
   import AssessmentView from './AssessmentView.svelte'
   import ClientForm from './ClientForm.svelte'
   import ClientList from './ClientList.svelte'
+  import Inbox from './Inbox.svelte'
+  import Settings from './Settings.svelte'
   import WatchView from './WatchView.svelte'
 
-  type View = { kind: 'list' } | { kind: 'edit'; id: number | null } | { kind: 'assess'; id: number } | { kind: 'watch' }
-  let view: View = $state({ kind: 'list' })
+  type View = { kind: 'list' } | { kind: 'edit'; id: number | null } | { kind: 'assess'; id: number } | { kind: 'watch' } | { kind: 'settings' }
+  let view = $state<View>({ kind: 'list' })
   const list = () => (view = { kind: 'list' })
+  const tab = $derived(view.kind === 'watch' || view.kind === 'settings' ? view.kind : 'clients')
 </script>
 
 <nav class="tabs">
-  <button class={view.kind === 'watch' ? 'link' : 'link active'} onclick={list}>Clients</button>
-  <button class={view.kind === 'watch' ? 'link active' : 'link'} onclick={() => (view = { kind: 'watch' })}>Veille des règles</button>
+  <button class={tab === 'clients' ? 'link active' : 'link'} onclick={list}>Clients</button>
+  <button class={tab === 'watch' ? 'link active' : 'link'} onclick={() => (view = { kind: 'watch' })}>Veille des règles</button>
+  <button class={tab === 'settings' ? 'link active' : 'link'} onclick={() => (view = { kind: 'settings' })}>Paramètres</button>
 </nav>
 
 {#if view.kind === 'watch'}
   <WatchView />
+{:else if view.kind === 'settings'}
+  <Settings />
 {:else if view.kind === 'list'}
+  <Inbox onOpen={(id) => (view = { kind: 'assess', id })} onSettings={() => (view = { kind: 'settings' })} />
   <ClientList onOpen={(id) => (view = { kind: 'assess', id })} onNew={() => (view = { kind: 'edit', id: null })} />
 {:else if view.kind === 'edit'}
   {#key view.id}

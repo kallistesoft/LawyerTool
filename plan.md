@@ -203,7 +203,7 @@ IRCC changes the CRS grid on 2026-11-03, so M0 has to support two grid versions 
 ---
 
 ## M2: Client flow (outline; detailed when M1 lands)
-- Import via the file picker into `Applicant`. The format is still to be decided; the parser for it maps onto the canonical model.
+- Import from the input folder chosen in Paramètres (read on demand, one level, `.xlsx`/`.csv`, files never modified; tracked by SHA-256 so nothing is imported twice) into `Applicant`; reviewed reports go to the output folder. The format is still to be decided; the parser for it maps onto the canonical model.
 - Optional Claude normalization of messy free-text answers (e.g. "BSc 2015, 4 yrs"). Claude **proposes** field values; the lawyer confirms them.
 - De-identification with a preview of what will be sent.
 - The engine computes the score and eligibility.

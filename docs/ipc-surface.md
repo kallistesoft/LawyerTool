@@ -26,7 +26,12 @@ or client data.
 | `client_delete` | id | unlocked | deleted? |
 | `assess` | id, date? | ISO date; grid in force on the date (shipped + approved); engine refuses invalid profiles | CRS, eligibility, latest draws |
 | `deid_preview` | id, date? | sends nothing | de-identified payload, size, redactions (no values) |
-| `export_report` | id, date?, format, reviewed ids | **refused unless every ManualReview flag is in `reviewed`**; format pdf/docx only; path chosen in the native dialog opened by Rust (the WebView never supplies a path); file name from file number, not client name | saved path or null |
+| `export_report` | id, date?, format, reviewed ids | **refused unless every ManualReview flag is in `reviewed`**; format pdf/docx only; written to the output folder from Paramètres (never overwriting: `-2`, `-3`…) or, if none, to a path chosen in the native dialog opened by Rust (the WebView never supplies a path); file name from file number, not client name | saved path or null |
+| `settings_get` | — | unlocked | input / output folder: path, exists, writable |
+| `settings_pick` | `input` or `output` | unlocked; folder chosen in the native dialog opened by Rust (never a path from the WebView); canonicalized; output must be writable | settings |
+| `settings_clear` | `input` or `output` | unlocked | settings |
+| `inbox_list` | — | input folder set and present; one level, `.xlsx`/`.csv`, no symlinks / hidden / lock files, ≤ 500 entries, files > 10 MB not read | name, size, date, status (new / imported / failed / too large) |
+| `inbox_import` | file names (≤ 500) | each name re-resolved as a plain file directly in the input folder; ≤ 10 MB; already-imported fingerprints skipped; file never modified; parser pending a sample (refused with a message) | per file: ok, client id, message |
 | `watch_status` | — | unlocked | runs, stale flag, pending changes, grids, draws |
 | `watch_check_now` | — | one run at a time; fetches only the 13 fixed URLs through `net` (allowlist, audit) | summary |
 | `watch_approve` | note? | something pending; candidate grid must have no issues after rulings | new snapshot ids |

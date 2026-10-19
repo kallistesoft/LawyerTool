@@ -103,3 +103,23 @@ export const watchCheckNow = () => invoke<unknown>('watch_check_now')
 export const watchApprove = (note: string | null) => invoke<string[]>('watch_approve', { note })
 export const watchReject = () => invoke<void>('watch_reject')
 export const onWatchUpdated = (f: () => void): Promise<UnlistenFn> => listen('watch-updated', f)
+
+export interface FolderStatus { path: string; exists: boolean; writable: boolean }
+export interface Settings { input_dir: FolderStatus | null; output_dir: FolderStatus | null }
+export type Folder = 'input' | 'output'
+export const settingsGet = () => invoke<Settings>('settings_get')
+/** Opens the native folder dialog (in Rust); the WebView never supplies a path. */
+export const settingsPick = (which: Folder) => invoke<Settings>('settings_pick', { which })
+export const settingsClear = (which: Folder) => invoke<Settings>('settings_clear', { which })
+
+export interface InboxFile {
+  name: string
+  size: number
+  modified: string | null
+  status: 'new' | 'imported' | 'failed' | 'too_large'
+  message: string | null
+  client_id: number | null
+}
+export interface ImportResult { name: string; ok: boolean; client_id: number | null; message: string }
+export const inboxList = () => invoke<InboxFile[]>('inbox_list')
+export const inboxImport = (names: string[]) => invoke<ImportResult[]>('inbox_import', { names })
