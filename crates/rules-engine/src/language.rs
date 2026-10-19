@@ -41,11 +41,13 @@ impl Clb {
 
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum LanguageError {
-    #[error("no {test:?} equivalency table for a test taken on {date}")]
+    #[error("aucun tableau d’équivalence {test} pour un test passé le {date}")]
     NoTable { test: TestKind, date: String },
-    #[error("several {test:?} equivalency tables for a test taken on {date}")]
+    #[error("plusieurs tableaux d’équivalence {test} pour un test passé le {date}")]
     AmbiguousTable { test: TestKind, date: String },
-    #[error("{test:?} {skill:?} score {score} is above the scale for that test date")]
+    #[error(
+        "{test} : le résultat {score} en {skill} dépasse l’échelle en vigueur à la date du test"
+    )]
     OutOfScale {
         test: TestKind,
         skill: Skill,

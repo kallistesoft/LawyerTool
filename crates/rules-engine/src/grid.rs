@@ -317,6 +317,19 @@ pub enum GridIssue {
     Overlap { table: &'static str, value: u8 },
 }
 
+impl std::fmt::Display for GridIssue {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Gap { table, value } => {
+                write!(f, "tableau « {table} » : aucune ligne pour {value}")
+            }
+            Self::Overlap { table, value } => {
+                write!(f, "tableau « {table} » : lignes en double pour {value}")
+            }
+        }
+    }
+}
+
 /// Checks that `ranges` cover 0..=∞ exactly once, assuming rows sorted by `min`.
 fn coverage(table: &'static str, ranges: impl Iterator<Item = Range>, out: &mut Vec<GridIssue>) {
     let mut next: Option<u8> = Some(0); // smallest value not yet covered; None = covered to ∞

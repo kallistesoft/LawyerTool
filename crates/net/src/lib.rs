@@ -20,13 +20,13 @@ pub const DEFAULT_MAX_BYTES: usize = 5 * 1024 * 1024;
 
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum NetError {
-    #[error("blocked by network policy: {0}")]
+    #[error("bloqué par la politique réseau : {0}")]
     Blocked(String),
-    #[error("request failed: {0}")]
+    #[error("échec de la requête : {0}")]
     Failed(String),
-    #[error("response larger than {0} bytes")]
+    #[error("réponse supérieure à {0} octets")]
     TooLarge(usize),
-    #[error("could not record the audit entry: {0}")]
+    #[error("impossible d’inscrire l’entrée au journal d’audit : {0}")]
     Audit(String),
 }
 
@@ -47,25 +47,25 @@ impl Allowlist {
     /// `Ok(host)` if `url` may be contacted, else the policy reason.
     pub fn check(&self, url: &Url) -> Result<String, String> {
         if url.scheme() != "https" {
-            return Err(format!("scheme {:?} is not https", url.scheme()));
+            return Err(format!("le protocole {:?} n’est pas https", url.scheme()));
         }
         if !url.username().is_empty() || url.password().is_some() {
-            return Err("credentials in URL".into());
+            return Err("identifiants dans l’URL".into());
         }
         if url.port().is_some() {
-            return Err("non-default port".into());
+            return Err("port non standard".into());
         }
         let host = match url.host() {
             Some(Host::Domain(d)) => d.to_ascii_lowercase(),
             Some(Host::Ipv4(_) | Host::Ipv6(_)) => {
-                return Err("IP address instead of host name".into());
+                return Err("adresse IP au lieu d’un nom d’hôte".into());
             }
-            None => return Err("no host".into()),
+            None => return Err("aucun hôte".into()),
         };
         if self.0.contains(&host) {
             Ok(host)
         } else {
-            Err(format!("host {host} is not on the allowlist"))
+            Err(format!("l’hôte {host} n’est pas dans la liste autorisée"))
         }
     }
 }
@@ -73,7 +73,7 @@ impl Allowlist {
 /// Redirect decision, separate from reqwest for testing.
 pub fn redirect_allowed(allow: &Allowlist, next: &Url, hops_so_far: usize) -> Result<(), String> {
     if hops_so_far >= MAX_REDIRECTS {
-        return Err(format!("more than {MAX_REDIRECTS} redirects"));
+        return Err(format!("plus de {MAX_REDIRECTS} redirections"));
     }
     allow.check(next).map(|_| ())
 }
@@ -277,7 +277,7 @@ impl Client {
                 .map(str::to_owned);
             if !content_type_allowed(content_type.as_deref(), &req.accept) {
                 return Err(NetError::Failed(format!(
-                    "unexpected content type {}",
+                    "type de contenu inattendu : {}",
                     content_type.as_deref().unwrap_or("(none)")
                 )));
             }
@@ -315,17 +315,17 @@ impl Client {
 /// Error kind without URLs, headers or bodies.
 fn error_kind(e: &reqwest::Error) -> String {
     let kind = if e.is_redirect() {
-        "redirect refused"
+        "redirection refusée"
     } else if e.is_timeout() {
-        "timeout"
+        "délai dépassé"
     } else if e.is_connect() {
-        "connection failed"
+        "connexion impossible"
     } else if e.is_body() || e.is_decode() {
-        "bad response body"
+        "réponse illisible"
     } else if e.is_request() {
-        "request error"
+        "erreur de requête"
     } else {
-        "network error"
+        "erreur réseau"
     };
     kind.to_owned()
 }

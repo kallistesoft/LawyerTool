@@ -17,7 +17,8 @@ use vault::Identity;
 use crate::clients::{Assessment, assess_inner};
 use crate::session::{CommandError, Session};
 
-fn line_label(l: &str) -> &str {
+/// French label of a CRS line (engine labels are stable English keys).
+pub fn line_label(l: &'static str) -> &'static str {
     match l {
         "age" => "Âge",
         "education" => "Niveau de scolarité",
@@ -374,6 +375,24 @@ fn sanitize(s: &str) -> String {
 
 #[cfg(test)]
 mod tests {
+    /// Every label the engine emits has a French translation.
+    #[test]
+    fn every_crs_label_is_translated() {
+        let engine = include_str!("../../crates/rules-engine/src/crs.rs");
+        let mut labels = Vec::new();
+        for chunk in engine.split(".push(").skip(1) {
+            let t = chunk.trim_start();
+            if let Some(rest) = t.strip_prefix('"') {
+                labels.push(rest.split('"').next().unwrap_or_default().to_owned());
+            }
+        }
+        assert!(labels.len() >= 14, "{labels:?}");
+        for l in labels {
+            let l: &'static str = Box::leak(l.into_boxed_str());
+            assert_ne!(super::line_label(l), l, "no French label for {l:?}");
+        }
+    }
+
     #[test]
     fn full_profile_renders_to_pdf_and_docx() {
         let a: applicant::Applicant =

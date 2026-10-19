@@ -15,18 +15,52 @@ use crate::language::{Clb, LanguageError, to_clb, valid_on};
 
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum CrsError {
-    #[error("applicant record is invalid: {0:?}")]
+    #[error("profil du demandeur invalide : {}", join(.0))]
     Invalid(Vec<ValidationError>),
-    #[error("grid {0} has unresolved issues: {1:?}")]
+    #[error("la grille {} comporte des lacunes non résolues : {}", .0, join(.1))]
     GridIssues(String, Vec<GridIssue>),
-    #[error("no first official language test: not eligible for Express Entry")]
+    #[error("aucun test de première langue officielle : non admissible à Entrée express")]
     NoFirstLanguage,
-    #[error("{0}: {1}")]
+    #[error("{} : {}", language_name(.0), .1)]
     Language(&'static str, LanguageError),
-    #[error("no grid row in {table} for value {value}")]
+    #[error("aucune ligne du tableau « {table} » pour la valeur {value}")]
     NoRow { table: &'static str, value: u8 },
-    #[error("missing data: {0}")]
+    #[error("donnée manquante : {}", missing_fr(.0))]
     Missing(&'static str),
+}
+
+/// Joins displayable items with "; ".
+pub(crate) fn join<T: std::fmt::Display>(items: &[T]) -> String {
+    items
+        .iter()
+        .map(ToString::to_string)
+        .collect::<Vec<_>>()
+        .join(" ; ")
+}
+
+/// French name of an internal language key ("first language"...).
+pub fn language_fr(k: &'static str) -> &'static str {
+    language_name(k)
+}
+
+fn language_name(k: &str) -> &str {
+    match k {
+        "first language" => "première langue officielle",
+        "second language" => "deuxième langue officielle",
+        "spouse language" => "langue de l’époux",
+        other => other,
+    }
+}
+
+fn missing_fr(k: &str) -> &str {
+    match k {
+        "education row" => "ligne de scolarité dans la grille",
+        "spouse" => "renseignements sur l’époux",
+        "spouse education" => "scolarité de l’époux",
+        "spouse education row" => "ligne de scolarité de l’époux dans la grille",
+        "high-wage occupation list" => "liste des professions à salaire élevé",
+        other => other,
+    }
 }
 
 /// Something the lawyer must look at; the score is still computed.
@@ -161,26 +195,26 @@ fn foreign_row(t: &TierTable<Range>, years: u8) -> Option<&TierRow<Range>> {
 fn review_reason(id: &str) -> &'static str {
     match id {
         "D-001" => {
-            "TCF Canada at NCLC 4 (first language): 6 points per skill awarded per the \
-                    criteria page; the official calculator gives 0. Confirm before relying on this score."
+            "TCF Canada au NCLC 4 (première langue) : 6 points par compétence accordés selon la \
+                    page des critères ; la calculatrice officielle donne 0. À confirmer avant de vous fier à cette note."
         }
         "D-002" => {
-            "Second official language at NCLC 4: 0 points by ruling; the criteria page \
-                    has no row for NCLC 4. Confirm before relying on this score."
+            "Deuxième langue officielle au NCLC 4 : 0 point selon la décision rendue ; la page des \
+                    critères n’a pas de ligne pour le NCLC 4. À confirmer avant de vous fier à cette note."
         }
         "D-003" => {
-            "TEF Canada result converted with the table for its test date (IRCC Atlantic \
-                    Immigration page); the Express Entry pages list only the pre-2019 scale. \
-                    Confirm the NCLC levels before relying on this score."
+            "Résultat TEF Canada converti avec le tableau en vigueur à la date du test (page d’IRCC \
+                    sur l’immigration au Canada atlantique) ; les pages d’Entrée express ne donnent que \
+                    l’échelle d’avant 2019. Confirmez les niveaux NCLC avant de vous fier à cette note."
         }
         "D-004" => {
-            "French bonus: 50 points awarded per the criteria page (French NCLC 7+, \
-                    English PTE Core CLB 5+); the official calculator shows 25 for PTE Core. \
-                    Confirm before relying on this score."
+            "Bonus francophone : 50 points accordés selon la page des critères (français NCLC 7+, \
+                    anglais PTE Core NCLC 5+) ; la calculatrice officielle affiche 25 pour PTE Core. \
+                    À confirmer avant de vous fier à cette note."
         }
         _ => {
-            "This value relies on a ruling on a divergence between official sources \
-              (see divergences.md). Confirm before relying on this score."
+            "Cette valeur repose sur une décision prise sur une divergence entre sources officielles \
+              (voir divergences.md). À confirmer avant de vous fier à cette note."
         }
     }
 }

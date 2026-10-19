@@ -47,6 +47,15 @@
   async function save(then?: (id: number) => void) {
     error = null
     saved = false
+    // Our own French checks (the WebView's built-in messages follow the OS language).
+    if (!identity.full_name.trim()) {
+      error = 'Le nom complet est obligatoire.'
+      return
+    }
+    if (identity.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identity.email)) {
+      error = 'Adresse courriel invalide.'
+      return
+    }
     try {
       const r = await clientSave(clientId, identity, a)
       clientId = r.id
@@ -72,7 +81,7 @@
   const num = (s: string) => (s.trim() === '' ? null : Number(s))
 </script>
 
-<form onsubmit={(e) => (e.preventDefault(), save())}>
+<form novalidate onsubmit={(e) => (e.preventDefault(), save())}>
   <div class="row between">
     <h2>{clientId === null ? 'Nouveau client' : identity.full_name || 'Client'}</h2>
     <button type="button" class="link" onclick={onBack}>← Liste des clients</button>
@@ -81,7 +90,7 @@
   <fieldset>
     <legend>Identité <span class="hint">(jamais envoyée à Claude)</span></legend>
     <div class="row">
-      <label>Nom complet <input required bind:value={identity.full_name} /></label>
+      <label>Nom complet <input bind:value={identity.full_name} /></label>
       <label>N° de dossier <input bind:value={() => identity.file_reference ?? '', (v) => (identity.file_reference = v || null)} /></label>
     </div>
     <div class="row">

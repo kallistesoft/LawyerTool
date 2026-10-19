@@ -44,10 +44,11 @@ pub fn channel_endpoint(stable: &Url, channel: Channel) -> Result<Url, String> {
             let s = stable.as_str();
             if !s.contains("/stable/") {
                 return Err(
-                    "stable endpoint must contain /stable/ to derive the beta channel".into(),
+                    "l’adresse du canal stable doit contenir /stable/ pour en déduire le canal bêta".into(),
                 );
             }
-            Url::parse(&s.replacen("/stable/", "/beta/", 1)).map_err(|e| e.to_string())
+            Url::parse(&s.replacen("/stable/", "/beta/", 1))
+                .map_err(|_| "adresse du canal bêta invalide".to_owned())
         }
     }
 }
@@ -125,15 +126,15 @@ fn prepare<R: Runtime>(app: &AppHandle<R>) -> Result<Option<Prepared>, String> {
         Err(reason) => {
             let host = url.host_str().unwrap_or("").to_owned();
             audit(&session, &host, Outcome::Blocked, 0, Some(reason.clone()))?;
-            return Err(format!("update endpoint refused: {reason}"));
+            return Err(format!("serveur de mise à jour refusé : {reason}"));
         }
     };
     let updater = app
         .updater_builder()
         .endpoints(vec![url])
-        .map_err(|e| e.to_string())?
+        .map_err(|_| "Configuration des mises à jour invalide.".to_owned())?
         .build()
-        .map_err(|e| e.to_string())?;
+        .map_err(|_| "Configuration des mises à jour invalide.".to_owned())?;
     Ok(Some(Prepared {
         updater,
         host,
@@ -161,7 +162,7 @@ pub async fn update_check(app: AppHandle) -> Result<UpdateInfo, String> {
         Ok(_) => audit(&session, &p.host, Outcome::Completed, 0, None)?,
         Err(e) => audit(&session, &p.host, Outcome::Failed, 0, Some(e.to_string()))?,
     }
-    let update = found.map_err(|e| e.to_string())?;
+    let update = found.map_err(|_| "La vérification des mises à jour a échoué.".to_owned())?;
     Ok(match update {
         None => UpdateInfo {
             configured: true,
@@ -188,14 +189,14 @@ pub async fn update_check(app: AppHandle) -> Result<UpdateInfo, String> {
 /// after the user clicked "Install and restart".
 #[tauri::command]
 pub async fn update_install(app: AppHandle) -> Result<(), String> {
-    let p = prepare(&app)?.ok_or("updater is not configured")?;
+    let p = prepare(&app)?.ok_or("Les mises à jour ne sont pas encore configurées.")?;
     let session = app.state::<Arc<Session>>().inner().clone();
     let update = p
         .updater
         .check()
         .await
-        .map_err(|e| e.to_string())?
-        .ok_or("no update available")?;
+        .map_err(|_| "La vérification des mises à jour a échoué.".to_owned())?
+        .ok_or("Aucune mise à jour disponible.")?;
     let mut received: u64 = 0;
     let result = update
         .download_and_install(|chunk, _total| received += chunk as u64, || {})
@@ -216,7 +217,7 @@ pub async fn update_install(app: AppHandle) -> Result<(), String> {
             Some(e.to_string()),
         )?,
     }
-    result.map_err(|e| e.to_string())?;
+    result.map_err(|_| "L’installation de la mise à jour a échoué.".to_owned())?;
     // Close the vault (wipes the key) before restarting into the new version.
     session.lock();
     app.restart()

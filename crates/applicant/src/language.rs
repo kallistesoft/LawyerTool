@@ -27,6 +27,29 @@ pub enum Skill {
     Writing,
 }
 
+impl std::fmt::Display for Skill {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(match self {
+            Self::Speaking => "expression orale",
+            Self::Listening => "compréhension de l’oral",
+            Self::Reading => "compréhension de l’écrit",
+            Self::Writing => "expression écrite",
+        })
+    }
+}
+
+impl std::fmt::Display for TestKind {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(match self {
+            Self::CelpipGeneral => "CELPIP-G",
+            Self::IeltsGeneral => "IELTS Formation générale",
+            Self::PteCore => "PTE Core",
+            Self::TefCanada => "TEF Canada",
+            Self::TcfCanada => "TCF Canada",
+        })
+    }
+}
+
 impl Skill {
     pub const ALL: [Skill; 4] = [
         Skill::Speaking,

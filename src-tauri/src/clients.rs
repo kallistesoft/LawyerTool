@@ -29,7 +29,15 @@ fn grids() -> &'static Result<Vec<Grid>, String> {
                 if issues.is_empty() {
                     Ok(g)
                 } else {
-                    Err(format!("grid {} has issues: {issues:?}", g.id))
+                    Err(format!(
+                        "La grille {} comporte des lacunes : {}",
+                        g.id,
+                        issues
+                            .iter()
+                            .map(ToString::to_string)
+                            .collect::<Vec<_>>()
+                            .join(" ; ")
+                    ))
                 }
             })
             .collect()
@@ -101,8 +109,12 @@ pub fn client_save(
     request: SaveRequest,
 ) -> Result<Saved, CommandError> {
     // The profile must match the Applicant model exactly (unknown fields are refused).
-    let a: Applicant = serde_json::from_value(request.profile.clone())
-        .map_err(|e| err("invalid_profile", format!("Profil invalide : {e}")))?;
+    let a: Applicant = serde_json::from_value(request.profile.clone()).map_err(|_| {
+        err(
+            "invalid_profile",
+            "Profil invalide : données du formulaire mal formées.",
+        )
+    })?;
     let problems = a
         .validate()
         .err()
@@ -140,7 +152,31 @@ pub fn assess(
     id: i64,
     on: Option<String>,
 ) -> Result<Assessment, CommandError> {
-    assess_inner(&s, id, on)
+    let mut a = assess_inner(&s, id, on)?;
+    if let Ok(c) = &mut a.crs {
+        localize(c);
+    }
+    Ok(a)
+}
+
+/// French labels for display (the export maps them itself).
+fn localize(c: &mut CrsResult) {
+    let sections = [
+        &mut c.core,
+        &mut c.spouse,
+        &mut c.transferability,
+        &mut c.additional,
+    ];
+    for s in sections.into_iter().chain(c.labour_market.as_mut()) {
+        for l in &mut s.lines {
+            l.label = crate::export::line_label(l.label);
+        }
+    }
+    for f in &mut c.flags {
+        if let rules_engine::crs::Flag::ExpiredLanguageTest { which } = f {
+            *which = rules_engine::crs::language_fr(which);
+        }
+    }
 }
 
 pub fn assess_inner(s: &Session, id: i64, on: Option<String>) -> Result<Assessment, CommandError> {
