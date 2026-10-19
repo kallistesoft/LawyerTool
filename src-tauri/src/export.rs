@@ -273,8 +273,9 @@ pub struct ExportRequest {
     reviewed: Vec<String>,
 }
 
-/// Saves the report where the user chooses. Returns the path, or `None` if
-/// the dialog was cancelled.
+/// Saves the report in the output folder (Paramètres) or, if none is set,
+/// where the user chooses. Returns the path, or `None` if the dialog was
+/// cancelled.
 #[tauri::command]
 pub async fn export_report(
     app: AppHandle,
@@ -319,6 +320,24 @@ pub async fn export_report(
         .filter(|f| !f.is_empty())
         .map_or_else(|| format!("client-{}", request.id), sanitize);
     let name = format!("Evaluation-{stem}-{}.{ext}", assessment.on);
+
+    // Output folder set in Paramètres: write there directly, never overwrite.
+    if let Some(dir) = session.setting(crate::folders::OUTPUT_KEY) {
+        let dir = std::path::PathBuf::from(dir);
+        if !dir.is_dir() {
+            return Err(CommandError::new(
+                "output_dir_missing",
+                "Le dossier de sortie est introuvable : vérifiez Paramètres.",
+            ));
+        }
+        let path = tauri::async_runtime::spawn_blocking(move || {
+            crate::folders::write_new(&dir, &name, &bytes)
+        })
+        .await
+        .map_err(|_| CommandError::internal())?
+        .map_err(|_| CommandError::new("write_failed", "Le fichier n’a pas pu être enregistré."))?;
+        return Ok(Some(path.display().to_string()));
+    }
 
     let dialog = app
         .dialog()

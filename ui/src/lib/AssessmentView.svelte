@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { assess, deidPreview, errorMessage, exportReport, type Redaction } from './api'
+  import { assess, deidPreview, errorMessage, exportReport, settingsGet, type Redaction } from './api'
   import { PROGRAM, type Assessment, type Check, type Cite, type CrsResult, type Flag, type Section } from './model'
 
   let { id, onEdit, onBack }: { id: number; onEdit: (id: number) => void; onBack: () => void } = $props()
@@ -21,6 +21,10 @@
     }
   }
 
+  let outputDir: string | null = $state(null)
+  settingsGet()
+    .then((s) => (outputDir = s.output_dir?.path ?? null))
+    .catch(() => {})
   let exported: string | null = $state(null)
   let exportError: string | null = $state(null)
   async function doExport(format: 'pdf' | 'docx') {
@@ -161,10 +165,13 @@
       <p class="error">{result.eligibility.Err}</p>
     {/if}
     <h3>Exporter l’évaluation</h3>
-    <p class="hint">Rapport brouillon pour l’avocat, avec les sources citées. Le fichier exporté n’est pas chiffré.</p>
+    <p class="hint">
+      Rapport brouillon pour l’avocat, avec les sources citées. Le fichier exporté n’est pas chiffré.
+      {#if outputDir}Enregistré dans le dossier de sortie : <code>{outputDir}</code>.{/if}
+    </p>
     <div class="row">
-      <button disabled={!allReviewed} onclick={() => doExport('pdf')}>Exporter en PDF</button>
-      <button disabled={!allReviewed} onclick={() => doExport('docx')}>Exporter en Word</button>
+      <button disabled={!allReviewed} onclick={() => doExport('pdf')}>{outputDir ? 'Exporter en PDF dans le dossier de sortie' : 'Exporter en PDF'}</button>
+      <button disabled={!allReviewed} onclick={() => doExport('docx')}>{outputDir ? 'Exporter en Word dans le dossier de sortie' : 'Exporter en Word'}</button>
     </div>
     {#if !allReviewed}<p class="hint">Cochez d’abord chaque point de révision obligatoire.</p>{/if}
     {#if exported}<p>Enregistré : {exported}</p>{/if}

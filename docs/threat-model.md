@@ -77,7 +77,14 @@ the independent security reviewer (see docs/security-review.md).
 - **Recommendation:** one OS account per lawyer; never share the passphrase.
 
 ### T4. Malicious client file (M2)
-- Files are read only through the file picker; the app never scans folders.
+- Form files are read only from the input folder the user chose (native
+  dialog opened by Rust), only when the user clicks "Analyser": one level,
+  `.xlsx`/`.csv`, no symlinks, hidden or Office lock files, at most 500
+  entries of 10 MB each; each name is re-checked to be a plain file directly
+  inside that folder before it is read. The files are never modified;
+  imports are tracked by SHA-256 (metadata only in the vault).
+- Reports are written only to the output folder the user chose (or a save
+  dialog), never overwriting an existing file.
 - Parsers are pure Rust (no macros, no external viewers, no OCR in MVP);
   size limits; parse errors are refused, not guessed.
 - File content is never executed or rendered as HTML in the WebView.

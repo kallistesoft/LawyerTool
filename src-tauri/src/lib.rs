@@ -4,6 +4,8 @@ mod clients;
 #[cfg(debug_assertions)]
 mod dev;
 mod export;
+mod folders;
+mod import;
 mod session;
 mod updates;
 mod watch;
@@ -90,6 +92,11 @@ pub fn run() {
             clients::assess,
             clients::deid_preview,
             export::export_report,
+            folders::settings_get,
+            folders::settings_pick,
+            folders::settings_clear,
+            folders::inbox_list,
+            folders::inbox_import,
             watch::watch_status,
             watch::watch_check_now,
             watch::watch_approve,

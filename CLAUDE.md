@@ -12,7 +12,7 @@ A standalone desktop app (macOS + Windows) for a Canadian immigration lawyer / l
 - **Storage:** SQLite with SQLCipher (AES-256). Key derived from passphrase with Argon2id, held in the OS keychain (macOS Keychain / Windows Credential Manager). Auto-lock on inactivity and wipe keys from memory on lock.
 - **All network access happens in the Rust backend only.** The frontend never touches the network or the API key. Strict CSP, minimal Tauri command allowlist and file-path scopes.
 - **Outbound destinations (the only ones):** the Claude API, an allowlist of official immigration sites (canada.ca / IRCC and others the user names), and the update host. All over HTTPS.
-- **Files:** the app reads only files the user picks via a file dialog. Never scan folders.
+- **Files:** the app reads only files the user picks via a file dialog, or (revised 2026-10-18) the form-results *input folder* the user chose in Paramètres: read on demand only (when the user clicks "Analyser"), one level deep, `.xlsx`/`.csv` only, files never modified. Never scan any other folder. Reviewed reports go to the *output folder* the user chose (never overwritten), or a save dialog if none is set.
 - **Updates:** `tauri-plugin-updater` with signed bundles and a `latest.json` on a private static host. Prompt the user rather than forcing restarts, support a minimum-version field for critical fixes, and keep a beta channel. Keep the updater private key offline/in CI secrets. Version the DB schema and take an automatic encrypted backup before migrating.
 - **Distribution:** Apple Developer account + notarization; Windows code-signing cert (EV preferred). CI via GitHub Actions with `tauri-action` building .dmg and .msi.
 
