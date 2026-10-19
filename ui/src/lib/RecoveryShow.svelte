@@ -16,7 +16,7 @@
 
 <section>
   <h2>Phrase de récupération</h2>
-  <p class="warn">
+  <p class="callout warn">
     Écrivez ces 24 mots sur papier et conservez-les dans un endroit sûr (coffre du cabinet). Ils sont affichés une
     seule fois. Sans eux, un ordinateur perdu ou réinstallé signifie la perte des dossiers.
   </p>
@@ -27,5 +27,5 @@
   {#each picks as n, i (n)}
     <label>Mot n° {n} <input autocomplete="off" bind:value={answers[i]} /></label>
   {/each}
-  <button disabled={!ok} onclick={onDone}>Continuer</button>
+  <button class="primary auth-submit" disabled={!ok} onclick={onDone}>Continuer</button>
 </section>

@@ -26,11 +26,11 @@
 
 <form novalidate onsubmit={create}>
   <h2>Créer le coffre chiffré</h2>
-  <p>
+  <p class="hint">
     Les dossiers clients sont chiffrés sur cet ordinateur. La phrase de passe déverrouille le coffre ; elle n'est
     jamais enregistrée.
   </p>
   <PassphraseFields bind:value={passphrase} bind:valid />
-  {#if error}<p class="error">{error}</p>{/if}
-  <button type="submit" disabled={!valid || busy}>{busy ? 'Création…' : 'Créer le coffre'}</button>
+  {#if error}<p class="callout err">{error}</p>{/if}
+  <button type="submit" class="primary auth-submit" disabled={!valid || busy}>{busy ? 'Création…' : 'Créer le coffre'}</button>
 </form>

@@ -16,6 +16,7 @@
     "allow-update-check",
     "allow-update-install",
     "allow-client-list",
+    "allow-client-overview",
     "allow-client-get",
     "allow-client-save",
     "allow-client-delete",

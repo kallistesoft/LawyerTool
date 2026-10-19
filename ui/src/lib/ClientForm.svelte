@@ -1,7 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { clientDelete, clientGet, clientSave, errorMessage } from './api'
+  import Icon from './Icon.svelte'
   import LanguageFields from './LanguageFields.svelte'
+  import PageHeader from './PageHeader.svelte'
   import {
     CDN_EDUCATION, CREDENTIAL, EDUCATION, MARITAL, newApplicant, newLanguageTest,
     type Applicant, type CanadianEducation, type Credential, type EducationLevel, type Identity, type MaritalStatus,
@@ -22,14 +24,21 @@
   let error: string | null = $state(null)
   let saved = $state(false)
   let confirmDelete = $state(false)
+  let toast: string | null = $state(null)
+  // Unsaved-changes indicator: compare with the last loaded/saved state.
+  let baseline = $state('')
+  const snapshot = () => JSON.stringify([identity, a])
+  const dirty = $derived(baseline !== '' && snapshot() !== baseline)
 
   onMount(() => {
     clientId = id
+    if (id === null) baseline = snapshot()
     if (id !== null) {
       clientGet(id)
         .then((c) => {
           identity = c.identity
           a = c.profile
+          baseline = snapshot()
         })
         .catch((e) => (error = errorMessage(e)))
     }
@@ -61,6 +70,9 @@
       clientId = r.id
       problems = r.problems
       saved = true
+      baseline = snapshot()
+      toast = r.problems.length ? 'Enregistré comme brouillon' : 'Dossier enregistré'
+      setTimeout(() => (toast = null), 2500)
       onSaved(r.id)
       if (then && r.problems.length === 0) then(r.id)
     } catch (e) {
@@ -78,16 +90,34 @@
     }
   }
 
+  const sectionsNav = [
+    ['sec-identity', 'Identité'], ['sec-situation', 'Situation et études'], ['sec-spouse', 'Époux'],
+    ['sec-languages', 'Langues'], ['sec-work', 'Expérience'], ['sec-other', 'Autres facteurs'],
+    ['sec-eligibility', 'Admissibilité'],
+  ] as const
   const num = (s: string) => (s.trim() === '' ? null : Number(s))
 </script>
 
-<form novalidate onsubmit={(e) => (e.preventDefault(), save())}>
-  <div class="row between">
-    <h2>{clientId === null ? 'Nouveau client' : identity.full_name || 'Client'}</h2>
-    <button type="button" class="link" onclick={onBack}>← Liste des clients</button>
-  </div>
+<PageHeader
+  title={clientId === null ? 'Nouveau client' : identity.full_name || 'Client'}
+  crumbs={[{ label: 'Clients', go: onBack }]}
+  subtitle="Les champs inconnus peuvent rester vides : l’évaluation indique ce qui manque."
+>
+  {#snippet actions()}
+    {#if clientId !== null}<button onclick={() => clientId !== null && onAssess(clientId)}><Icon name="scale" />Voir l’évaluation</button>{/if}
+  {/snippet}
+</PageHeader>
 
-  <fieldset>
+<div class="layout">
+<nav class="index" aria-label="Sections du formulaire">
+  {#each sectionsNav as [anchor, label] (anchor)}
+    {#if anchor !== 'sec-spouse' || a.spouse}<a href={'#' + anchor}>{label}</a>{/if}
+  {/each}
+</nav>
+
+<form novalidate onsubmit={(e) => (e.preventDefault(), save())}>
+
+  <fieldset id="sec-identity">
     <legend>Identité <span class="hint">(jamais envoyée à Claude)</span></legend>
     <div class="row">
       <label>Nom complet <input bind:value={identity.full_name} /></label>
@@ -99,7 +129,7 @@
     </div>
   </fieldset>
 
-  <fieldset>
+  <fieldset id="sec-situation">
     <legend>Situation et études</legend>
     <div class="row">
       <label>État matrimonial
@@ -123,7 +153,7 @@
   </fieldset>
 
   {#if a.spouse}
-    <fieldset>
+    <fieldset id="sec-spouse">
       <legend>Époux ou conjoint de fait</legend>
       <label class="check"><input type="checkbox" bind:checked={a.spouse.is_canadian_citizen_or_pr} /> Citoyen(ne) canadien(ne) ou résident(e) permanent(e)</label>
       <label class="check"><input type="checkbox" bind:checked={a.spouse.accompanying} /> Accompagnera le (la) demandeur(se) au Canada</label>
@@ -144,7 +174,7 @@
     </fieldset>
   {/if}
 
-  <fieldset>
+  <fieldset id="sec-languages">
     <legend>Langues officielles</legend>
     {#if a.first_language}
       <LanguageFields bind:value={a.first_language} title="Première langue officielle" />
@@ -160,7 +190,7 @@
     {/if}
   </fieldset>
 
-  <fieldset>
+  <fieldset id="sec-work">
     <legend>Expérience de travail (pointage SCG)</legend>
     <div class="row">
       <label>Années au Canada (10 dernières années) <input type="number" min="0" max="40" bind:value={a.canadian_work_years} /></label>
@@ -177,7 +207,7 @@
     <button type="button" class="link" onclick={() => a.canadian_work_by_noc.push({ noc: '', months: 12 })}>+ Emploi au Canada (CNP)</button>
   </fieldset>
 
-  <fieldset>
+  <fieldset id="sec-other">
     <legend>Autres facteurs</legend>
     <label class="check"><input type="checkbox" bind:checked={a.certificate_of_qualification} /> Certificat de compétence (province/territoire)</label>
     <label class="check"><input type="checkbox" bind:checked={a.provincial_nomination} /> Désignation d’une province ou d’un territoire</label>
@@ -189,7 +219,7 @@
     {#if a.job_offer}<label>CNP de l’offre <input maxlength="5" bind:value={a.job_offer.noc} /></label>{/if}
   </fieldset>
 
-  <fieldset>
+  <fieldset id="sec-eligibility">
     <legend>Admissibilité aux programmes</legend>
     <p class="hint">Antécédents de travail détaillés (TQF, CEC, TMS) : chaque emploi compte au maximum 30 h/semaine.</p>
     {#each a.eligibility.work_history as w, i (i)}
@@ -234,26 +264,98 @@
     </div>
   </fieldset>
 
-  {#if problems.length}
-    <div class="warn">
-      <p><strong>Enregistré comme brouillon. À corriger avant l’évaluation :</strong></p>
-      <ul>{#each problems as p (p)}<li>{p}</li>{/each}</ul>
-    </div>
-  {:else if saved}
-    <p class="hint">Enregistré.</p>
-  {/if}
-  {#if error}<p class="error">{error}</p>{/if}
-
-  <div class="row">
-    <button type="submit">Enregistrer</button>
-    <button type="button" onclick={() => save(onAssess)}>Enregistrer et évaluer</button>
-    {#if clientId !== null}
-      {#if confirmDelete}
-        <button type="button" class="danger" onclick={remove}>Confirmer la suppression</button>
-        <button type="button" class="link" onclick={() => (confirmDelete = false)}>Annuler</button>
-      {:else}
-        <button type="button" class="link" onclick={() => (confirmDelete = true)}>Supprimer…</button>
-      {/if}
+  <div class="savebar">
+    {#if problems.length}
+      <div class="callout warn problems">
+        <strong>Enregistré comme brouillon. À corriger avant l’évaluation :</strong>
+        <ul>{#each problems as p (p)}<li>{p}</li>{/each}</ul>
+      </div>
     {/if}
+    {#if error}<p class="callout err">{error}</p>{/if}
+    <div class="bar-row">
+      <span class="state">
+        {#if dirty}<span class="badge warn">Modifications non enregistrées</span>
+        {:else if saved}<span class="badge ok"><Icon name="check" size={12} />Enregistré</span>{/if}
+      </span>
+      <div class="actions">
+        {#if clientId !== null}
+          {#if confirmDelete}
+            <span class="hint">Supprimer définitivement ce dossier ?</span>
+            <button type="button" class="danger" onclick={remove}><Icon name="trash" />Supprimer</button>
+            <button type="button" class="ghost" onclick={() => (confirmDelete = false)}>Annuler</button>
+          {:else}
+            <button type="button" class="ghost" onclick={() => (confirmDelete = true)}><Icon name="trash" />Supprimer…</button>
+          {/if}
+        {/if}
+        <button type="submit">Enregistrer</button>
+        <button type="button" class="primary" onclick={() => save(onAssess)}><Icon name="scale" />Enregistrer et évaluer</button>
+      </div>
+    </div>
   </div>
 </form>
+</div>
+
+{#if toast}<div class="toast" role="status">{toast}</div>{/if}
+
+<style>
+  .layout {
+    display: grid;
+    grid-template-columns: 11rem 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  .index {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding-top: 0.3rem;
+  }
+  .index a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 550;
+    padding: 0.35rem 0.6rem;
+    border-left: 2px solid var(--border);
+  }
+  .index a:hover {
+    color: var(--accent);
+    border-left-color: var(--accent);
+  }
+  form :global(fieldset) {
+    scroll-margin-top: 1rem;
+  }
+  .savebar {
+    position: sticky;
+    bottom: -3rem;
+    margin: 1rem -0.5rem 0;
+    padding: 0.8rem 0.5rem 1rem;
+    background: linear-gradient(to top, var(--bg) 75%, transparent);
+  }
+  .bar-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 0.65rem 0.9rem;
+  }
+  .problems ul {
+    margin: 0.4rem 0 0;
+    padding-left: 1.2rem;
+  }
+  @media (max-width: 900px) {
+    .layout {
+      grid-template-columns: 1fr;
+    }
+    .index {
+      display: none;
+    }
+  }
+</style>

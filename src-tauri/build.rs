@@ -11,6 +11,7 @@ fn main() {
             "vault_lock",
             "activity",
             "client_list",
+            "client_overview",
             "client_get",
             "client_save",
             "client_delete",

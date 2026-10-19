@@ -21,6 +21,7 @@ or client data.
 | `vault_lock` | — | — | — (closes DB, wipes key, emits `vault-locked`) |
 | `activity` | — | only when unlocked | — |
 | `client_list` | — | unlocked | id, name, file number, updated |
+| `client_overview` | — | unlocked; computed locally on today's grid | per client: CRS or reason, program statuses, review points, profile problems |
 | `client_get` | id | unlocked; profile must parse | identity + profile |
 | `client_save` | id?, identity, profile | profile parsed strictly as `Applicant` (unknown fields refused); identity length limits (name 200, email 254, phone 40, file 64); profile ≤ 256 KiB; ≤ 100 jobs, ≤ 50 NOC rows; validation problems returned (draft saved) | id, problems |
 | `client_delete` | id | unlocked | deleted? |

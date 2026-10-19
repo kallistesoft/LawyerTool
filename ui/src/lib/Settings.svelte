@@ -1,5 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import Icon from './Icon.svelte'
+  import PageHeader from './PageHeader.svelte'
   import { errorMessage, settingsClear, settingsGet, settingsPick, type Folder, type FolderStatus, type Settings } from './api'
 
   let settings: Settings | null = $state(null)
@@ -43,35 +45,69 @@
   }
 </script>
 
-<section>
-  <h2>Paramètres</h2>
-  {#if error}<p class="error">{error}</p>{/if}
+<PageHeader title="Paramètres" subtitle="Dossiers de travail. Les chemins sont enregistrés dans le coffre chiffré." />
+
+{#if error}<p class="callout err">{error}</p>{/if}
+
+<div class="folders">
   {#each folders as f (f.which)}
     {@const s = statusOf(f.which)}
-    <div class="folder">
-      <h3>{f.title}</h3>
+    {@const issue = s ? problem(f.which, s) : null}
+    <div class="card folder">
+      <div class="card-title">
+        <h3><span class="ico"><Icon name="folder" size={18} /></span>{f.title}</h3>
+        {#if !s}<span class="badge">Non défini</span>
+        {:else if issue}<span class="badge err">{issue}</span>
+        {:else}<span class="badge ok"><Icon name="check" size={12} />Prêt</span>{/if}
+      </div>
       <p class="hint">{f.help}</p>
       {#if s}
-        <p><code>{s.path}</code></p>
-        {#if problem(f.which, s)}<p class="error">{problem(f.which, s)}</p>{/if}
+        <div class="path"><code>{s.path}</code></div>
       {:else}
-        <p class="hint">
+        <p class="hint empty">
           {f.which === 'input' ? 'Aucun dossier choisi.' : 'Aucun dossier choisi : l’export demande l’emplacement à chaque fois.'}
         </p>
       {/if}
-      <div class="row">
-        <button disabled={busy} onclick={() => act(() => settingsPick(f.which))}>Choisir…</button>
-        {#if s}<button class="link" disabled={busy} onclick={() => act(() => settingsClear(f.which))}>Retirer</button>{/if}
+      <div class="actions">
+        <button class={s ? '' : 'primary'} disabled={busy} onclick={() => act(() => settingsPick(f.which))}><Icon name="folder" />{s ? 'Changer…' : 'Choisir…'}</button>
+        {#if s}<button class="ghost" disabled={busy} onclick={() => act(() => settingsClear(f.which))}>Retirer</button>{/if}
       </div>
     </div>
   {/each}
-</section>
+</div>
 
 <style>
-  .folder {
-    margin-bottom: 1.5rem;
+  .folders {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+    gap: 1rem;
   }
-  code {
+  .folder {
+    margin: 0;
+  }
+  h3 {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .ico {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 8px;
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .path {
+    margin: 0.6rem 0 0.9rem;
+    padding: 0.5rem 0.7rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
     word-break: break-all;
+  }
+  .empty {
+    margin: 0.6rem 0 0.9rem;
   }
 </style>

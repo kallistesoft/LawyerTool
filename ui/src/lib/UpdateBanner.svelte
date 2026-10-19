@@ -26,7 +26,7 @@
 </script>
 
 {#if info?.available && (info.mandatory || !dismissed)}
-  <div class={info.mandatory ? 'update mandatory' : 'update'} role="alert">
+  <div class={info.mandatory ? 'update mandatory' : 'update callout info'} role="alert">
     <p>
       {#if info.mandatory}
         <strong>Mise à jour obligatoire</strong> : la version {info.current} n'est plus prise en charge.
@@ -36,24 +36,23 @@
     </p>
     {#if info.notes}<p class="notes">{info.notes}</p>{/if}
     {#if error}<p class="error">{error}</p>{/if}
-    <button disabled={busy} onclick={install}>{busy ? 'Installation…' : 'Installer et redémarrer'}</button>
-    {#if !info.mandatory}<button class="link" onclick={() => (dismissed = true)}>Plus tard</button>{/if}
+    <div class="actions">
+    <button class="primary" disabled={busy} onclick={install}>{busy ? 'Installation…' : 'Installer et redémarrer'}</button>
+    {#if !info.mandatory}<button class="ghost" onclick={() => (dismissed = true)}>Plus tard</button>{/if}
+    </div>
   </div>
 {/if}
 
 <style>
   .update {
-    border: 1px solid #2b6cb0;
-    border-radius: 6px;
-    padding: 0.8rem 1rem;
-    margin: 1rem 0;
+    margin: 0 0 1rem;
   }
   .mandatory {
     position: fixed;
     inset: 0;
     margin: 0;
     border-radius: 0;
-    background: Canvas;
+    background: var(--bg);
     z-index: 10;
     padding: 20vh 15vw;
   }

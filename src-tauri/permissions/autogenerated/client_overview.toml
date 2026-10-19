@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-client-overview"
+description = "Enables the client_overview command without any pre-configured scope."
+commands.allow = ["client_overview"]
+
+[[permission]]
+identifier = "deny-client-overview"
+description = "Denies the client_overview command without any pre-configured scope."
+commands.deny = ["client_overview"]

@@ -31,9 +31,11 @@
     <!-- svelte-ignore a11y_autofocus -->
     <input type="password" autocomplete="current-password" autofocus bind:value={passphrase} />
   </label>
-  {#if error}<p class="error">{error}</p>{/if}
-  <button type="submit" disabled={!passphrase || busy}>{busy ? 'Vérification…' : 'Déverrouiller'}</button>
-  <button type="button" class={code === 'keychain_missing' ? '' : 'link'} onclick={onRecover}>
+  {#if error}<p class="callout err">{error}</p>{/if}
+  <div class="actions auth-actions">
+  <button type="submit" class="primary" disabled={!passphrase || busy}>{busy ? 'Vérification…' : 'Déverrouiller'}</button>
+  <button type="button" class={code === 'keychain_missing' ? '' : 'ghost'} onclick={onRecover}>
     Utiliser la phrase de récupération
   </button>
+  </div>
 </form>
