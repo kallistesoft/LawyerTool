@@ -29,13 +29,15 @@
 
 <form novalidate onsubmit={recover}>
   <h2>Récupération</h2>
-  <p>Saisissez les 24 mots, puis choisissez une nouvelle phrase de passe pour cet ordinateur.</p>
+  <p class="hint">Saisissez les 24 mots, puis choisissez une nouvelle phrase de passe pour cet ordinateur.</p>
   <label>
     Phrase de récupération ({count}/24)
     <textarea rows="4" autocomplete="off" spellcheck="false" bind:value={phrase}></textarea>
   </label>
   <PassphraseFields bind:value={passphrase} bind:valid label="Nouvelle phrase de passe" />
-  {#if error}<p class="error">{error}</p>{/if}
-  <button type="submit" disabled={count !== 24 || !valid || busy}>{busy ? 'Récupération…' : 'Récupérer'}</button>
-  <button type="button" class="link" onclick={onCancel}>Annuler</button>
+  {#if error}<p class="callout err">{error}</p>{/if}
+  <div class="actions auth-actions">
+  <button type="submit" class="primary" disabled={count !== 24 || !valid || busy}>{busy ? 'Récupération…' : 'Récupérer'}</button>
+  <button type="button" class="ghost" onclick={onCancel}>Annuler</button>
+  </div>
 </form>

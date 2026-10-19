@@ -44,6 +44,91 @@ fn grids() -> &'static Result<Vec<Grid>, String> {
     })
 }
 
+/// One row of the client list: the key results at a glance.
+#[derive(Debug, Serialize)]
+pub struct ClientOverview {
+    pub id: i64,
+    pub full_name: String,
+    pub file_reference: Option<String>,
+    pub updated_at: String,
+    /// CRS total on today's grid, or why it could not be computed.
+    pub crs: Option<u16>,
+    pub crs_error: Option<String>,
+    pub programs: Vec<(
+        rules_engine::eligibility::Program,
+        rules_engine::eligibility::Status,
+    )>,
+    /// Mandatory lawyer review points.
+    pub reviews: usize,
+    /// Profile validation problems.
+    pub problems: usize,
+}
+
+/// Key results for one stored profile on `on` (pure; no vault access).
+pub fn overview_of(
+    c: ClientSummary,
+    profile: &str,
+    grids: &[Grid],
+    on: &IsoDate,
+) -> ClientOverview {
+    let mut o = ClientOverview {
+        id: c.id,
+        full_name: c.full_name,
+        file_reference: c.file_reference,
+        updated_at: c.updated_at,
+        crs: None,
+        crs_error: None,
+        programs: vec![],
+        reviews: 0,
+        problems: 0,
+    };
+    let Ok(a) = serde_json::from_str::<Applicant>(profile) else {
+        o.crs_error = Some("Profil illisible.".into());
+        return o;
+    };
+    o.problems = a.validate().err().map_or(0, |e| e.len());
+    let Some(grid) = in_force(grids, on) else {
+        o.crs_error = Some("Aucune grille officielle pour cette date.".into());
+        return o;
+    };
+    match rules_engine::crs::score(grid, &a, on) {
+        Ok(r) => {
+            o.crs = Some(r.total);
+            o.reviews = r.flags.iter().filter(|f| f.blocks_approval()).count();
+        }
+        Err(e) => o.crs_error = Some(e.to_string()),
+    }
+    if let Ok(ps) = rules_engine::eligibility::assess(grid, &a, on) {
+        o.programs = ps.iter().map(|p| (p.program, p.status)).collect();
+    }
+    o
+}
+
+/// Every client with its score, eligibility and pending checks on `on`
+/// (the UI's local date; default: today in UTC).
+#[tauri::command]
+pub fn client_overview(
+    s: State<'_, Arc<Session>>,
+    on: Option<String>,
+) -> Result<Vec<ClientOverview>, CommandError> {
+    let on = match on {
+        Some(d) => {
+            IsoDate::parse(&d).ok_or_else(|| err("invalid_date", "Date invalide (AAAA-MM-JJ)."))?
+        }
+        None => today(),
+    };
+    s.with_vault(|v| {
+        let grids = crate::watch::all_grids(v)?;
+        v.client_list()?
+            .into_iter()
+            .map(|c| {
+                let profile = v.client_get(c.id)?.map(|r| r.profile).unwrap_or_default();
+                Ok(overview_of(c, &profile, &grids, &on))
+            })
+            .collect()
+    })
+}
+
 pub fn today() -> IsoDate {
     let secs = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -362,6 +447,43 @@ mod tests {
             // The result must serialize for the UI.
             assert!(serde_json::to_string(&r).is_ok());
         }
+    }
+
+    #[test]
+    fn overview_shows_score_programs_and_pending_checks() {
+        let grids = super::grids().as_ref().unwrap_or_else(|e| panic!("{e}"));
+        let on = applicant::IsoDate::parse("2026-10-18").unwrap_or_else(|| unreachable!());
+        let row = |id| vault::ClientSummary {
+            id,
+            full_name: "X".into(),
+            file_reference: None,
+            updated_at: "t".into(),
+        };
+        let full = include_str!("../tests/fixtures/ui-full-applicant.json");
+        let o = super::overview_of(row(1), full, grids, &on);
+        assert!(o.crs.is_some_and(|t| t > 0) && o.crs_error.is_none());
+        assert_eq!(o.programs.len(), 3);
+        assert_eq!(o.problems, 0);
+
+        // Impossible profile: problems counted, score refused with a reason.
+        let mut a: serde_json::Value = serde_json::from_str(full).unwrap_or_else(|e| panic!("{e}"));
+        a["age"] = serde_json::json!(19);
+        a["foreign_work_years"] = serde_json::json!(10);
+        let o = super::overview_of(row(2), &a.to_string(), grids, &on);
+        assert!(o.problems > 0 && o.crs.is_none() && o.crs_error.is_some());
+
+        // TCF at NCLC 4 relies on ruling D-001: one mandatory review.
+        let mut a: serde_json::Value = serde_json::from_str(full).unwrap_or_else(|e| panic!("{e}"));
+        a["first_language"] = serde_json::json!({
+            "test": "tcf_canada", "test_date": "2026-01-15",
+            "speaking": 4, "listening": 331, "reading": 342, "writing": 4
+        });
+        a["second_language"] = serde_json::Value::Null;
+        let o = super::overview_of(row(3), &a.to_string(), grids, &on);
+        assert!(o.reviews >= 1, "{o:?}");
+
+        let o = super::overview_of(row(4), "{", grids, &on);
+        assert_eq!(o.crs_error.as_deref(), Some("Profil illisible."));
     }
 
     #[test]

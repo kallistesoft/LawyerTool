@@ -86,6 +86,7 @@ pub fn run() {
             session::vault_lock,
             session::activity,
             clients::client_list,
+            clients::client_overview,
             clients::client_get,
             clients::client_save,
             clients::client_delete,

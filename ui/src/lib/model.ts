@@ -148,11 +148,17 @@ export const PROGRAM: Record<ProgramResult['program'], string> = {
   Fsw: 'Travailleurs qualifiés (fédéral)', Cec: 'Expérience canadienne', Fst: 'Métiers spécialisés (fédéral)',
 }
 
+/** Today's date (YYYY-MM-DD) in the computer's time zone (not UTC). */
+export function localToday(): string {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
 /** IELTS bands are stored in tenths (6.5 → 65). */
 export const isIelts = (t: TestKind) => t === 'ielts_general'
 
 export function newLanguageTest(test: TestKind = 'ielts_general'): LanguageTest {
-  return { test, test_date: new Date().toISOString().slice(0, 10), speaking: 0, listening: 0, reading: 0, writing: 0 }
+  return { test, test_date: localToday(), speaking: 0, listening: 0, reading: 0, writing: 0 }
 }
 
 export function newApplicant(): Applicant {
@@ -167,4 +173,24 @@ export function newApplicant(): Applicant {
       fsw_arranged_employment: null, intends_to_live_in_quebec: null, settlement_funds_cad: null, family_size: null,
     },
   }
+}
+
+export type ProgramStatus = ProgramResult['status']
+/** Short program names for badges. */
+export const PROGRAM_SHORT: Record<ProgramResult['program'], string> = { Fsw: 'TQF', Cec: 'CEC', Fst: 'TMS' }
+export const STATUS_LABEL: Record<ProgramStatus, string> = {
+  Eligible: 'Admissible', NotEligible: 'Non admissible', NeedsInput: 'À compléter',
+}
+export const STATUS_TONE: Record<ProgramStatus, 'ok' | 'err' | 'warn'> = { Eligible: 'ok', NotEligible: 'err', NeedsInput: 'warn' }
+
+export interface ClientOverview {
+  id: number
+  full_name: string
+  file_reference: string | null
+  updated_at: string
+  crs: number | null
+  crs_error: string | null
+  programs: [ProgramResult['program'], ProgramStatus][]
+  reviews: number
+  problems: number
 }

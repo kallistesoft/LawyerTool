@@ -26,6 +26,7 @@ fn window_permissions_are_exactly_our_commands() {
         "allow-client-delete",
         "allow-client-get",
         "allow-client-list",
+        "allow-client-overview",
         "allow-client-save",
         "allow-deid-preview",
         "allow-export-report",
