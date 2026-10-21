@@ -95,7 +95,7 @@ dependencies = [
 
 [[package]]
 name = "applicant"
-version = "0.1.16"
+version = "0.1.17"
 dependencies = [
  "serde",
  "serde_json",
@@ -151,7 +151,7 @@ checksum = "1505bd5d3d116872e7271a6d4e16d81d0c8570876c8de68093a09ac269d8aac0"
 
 [[package]]
 name = "audit"
-version = "0.1.16"
+version = "0.1.17"
 dependencies = [
  "serde",
 ]
@@ -795,7 +795,7 @@ dependencies = [
 
 [[package]]
 name = "deid"
-version = "0.1.16"
+version = "0.1.17"
 dependencies = [
  "proptest",
  "regex",
@@ -1471,7 +1471,7 @@ dependencies = [
 
 [[package]]
 name = "grid-parser"
-version = "0.1.16"
+version = "0.1.17"
 dependencies = [
  "applicant",
  "proptest",
@@ -2151,7 +2151,7 @@ dependencies = [
 
 [[package]]
 name = "lawyertool"
-version = "0.1.16"
+version = "0.1.17"
 dependencies = [
  "applicant",
  "audit",
@@ -2394,7 +2394,7 @@ dependencies = [
 
 [[package]]
 name = "net"
-version = "0.1.16"
+version = "0.1.17"
 dependencies = [
  "audit",
  "reqwest",
@@ -2698,7 +2698,7 @@ checksum = "04744f49eae99ab78e0d5c0b603ab218f515ea8cfe5a456d7629ad883a3b6e7d"
 
 [[package]]
 name = "oracle-tests"
-version = "0.1.16"
+version = "0.1.17"
 dependencies = [
  "applicant",
  "proptest",
@@ -3166,7 +3166,7 @@ checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
 
 [[package]]
 name = "report"
-version = "0.1.16"
+version = "0.1.17"
 
 [[package]]
 name = "reqwest"
@@ -3258,7 +3258,7 @@ dependencies = [
 
 [[package]]
 name = "rules-engine"
-version = "0.1.16"
+version = "0.1.17"
 dependencies = [
  "applicant",
  "regex",
@@ -3269,7 +3269,7 @@ dependencies = [
 
 [[package]]
 name = "rules-watcher"
-version = "0.1.16"
+version = "0.1.17"
 dependencies = [
  "applicant",
  "audit",
@@ -4807,7 +4807,7 @@ dependencies = [
 
 [[package]]
 name = "vault"
-version = "0.1.16"
+version = "0.1.17"
 dependencies = [
  "aes-gcm",
  "apple-native-keyring-store",
@@ -4829,7 +4829,7 @@ dependencies = [
 
 [[package]]
 name = "vault-file"
-version = "0.1.16"
+version = "0.1.17"
 dependencies = [
  "aes-gcm",
  "argon2",
@@ -4996,7 +4996,7 @@ dependencies = [
 
 [[package]]
 name = "web"
-version = "0.1.16"
+version = "0.1.17"
 dependencies = [
  "applicant",
  "audit",
