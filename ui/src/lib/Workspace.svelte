@@ -67,6 +67,12 @@
   </aside>
 
   <main class="content">
+    {#if dev}
+      <p class="callout warn">
+        <strong>Version de démonstration.</strong> Coffre de test sans phrase de passe, conservé dans ce navigateur :
+        n’y saisissez aucune donnée réelle de client.
+      </p>
+    {/if}
     {#if view.kind === 'watch'}
       <WatchView />
     {:else if view.kind === 'settings'}

@@ -8,8 +8,8 @@ name: Web app
 # The site and the snapshot are deployed together on purpose: the FTP deploy
 # deletes files it uploaded earlier that are missing from the new upload.
 #
-# Repository secrets (this repository is private, so the kallistesoft
-# organization secrets do not apply): FTP_SERVER, FTP_USERNAME, FTP_PASSWORD.
+# FTP_SERVER, FTP_USERNAME and FTP_PASSWORD are the kallistesoft organization
+# secrets (free plan: they reach public repositories, which this one is).
 
 on:
   push:
@@ -27,6 +27,9 @@ concurrency:
 
 env:
   CARGO_TERM_COLOR: always
+  # "demo": automatic test vault without passphrase (no real client data).
+  # Set to "production" for the real encrypted vault file.
+  UI_MODE: demo
 
 jobs:
   build:
@@ -48,7 +51,7 @@ jobs:
           ./scripts/build-wasm.sh
           npm ci --prefix ui --ignore-scripts --no-fund
           npm --prefix ui run check
-          npm --prefix ui run build
+          npm --prefix ui run build -- --mode "$UI_MODE"
       - name: Rules watcher snapshot
         run: |
           mkdir -p ui/dist/watch
