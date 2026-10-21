@@ -1,0 +1,52 @@
+# audit.kallistesoft.ca (GoDaddy cPanel, Apache). Deployed with the site by
+# .github/workflows/web.yml.
+#
+# The site serves the app's code and public rules data only: client data
+# never reaches this server. These headers keep the page from loading or
+# sending anything elsewhere, so even injected code could not exfiltrate
+# data from the lawyer's browser to another host.
+
+Options -Indexes
+
+<IfModule mod_headers.c>
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self'; connect-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
+  Header always set Strict-Transport-Security "max-age=31536000"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set Referrer-Policy "no-referrer"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+  Header always set Cross-Origin-Opener-Policy "same-origin"
+
+  # New versions must reach the lawyer at the next visit; hashed assets never change.
+  <FilesMatch "^(index\.html|latest\.json)$">
+    Header set Cache-Control "no-store"
+  </FilesMatch>
+  <If "%{REQUEST_URI} =~ m#^/assets/#">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </If>
+</IfModule>
+
+<IfModule mod_mime.c>
+  AddType application/wasm .wasm
+</IfModule>
+
+# The FTP deploy's bookkeeping file stays private.
+<Files ".ftp-deploy-sync-state.json">
+  Require all denied
+</Files>
+
+# Password for the pilot (defence in depth: the site holds no client data).
+# Active once the password file exists: cPanel > Directory Privacy >
+# audit.kallistesoft.ca creates it at this path.
+<IfFile "/home/djofk7r8n6lk/.htpasswds/public_html/audit.kallistesoft.ca/passwd">
+  AuthType Basic
+  AuthName "LawyerTool"
+  AuthUserFile "/home/djofk7r8n6lk/.htpasswds/public_html/audit.kallistesoft.ca/passwd"
+  Require valid-user
+</IfFile>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} off
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>

@@ -6,7 +6,6 @@
   import ClientList from './ClientList.svelte'
   import Icon from './Icon.svelte'
   import Settings from './Settings.svelte'
-  import UpdateBanner from './UpdateBanner.svelte'
   import WatchView from './WatchView.svelte'
 
   let { info, dev }: { info: AppInfo | null; dev: boolean } = $props()
@@ -68,7 +67,6 @@
   </aside>
 
   <main class="content">
-    <UpdateBanner />
     {#if view.kind === 'watch'}
       <WatchView />
     {:else if view.kind === 'settings'}

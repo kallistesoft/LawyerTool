@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { appInfo, onLocked, reportActivity, vaultStatus, type AppInfo } from './lib/api'
+  import { supported } from './lib/files'
   import Icon from './lib/Icon.svelte'
   import Recover from './lib/Recover.svelte'
   import RecoveryShow from './lib/RecoveryShow.svelte'
@@ -8,20 +9,23 @@
   import Unlock from './lib/Unlock.svelte'
   import Workspace from './lib/Workspace.svelte'
 
-  type Screen = 'loading' | 'setup' | 'recovery-show' | 'unlock' | 'recover' | 'home'
-  let screen: Screen = $state('loading')
+  type Screen = 'loading' | 'unsupported' | 'setup' | 'recovery-show' | 'unlock' | 'recover' | 'home'
+  let screen: Screen = $state(supported() ? 'loading' : 'unsupported')
   let phrase = $state('')
   let info: AppInfo | null = $state(null)
   let dev = $state(false)
+  let file: string | null = $state(null)
 
   async function refresh() {
     const s = await vaultStatus()
     dev = s.dev
+    file = s.file
     screen = s.unlocked ? 'home' : s.exists ? 'unlock' : 'setup'
   }
 
   onMount(() => {
     appInfo().then((i) => (info = i))
+    if (screen === 'unsupported') return
     refresh()
     const unlisten = onLocked(() => {
       phrase = ''
@@ -47,12 +51,18 @@
           <div class="hint">Admissibilité Entrée express · données chiffrées sur cet ordinateur</div>
         </div>
       </div>
-      {#if screen === 'setup'}
-        <Setup onCreated={(p) => ((phrase = p), (screen = 'recovery-show'))} />
+      {#if screen === 'unsupported'}
+        <h2>Navigateur non pris en charge</h2>
+        <p class="hint">
+          LawyerTool enregistre le coffre chiffré et les rapports directement sur cet ordinateur, ce que seuls Google
+          Chrome et Microsoft Edge permettent. Ouvrez cette page dans l’un de ces navigateurs.
+        </p>
+      {:else if screen === 'setup'}
+        <Setup onCreated={(p) => ((phrase = p), (screen = 'recovery-show'))} onOpened={refresh} />
       {:else if screen === 'recovery-show'}
         <RecoveryShow {phrase} onDone={() => ((phrase = ''), (screen = 'home'))} />
       {:else if screen === 'unlock'}
-        <Unlock onUnlocked={() => (screen = 'home')} onRecover={() => (screen = 'recover')} />
+        <Unlock {file} onUnlocked={() => (screen = 'home')} onRecover={() => (screen = 'recover')} onOpened={refresh} />
       {:else if screen === 'recover'}
         <Recover onRecovered={() => (screen = 'home')} onCancel={() => (screen = 'unlock')} />
       {/if}

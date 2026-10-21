@@ -1,0 +1,31 @@
+[package]
+name = "web"
+description = "The web app's engine, compiled to WebAssembly: vault file, clients, assessment, report export, inbox and watcher review. No network; the page does file and folder access."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+applicant = { path = "../applicant" }
+rules-engine = { path = "../rules-engine" }
+deid = { path = "../deid" }
+report = { path = "../report" }
+audit = { path = "../audit" }
+vault-file = { path = "../vault-file" }
+rules-watcher = { path = "../rules-watcher", default-features = false }
+sha2 = "=0.11.1"
+zeroize = "=1.9.1"
+serde.workspace = true
+serde_json.workspace = true
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "=0.2.129"
+js-sys = "=0.3.106"
+getrandom = { version = "=0.4.3", features = ["wasm_js"] }
+
+[lints]
+workspace = true

@@ -30,8 +30,8 @@ forbid audit vault rusqlite libsqlite3-sys reqwest
 
 # No printing or logging in crates that handle keys, client data or traffic
 # (brief rule 9: no sensitive data in logs).
-if grep -rnE '\b(println|eprintln|print|eprint|dbg)!|\b(log|tracing)::' crates/net/src crates/vault/src crates/audit/src; then
-  echo "::error::net, vault and audit must not print or log"
+if grep -rnE '\b(println|eprintln|print|eprint|dbg)!|\b(log|tracing)::' crates/net/src crates/vault/src crates/vault-file/src crates/web/src crates/audit/src; then
+  echo "::error::net, vault, vault-file, web and audit must not print or log"
   fail=1
 fi
 
@@ -40,6 +40,12 @@ if ! grep -B1 '^mod dev;' src-tauri/src/lib.rs | grep -q 'cfg(debug_assertions)'
   echo "::error::src-tauri dev module must be gated by #[cfg(debug_assertions)]"
   fail=1
 fi
+
+# The web engine runs in the lawyer's browser with client data: no network
+# client, database or runtime of its own (the page only fetches public files
+# from its own origin), and the watcher code it uses comes without `collect`.
+forbid web "${IO[@]}" net grid-parser vault
+forbid vault-file "${IO[@]}" net
 
 if cargo metadata --no-deps --format-version 1 | grep -q '"name":"rules-watcher"'; then
   forbid rules-watcher vault deid

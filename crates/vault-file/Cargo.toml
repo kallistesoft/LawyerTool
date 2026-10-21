@@ -1,0 +1,23 @@
+[package]
+name = "vault-file"
+description = "Encrypted vault as a single file on the lawyer's disk (web app): Argon2id passphrase slot + recovery phrase slot, AES-256-GCM body, in-memory store"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+audit = { path = "../audit" }
+argon2 = "=0.6.0"
+aes-gcm = "=0.11.1"
+hkdf = "=0.13.0"
+sha2 = "=0.11.1"
+getrandom = "=0.4.3"
+zeroize = { version = "=1.9.1", features = ["derive"] }
+bip39 = "=3.0.0"
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+
+[lints]
+workspace = true

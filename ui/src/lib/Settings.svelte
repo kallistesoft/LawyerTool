@@ -2,7 +2,9 @@
   import { onMount } from 'svelte'
   import Icon from './Icon.svelte'
   import PageHeader from './PageHeader.svelte'
-  import { errorMessage, settingsClear, settingsGet, settingsPick, type Folder, type FolderStatus, type Settings } from './api'
+  import {
+    errorMessage, folderAccess, settingsClear, settingsGet, settingsPick, type Folder, type FolderStatus, type Settings,
+  } from './api'
 
   let settings: Settings | null = $state(null)
   let error: string | null = $state(null)
@@ -38,16 +40,25 @@
   const statusOf = (which: Folder): FolderStatus | null =>
     settings ? (which === 'input' ? settings.input_dir : settings.output_dir) : null
 
+  const needsPermission = $derived(!!(statusOf('input')?.needs_permission || statusOf('output')?.needs_permission))
+
   function problem(which: Folder, s: FolderStatus): string | null {
+    if (s.needs_permission) return 'Accès à confirmer'
     if (!s.exists) return 'Dossier introuvable.'
     if (which === 'output' && !s.writable) return 'Écriture impossible dans ce dossier.'
     return null
   }
 </script>
 
-<PageHeader title="Paramètres" subtitle="Dossiers de travail. Les chemins sont enregistrés dans le coffre chiffré." />
+<PageHeader title="Paramètres" subtitle="Dossiers de travail sur cet ordinateur, mémorisés par ce navigateur." />
 
 {#if error}<p class="callout err">{error}</p>{/if}
+{#if needsPermission}
+  <div class="callout warn access">
+    <span>Le navigateur demande de confirmer l’accès aux dossiers à chaque nouvelle session.</span>
+    <button class="primary" disabled={busy} onclick={() => act(folderAccess)}><Icon name="folder" />Autoriser l’accès aux dossiers</button>
+  </div>
+{/if}
 
 <div class="folders">
   {#each folders as f (f.which)}
@@ -57,7 +68,7 @@
       <div class="card-title">
         <h3><span class="ico"><Icon name="folder" size={18} /></span>{f.title}</h3>
         {#if !s}<span class="badge">Non défini</span>
-        {:else if issue}<span class="badge err">{issue}</span>
+        {:else if issue}<span class="badge {s.needs_permission ? 'warn' : 'err'}">{issue}</span>
         {:else}<span class="badge ok"><Icon name="check" size={12} />Prêt</span>{/if}
       </div>
       <p class="hint">{f.help}</p>
@@ -77,6 +88,13 @@
 </div>
 
 <style>
+  .access {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
   .folders {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));

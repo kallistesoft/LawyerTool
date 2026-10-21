@@ -2,6 +2,7 @@
 # Runs the same checks as CI's "check" job. Commit only if this passes.
 set -euo pipefail
 cd "$(dirname "$0")/.."
+./scripts/build-wasm.sh >/dev/null 2>&1
 npm --prefix ui run build >/dev/null
 npm --prefix ui run check >/dev/null
 cargo fmt --all --check

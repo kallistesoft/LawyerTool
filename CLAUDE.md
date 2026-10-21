@@ -5,6 +5,16 @@ Read this fully before doing anything. It records decisions already made in a pl
 ## What we're building
 A standalone desktop app (macOS + Windows) for a Canadian immigration lawyer / law firm. It screens client eligibility: it takes a client's form answers, calculates eligibility deterministically from official rules, and uses Claude to draft an explanatory note for lawyer review. Privileged client data, so security comes first.
 
+## Revision 2026-10-21: web app instead of a desktop app
+The user dropped the Mac/Windows app (no notarization, signing or updater) now that Kallistesoft has its own hosting. What changed, ruled by the user:
+- **Static web app at `audit.kallistesoft.ca`** (GoDaddy cPanel, deployed by `.github/workflows/web.yml`). No backend, no database, no PHP. One lawyer for the pilot; Chrome or Edge (File System Access API).
+- **Client data stays on the lawyer's computer.** The Rust engine (rules engine, de-identification, reports, vault) is compiled to WebAssembly (`crates/web`) and runs in the browser, in a Web Worker. The vault is one encrypted file on the lawyer's disk (`crates/vault-file`: Argon2id passphrase slot + 24-word recovery slot, AES-256-GCM body), read and written in place. The server never receives client data.
+- **Same behaviour as the desktop app:** Paramètres keeps the input folder (form results) and the output folder (reports, never overwritten), chosen with the browser's folder picker and remembered by the browser; auto-lock after 5 minutes or after sleep.
+- **Network:** the page only fetches its own origin. The strict CSP in `ui/public/.htaccess` (`connect-src 'self'`) blocks any other destination.
+- **Rules watcher:** a daily CI job runs the native watcher (`watch-publish`, feature `collect`) and publishes `watch/latest.json` (public data) with the site. The browser compares it with the vault; the lawyer still approves every change.
+- **Tech stack kept:** Rust engine + Svelte UI. A full TypeScript rewrite and a PHP server app were rejected.
+- The Tauri shell (`src-tauri`, `crates/vault`, `crates/net` in the app, updater) stays until the web pilot works, then gets deleted. The "Decisions (final)" below are superseded where they mention the desktop, the keychain, installers or updates.
+
 ## Decisions (final)
 - **Stack:** Tauri (Rust backend + web frontend). Not Electron, not Compose Multiplatform.
 - **Standalone:** one double-click installer. No Python/Node/Java required on user machines. Stay in Rust for the backend (parse PDFs/Word/CSV with crates). No OCR in the MVP; if added later it must be a bundled sidecar.

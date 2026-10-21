@@ -1357,9 +1357,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "300e883d756b2e4ec94e02791f39b04b522276138852cfc41d9fb7e904106099"
 dependencies = [
  "cfg-if",
+ "js-sys",
  "libc",
  "r-efi 6.0.0",
  "rand_core",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -4826,6 +4828,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "vault-file"
+version = "0.1.16"
+dependencies = [
+ "aes-gcm",
+ "argon2",
+ "audit",
+ "bip39",
+ "getrandom 0.4.3",
+ "hkdf",
+ "serde",
+ "serde_json",
+ "sha2 0.11.1",
+ "thiserror 2.0.21",
+ "zeroize",
+]
+
+[[package]]
 name = "vcpkg"
 version = "0.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4973,6 +4992,26 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
+]
+
+[[package]]
+name = "web"
+version = "0.1.16"
+dependencies = [
+ "applicant",
+ "audit",
+ "deid",
+ "getrandom 0.4.3",
+ "js-sys",
+ "report",
+ "rules-engine",
+ "rules-watcher",
+ "serde",
+ "serde_json",
+ "sha2 0.11.1",
+ "vault-file",
+ "wasm-bindgen",
+ "zeroize",
 ]
 
 [[package]]

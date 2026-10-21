@@ -11,16 +11,24 @@
 //! - Reads the official draws feed (deterministic JSON).
 //! - Prose pages (announcements) get a sentence diff only: Claude extraction
 //!   is deferred.
+//!
+//! Web app: a daily CI job (`watch-publish`, feature `collect`) fetches and
+//! parses the pages and publishes a [`Published`] snapshot next to the app;
+//! the browser compares it with the vault (without `collect`: no network,
+//! no HTML parsing in the browser).
 
 mod diff;
 mod draws;
 
+#[cfg(feature = "collect")]
 use std::collections::BTreeMap;
 
+#[cfg(feature = "collect")]
 use grid_parser::{Page, ProgramPages};
 use rules_engine::grid::{Crs, EquivalencyTable, HighWageList, LabourMarket};
 use rules_engine::programs::Programs;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
+#[cfg(feature = "collect")]
 use sha2::{Digest, Sha256};
 
 pub use diff::{Change, SentenceChange, grid_changes, sentence_diff};
@@ -126,10 +134,12 @@ pub fn source(id: &str) -> Option<&'static Source> {
     SOURCES.iter().find(|s| s.id == id)
 }
 
+#[cfg(feature = "collect")]
 fn hex(bytes: &[u8]) -> String {
     bytes.iter().map(|b| format!("{b:02x}")).collect()
 }
 
+#[cfg(feature = "collect")]
 /// Content fingerprint: normalized `<main>` text for HTML pages (ignores
 /// per-request tokens and layout), raw bytes for scripts and JSON.
 pub fn fingerprint(src: &Source, body: &[u8]) -> String {
@@ -146,6 +156,7 @@ pub fn fingerprint(src: &Source, body: &[u8]) -> String {
 }
 
 /// Normalized text of an HTML page's `<main>`, for prose diffs.
+#[cfg(feature = "collect")]
 pub fn main_text(src: &Source, body: &[u8]) -> Option<String> {
     Page::parse(src.id, &String::from_utf8_lossy(body))
         .ok()
@@ -154,7 +165,7 @@ pub fn main_text(src: &Source, body: &[u8]) -> Option<String> {
 
 /// The grid parts rebuilt from fetched pages. Each part fails on its own:
 /// a redesigned page blocks only what it feeds.
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Candidate {
     pub crs: Result<Crs, String>,
     pub language: Result<Vec<EquivalencyTable>, String>,
@@ -163,6 +174,7 @@ pub struct Candidate {
     pub high_wage: Result<HighWageList, String>,
 }
 
+#[cfg(feature = "collect")]
 fn page(bodies: &BTreeMap<&str, Vec<u8>>, id: &'static str) -> Result<Page, String> {
     let body = bodies
         .get(id)
@@ -171,6 +183,7 @@ fn page(bodies: &BTreeMap<&str, Vec<u8>>, id: &'static str) -> Result<Page, Stri
 }
 
 /// Rebuilds every grid part from fetched page bodies (keyed by source id).
+#[cfg(feature = "collect")]
 pub fn build_candidate(bodies: &BTreeMap<&str, Vec<u8>>) -> Candidate {
     let placeholder = || applicant::IsoDate::parse("1970-01-01").unwrap_or_else(|| unreachable!());
     let crs = page(bodies, "criteries-scg").and_then(|p| {
@@ -224,6 +237,7 @@ pub fn build_candidate(bodies: &BTreeMap<&str, Vec<u8>>) -> Candidate {
 }
 
 /// One fetch result.
+#[cfg(feature = "collect")]
 #[derive(Debug, Clone, Serialize)]
 pub struct Fetched {
     pub id: &'static str,
@@ -231,6 +245,7 @@ pub struct Fetched {
 }
 
 /// Media types each kind of source must come back as.
+#[cfg(feature = "collect")]
 pub fn accepted_types(s: &Source) -> Vec<&'static str> {
     if s.url.ends_with(".js") {
         vec![
@@ -245,6 +260,7 @@ pub fn accepted_types(s: &Source) -> Vec<&'static str> {
     }
 }
 
+#[cfg(feature = "collect")]
 fn request(s: &Source, u: url::Url) -> net::Request {
     let mut r = net::Request::get(u, audit::DataCategory::PublicRulesFetch);
     r.accept = accepted_types(s);
@@ -252,6 +268,7 @@ fn request(s: &Source, u: url::Url) -> net::Request {
 }
 
 /// Fetches every source through the audited, allowlisted client.
+#[cfg(feature = "collect")]
 pub async fn fetch_all(client: &net::Client) -> Vec<Fetched> {
     let mut out = Vec::new();
     for s in SOURCES {
@@ -266,4 +283,72 @@ pub async fn fetch_all(client: &net::Client) -> Vec<Fetched> {
         out.push(Fetched { id: s.id, result });
     }
     out
+}
+
+/// One source in a published snapshot: what the browser needs to detect a
+/// change (fingerprint) and show a prose diff (main text).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct PublishedSource {
+    pub id: String,
+    /// `None` when the fetch failed (see `error`).
+    pub fingerprint: Option<String>,
+    /// Normalized `<main>` text, for prose sources only.
+    pub main_text: Option<String>,
+    pub error: Option<String>,
+}
+
+/// What the CI publisher writes to `watch/latest.json` for the web app.
+/// Public data only.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Published {
+    /// Format version of this file.
+    pub version: u32,
+    /// When the pages were fetched (RFC 3339 UTC).
+    pub at: String,
+    pub sources: Vec<PublishedSource>,
+    pub candidate: Candidate,
+    /// Parsed draws feed, or why it failed.
+    pub draws: Result<Vec<Draw>, String>,
+}
+
+pub const PUBLISHED_VERSION: u32 = 1;
+
+/// Builds the published snapshot from fetch results.
+#[cfg(feature = "collect")]
+pub fn publish(fetched: &[Fetched], at: String) -> Published {
+    let mut bodies: BTreeMap<&str, Vec<u8>> = BTreeMap::new();
+    let mut sources = Vec::new();
+    for f in fetched {
+        let Some(s) = source(f.id) else { continue };
+        match &f.result {
+            Ok(body) => {
+                sources.push(PublishedSource {
+                    id: s.id.into(),
+                    fingerprint: Some(fingerprint(s, body)),
+                    main_text: matches!(s.kind, Kind::Prose)
+                        .then(|| main_text(s, body))
+                        .flatten(),
+                    error: None,
+                });
+                bodies.insert(s.id, body.clone());
+            }
+            Err(e) => sources.push(PublishedSource {
+                id: s.id.into(),
+                fingerprint: None,
+                main_text: None,
+                error: Some(e.clone()),
+            }),
+        }
+    }
+    let draws = bodies.get("ee-rounds").map_or_else(
+        || Err("ee-rounds : flux non récupéré".to_owned()),
+        |b| parse_draws(b),
+    );
+    Published {
+        version: PUBLISHED_VERSION,
+        at,
+        sources,
+        candidate: build_candidate(&bodies),
+        draws,
+    }
 }

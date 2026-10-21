@@ -233,3 +233,47 @@ fn every_source_has_a_content_type_allowlist() {
         assert!(!rules_watcher::accepted_types(s).is_empty(), "{}", s.id);
     }
 }
+
+/// The snapshot published for the web app carries every source and parses
+/// back to the same candidate (it crosses CI -> site -> browser as JSON).
+#[test]
+fn published_snapshot_round_trips() {
+    let fetched: Vec<rules_watcher::Fetched> = saved()
+        .into_iter()
+        .map(|(id, body)| rules_watcher::Fetched {
+            id,
+            result: Ok(body),
+        })
+        .chain([rules_watcher::Fetched {
+            id: "verifier-note",
+            result: Err("HTTP 503".into()),
+        }])
+        .collect();
+    let p = rules_watcher::publish(&fetched, "2026-10-21T00:00:00Z".into());
+    assert_eq!(p.sources.len(), SOURCES.len() + 1);
+    let modifications = p.sources.iter().find(|s| s.id == "modifications").unwrap();
+    assert!(
+        modifications
+            .main_text
+            .as_ref()
+            .is_some_and(|t| t.len() > 100)
+    );
+    assert!(
+        p.sources
+            .iter()
+            .any(|s| s.error.as_deref() == Some("HTTP 503"))
+    );
+    assert!(p.draws.as_ref().is_ok_and(|d| !d.is_empty()));
+
+    let json = serde_json::to_string(&p).unwrap();
+    let back: rules_watcher::Published = serde_json::from_str(&json).unwrap();
+    let c = back.candidate;
+    let rebuilt = serde_json::json!({
+        "crs": c.crs.unwrap(),
+        "language": c.language.unwrap(),
+        "programs": c.programs.unwrap(),
+        "labour_market": c.labour_market.unwrap(),
+        "high_wage": c.high_wage.unwrap(),
+    });
+    assert!(grid_changes(&parts(&v1()), &rebuilt).is_empty());
+}
