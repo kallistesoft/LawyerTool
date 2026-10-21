@@ -241,6 +241,11 @@ impl App {
             "client_get" => out(clients::get(self.vault()?, arg(args, "id")?)?),
             "client_save" => out(clients::save(self.vault_mut()?, arg(args, "request")?)?),
             "client_delete" => out(self.vault_mut()?.client_delete(arg(args, "id")?)),
+            "client_clear_notes" => {
+                let id = arg(args, "id")?;
+                self.vault_mut()?.client_set_notes(id, vec![])?;
+                out(())
+            }
             "assess" => out(clients::assess(
                 self.vault()?,
                 arg(args, "id")?,

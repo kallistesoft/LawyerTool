@@ -200,6 +200,8 @@ export const clientGet = (id: number) => call<ClientView>('client_get', { id })
 export const clientSave = (id: number | null, identity: Identity, profile: Applicant) =>
   call<{ id: number; problems: string[] }>('client_save', { request: { id, identity, profile } })
 export const clientDelete = (id: number) => call<boolean>('client_delete', { id })
+/** The lawyer has completed what the form import left to check. */
+export const clientClearNotes = (id: number) => call<void>('client_clear_notes', { id })
 export const assess = (id: number, on: string | null) => call<Assessment>('assess', { id, on })
 
 export interface Redaction { path: string; kind: string; placeholder: string }

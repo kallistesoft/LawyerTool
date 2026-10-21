@@ -3,10 +3,10 @@
 //!
 //! The page lists the folder the lawyer chose in Paramètres (one level,
 //! plain files, read on demand, never modified) and hands each file's
-//! metadata and bytes here. Files are tracked by SHA-256 so the same export
-//! is never imported twice.
+//! metadata and bytes here. Files are tracked by SHA-256, and each form
+//! response by its own key, so the same export (or the same response in a
+//! later, longer export) is never imported twice.
 
-use applicant::Applicant;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use vault_file::{Identity, ImportOutcome, ImportRow, Vault};
@@ -19,18 +19,6 @@ pub const EXTENSIONS: [&str; 2] = ["xlsx", "csv"];
 pub const MAX_FILE: u64 = 10 * 1024 * 1024;
 /// Most files listed from the input folder.
 pub const MAX_ENTRIES: usize = 500;
-
-pub const FORMAT_PENDING: &str =
-    "Format du formulaire à configurer : en attente d’un exemple d’export (données fictives).";
-
-/// Parses one form file. `ext` is the lower-case extension.
-///
-/// The parser for the firm's real form is written once a sample export
-/// (with fake data) is available; until then every file is refused with a
-/// clear message and nothing is created.
-pub fn parse_form(_bytes: &[u8], _ext: &str) -> Result<(Identity, Applicant), String> {
-    Err(FORMAT_PENDING.to_owned())
-}
 
 /// SHA-256 of a file's content (hex).
 pub fn fingerprint(bytes: &[u8]) -> String {
@@ -121,7 +109,18 @@ pub struct ImportResult {
     pub message: String,
 }
 
-/// Imports one file (skipped if already imported). The file is only read.
+/// Key of one form response in the imports record (never a file fingerprint).
+fn response_key(key: &str) -> String {
+    format!("response:{key}")
+}
+
+fn plural(n: usize, one: &str, many: &str) -> String {
+    format!("{n} {}", if n > 1 { many } else { one })
+}
+
+/// Imports one file: one client per new form response, each with the
+/// to-complete notes of `form_import` (skipped if already imported). The
+/// file is only read.
 pub fn import(v: &mut Vault, name: &str, bytes: &[u8]) -> Res<ImportResult> {
     if !accepted_name(name) {
         return Err(CommandError::new("invalid_file", "Fichier refusé."));
@@ -151,12 +150,49 @@ pub fn import(v: &mut Vault, name: &str, bytes: &[u8]) -> Res<ImportResult> {
         .map(|(_, e)| e.to_ascii_lowercase())
         .unwrap_or_default();
     let now = time::now();
-    let (outcome, client_id, message) = match parse_form(bytes, &ext) {
-        Ok((identity, applicant)) => {
-            let profile =
-                serde_json::to_string(&applicant).map_err(|_| CommandError::internal())?;
-            let id = v.client_save(None, &identity, &profile, &now)?;
-            (ImportOutcome::Imported, Some(id), "Client créé.".to_owned())
+    let (outcome, client_id, message) = match form_import::parse(bytes, &ext, &time::today()) {
+        Ok(parsed) => {
+            let (mut created, mut known) = (Vec::new(), 0);
+            for r in parsed.responses {
+                let key = response_key(&r.key);
+                if v.import_get(&key).is_some() {
+                    known += 1;
+                    continue;
+                }
+                let identity = Identity {
+                    full_name: r.full_name,
+                    email: r.email,
+                    phone: None,
+                    file_reference: None,
+                };
+                let profile =
+                    serde_json::to_string(&r.applicant).map_err(|_| CommandError::internal())?;
+                let id = v.client_save(None, &identity, &profile, &now)?;
+                v.client_set_notes(id, r.notes)?;
+                v.import_record(&ImportRow {
+                    fingerprint: key,
+                    file_name: name.into(),
+                    imported_at: now.clone(),
+                    client_id: Some(id),
+                    outcome: ImportOutcome::Imported,
+                    message: "Client créé.".into(),
+                });
+                created.push(id);
+            }
+            let mut parts = vec![plural(created.len(), "client créé", "clients créés")];
+            if known > 0 {
+                parts.push(plural(
+                    known,
+                    "réponse déjà importée",
+                    "réponses déjà importées",
+                ));
+            }
+            for s in &parsed.skipped {
+                parts.push(format!("ligne {} ignorée ({})", s.row, s.reason));
+            }
+            let message = format!("{} : profils partiels, à compléter.", parts.join(", "));
+            let single = (created.len() == 1).then(|| created[0]);
+            (ImportOutcome::Imported, single, message)
         }
         Err(m) => (ImportOutcome::Failed, None, m),
     };
@@ -200,16 +236,57 @@ mod tests {
         }
     }
 
-    #[test]
-    fn failed_imports_are_listed_with_their_reason_and_retried() {
-        let (mut v, _) = Vault::create(
+    const SAMPLE: &[u8] = include_bytes!("../../form-import/tests/fixtures/sample-form.xlsx");
+
+    fn vault() -> Vault {
+        Vault::create(
             "a long test passphrase",
             vault_file::KdfParams::INSECURE_FAST_FOR_TESTS,
         )
-        .unwrap();
+        .unwrap()
+        .0
+    }
+
+    #[test]
+    fn a_form_export_creates_one_client_per_response_once() {
+        let mut v = vault();
+        let r = import(&mut v, "AUDIT(1-3).xlsx", SAMPLE).unwrap();
+        assert!(r.ok, "{}", r.message);
+        assert_eq!(r.client_id, None, "several clients: none opened");
+        assert!(
+            r.message
+                .starts_with("3 clients créés, ligne 5 ignorée (nom absent)"),
+            "{}",
+            r.message
+        );
+        let list = v.client_list();
+        assert_eq!(list.len(), 3);
+        let c = v.client_get(list[0].id).unwrap();
+        assert!(!c.notes.is_empty() && c.notes[0].contains("Importé du formulaire"));
+        assert!(c.identity.email.is_some() || c.identity.full_name == "Fictif Dominique");
+
+        // The same file again: already imported.
+        let again = import(&mut v, "AUDIT(1-3).xlsx", SAMPLE).unwrap();
+        assert_eq!(again.message, "Déjà importé.");
+        // A longer export with the same responses (different bytes): none duplicated.
+        let mut longer = SAMPLE.to_vec();
+        longer.extend_from_slice(b"\0");
+        let r = import(&mut v, "AUDIT(1-4).xlsx", &longer).unwrap();
+        assert!(
+            r.message
+                .starts_with("0 client créé, 3 réponses déjà importées"),
+            "{}",
+            r.message
+        );
+        assert_eq!(v.client_list().len(), 3);
+    }
+
+    #[test]
+    fn failed_imports_are_listed_with_their_reason_and_retried() {
+        let mut v = vault();
         let r = import(&mut v, "a.csv", b"a,b\n1,2").unwrap();
         assert!(!r.ok);
-        assert_eq!(r.message, FORMAT_PENDING);
+        assert_eq!(r.message, form_import::NOT_THIS_FORM);
         assert!(v.client_list().is_empty(), "nothing created");
         let files = status(
             &v,
@@ -249,7 +326,10 @@ mod tests {
                 ("new.xlsx", FileStatus::New)
             ]
         );
-        assert_eq!(files[0].message.as_deref(), Some(FORMAT_PENDING));
+        assert_eq!(
+            files[0].message.as_deref(),
+            Some(form_import::NOT_THIS_FORM)
+        );
         assert!(import(&mut v, "../a.csv", b"x").is_err());
     }
 }

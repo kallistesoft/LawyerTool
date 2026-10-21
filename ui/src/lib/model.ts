@@ -82,7 +82,15 @@ export interface Identity {
 }
 
 export interface ClientSummary { id: number; full_name: string; file_reference: string | null; updated_at: string }
-export interface ClientView { id: number; created_at: string; updated_at: string; identity: Identity; profile: Applicant }
+export interface ClientView {
+  id: number
+  created_at: string
+  updated_at: string
+  identity: Identity
+  profile: Applicant
+  /** To complete or check after a form import, until cleared. */
+  notes: string[]
+}
 
 // --- results ---
 export interface Cite { source: string; table: number | null; row: number | null; text: string }
