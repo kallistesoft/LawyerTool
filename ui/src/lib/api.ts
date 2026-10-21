@@ -80,7 +80,7 @@ function save(bytes: Uint8Array): Promise<void> {
 
 // ---- Vault ---------------------------------------------------------------
 
-const DEV = import.meta.env.DEV && !new URLSearchParams(location.search).has('real')
+const DEV = __DEV_VAULT__ && !new URLSearchParams(location.search).has('real')
 const DEV_PASSPHRASE = 'dev-only-not-a-secret'
 const IDLE_MS = 5 * 60_000
 

@@ -22,7 +22,7 @@ export interface Reply {
   sealed?: Uint8Array
 }
 
-const fastKdf = import.meta.env.DEV
+const fastKdf = __DEV_VAULT__
 let engine: Engine | null = null
 const ready = init().then(() => (engine = new Engine(fastKdf)))
 
