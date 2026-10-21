@@ -50,13 +50,19 @@ This plan set the build order (the repo started with only the brief). Version 1 
 - **UI redesign (v0.1.15):** sidebar, light/dark design system, client list with score / program badges / review status (`client_overview`), assessment page with the key results first, form with section index and sticky save bar; dates in local time.
 - **Vault fix (v0.1.12):** a migration backup used to empty the live key file; fixed, with a rebuild from the keychain and regression tests.
 
+### Web app (2026-10-21, branch `web-port`)
+The desktop app becomes a static web app at `audit.kallistesoft.ca`, with client data kept on the lawyer's computer (see `CLAUDE.md`, "Revision 2026-10-21"). Done: `crates/vault-file`, `crates/web` (wasm), the worker + File System Access layer in `ui/src/lib/api.ts`, the watcher publisher, `web.yml` and `.htaccess`. To do:
+- user: create the `audit.kallistesoft.ca` subdomain in cPanel (docroot `public_html/audit.kallistesoft.ca`), add the repository secrets `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD`, and set the pilot password in cPanel > Directory Privacy;
+- try the real (non-dev) flows in Chrome: create the vault file, pick the folders, export, lock and unlock, recover;
+- after the pilot: delete `src-tauri`, `crates/vault`, the updater and the release workflows; update `docs/threat-model.md` (no keychain: the passphrase alone protects a copied vault file; a compromised host could serve hostile code, mitigated by the CSP and CI-only deploys).
+
 ### Next steps
 1. **2026-11-03:** IRCC switches to the grid with the labour-market factor. When its calculator is updated, re-record the golden profiles marked `oracle: pending` and check that the watcher picked up the change.
 2. **Form import:** write the parser as soon as a sample export (fake data) arrives.
 3. **M4 pilot:** compare with the lawyer's own analyses on low-risk real cases.
 4. **Independent security review** with `docs/security-review.md`.
 5. To decide: match imported forms to existing clients (email or file number) instead of always creating a new client.
-6. **Last step:** updater activation, Apple notarization, Windows signing, clean-machine VM test.
+6. ~~Last step: updater activation, Apple notarization, Windows signing~~: no longer needed (web app).
 
 ---
 

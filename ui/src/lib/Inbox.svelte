@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { errorMessage, inboxImport, inboxList, type ImportResult, type InboxFile } from './api'
+  import { errorMessage, folderAccess, inboxImport, inboxList, type ImportResult, type InboxFile } from './api'
   import Icon from './Icon.svelte'
 
   let { onOpen, onSettings, onCount, onImported }: {
@@ -13,6 +13,7 @@
   let results: ImportResult[] = $state([])
   let error: string | null = $state(null)
   let noFolder = $state(false)
+  let needsAccess = $state(false)
   let busy = $state(false)
   let open = $state(false)
   let pending = $derived(files.filter((f) => f.status === 'new' || f.status === 'failed'))
@@ -21,12 +22,20 @@
   async function refresh() {
     error = null
     noFolder = false
+    needsAccess = false
     try {
       files = await inboxList()
     } catch (e) {
-      if (typeof e === 'object' && e !== null && (e as { code?: string }).code === 'no_input_dir') noFolder = true
+      const code = typeof e === 'object' && e !== null ? (e as { code?: string }).code : undefined
+      if (code === 'no_input_dir') noFolder = true
+      else if (code === 'needs_permission') needsAccess = true
       else error = errorMessage(e)
     }
+  }
+
+  async function allow() {
+    await folderAccess().catch(() => {})
+    await refresh()
   }
 
   async function analyse() {
@@ -68,6 +77,8 @@
     </button>
     {#if noFolder}
       <span class="hint">Aucun dossier de formulaires. <button class="link" onclick={onSettings}>Le choisir dans Paramètres</button></span>
+    {:else if needsAccess}
+      <button class="small" onclick={allow}><Icon name="folder" size={14} />Autoriser l’accès aux dossiers</button>
     {:else}
       <div class="actions">
         <button class="ghost small" onclick={refresh} disabled={busy} title="Actualiser"><Icon name="refresh" size={14} /></button>

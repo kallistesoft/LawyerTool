@@ -2,7 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Draw {
     /// As published: usually digits, sometimes with a suffix ("91a", "91b":
     /// two draws on 2018-05-30).

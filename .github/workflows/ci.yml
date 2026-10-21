@@ -35,6 +35,12 @@ jobs:
         run: |
           npm ci --prefix ui --ignore-scripts --no-fund
           npm ci --prefix tools/oracle --ignore-scripts --no-fund
+      - name: Build engine (WebAssembly)
+        shell: bash
+        run: |
+          rustup target add wasm32-unknown-unknown
+          wasm-bindgen --version 2>/dev/null | grep -q 0.2.129 || cargo install wasm-bindgen-cli --version 0.2.129 --locked
+          ./scripts/build-wasm.sh
       - name: Build frontend
         run: npm --prefix ui run build
       - name: Type-check frontend

@@ -1,0 +1,36 @@
+{
+  "marital_status": "never_married",
+  "spouse": null,
+  "age": 30,
+  "education": "bachelor_or_three_year",
+  "canadian_education": null,
+  "first_language": {
+    "test": "ielts_general",
+    "test_date": "2025-06-01",
+    "speaking": 70,
+    "listening": 80,
+    "reading": 70,
+    "writing": 70
+  },
+  "second_language": null,
+  "canadian_work_years": 0,
+  "canadian_work_by_noc": [],
+  "foreign_work_years": 0,
+  "certificate_of_qualification": false,
+  "job_offer": null,
+  "provincial_nomination": false,
+  "sibling_in_canada": false,
+  "eligibility": {
+    "work_history": [],
+    "credential": null,
+    "canadian_study_two_years": null,
+    "spouse_canadian_study_two_years": null,
+    "spouse_canadian_work_one_year": null,
+    "relative_in_canada": null,
+    "authorized_to_work_in_canada": null,
+    "fsw_arranged_employment": null,
+    "intends_to_live_in_quebec": null,
+    "settlement_funds_cad": null,
+    "family_size": null
+  }
+}
