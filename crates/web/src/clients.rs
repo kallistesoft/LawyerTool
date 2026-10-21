@@ -138,6 +138,8 @@ pub struct ClientView {
     updated_at: String,
     identity: Identity,
     profile: serde_json::Value,
+    /// To complete or check (form import), until the lawyer clears them.
+    notes: Vec<String>,
 }
 
 pub fn get(v: &Vault, id: i64) -> Res<ClientView> {
@@ -152,6 +154,7 @@ pub fn get(v: &Vault, id: i64) -> Res<ClientView> {
         updated_at: r.updated_at,
         identity: r.identity,
         profile,
+        notes: r.notes,
     })
 }
 

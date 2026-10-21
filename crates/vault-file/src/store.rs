@@ -28,6 +28,10 @@ pub struct ClientRecord {
     pub identity: Identity,
     /// JSON of the applicant profile.
     pub profile: String,
+    /// What the lawyer must complete or check (set by a form import, kept
+    /// until the lawyer clears it).
+    #[serde(default)]
+    pub notes: Vec<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -182,6 +186,7 @@ impl Store {
                     updated_at: now.to_owned(),
                     identity,
                     profile: profile.to_owned(),
+                    notes: vec![],
                 });
                 Ok(id)
             }
@@ -197,6 +202,17 @@ impl Store {
                 Ok(id)
             }
         }
+    }
+
+    /// Sets (or clears, with an empty list) a client's to-complete notes.
+    pub fn client_set_notes(&mut self, id: i64, notes: Vec<String>) -> Result<(), Error> {
+        let c = self
+            .clients
+            .iter_mut()
+            .find(|c| c.id == id)
+            .ok_or(Error::Invalid("client introuvable"))?;
+        c.notes = notes;
+        Ok(())
     }
 
     pub fn client_get(&self, id: i64) -> Option<ClientRecord> {
@@ -365,8 +381,14 @@ mod tests {
             .unwrap();
         assert_eq!((a, b), (1, 2));
         assert_eq!(s.client_get(a).unwrap().identity.full_name, "Alice");
+        s.client_set_notes(a, vec!["à compléter".into()]).unwrap();
         s.client_save(Some(a), &id("Alice B"), "{\"x\":1}", "2026-10-03T00:00:00Z")
             .unwrap();
+        assert_eq!(
+            s.client_get(a).unwrap().notes,
+            ["à compléter"],
+            "saving keeps the notes"
+        );
         let names: Vec<_> = s.client_list().into_iter().map(|c| c.full_name).collect();
         assert_eq!(names, ["Alice B", "Bob"]);
         assert!(s.client_delete(a));

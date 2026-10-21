@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import { assess, clientGet, deidPreview, errorMessage, exportReport, settingsGet, type Redaction } from './api'
   import Icon from './Icon.svelte'
+  import ImportNotes from './ImportNotes.svelte'
   import {
     localToday, PROGRAM, STATUS_LABEL, STATUS_TONE,
     type Assessment, type Check, type Cite, type CrsResult, type Flag, type ProgramResult, type Section,
@@ -16,6 +17,7 @@
   let reviewed: Record<string, boolean> = $state({})
   let name = $state('Client')
   let fileRef: string | null = $state(null)
+  let notes: string[] = $state([])
   let tab = $state<'score' | 'programs'>('score')
 
   let preview = $state<{ payload: string; bytes: number; redactions: Redaction[] } | null>(null)
@@ -59,7 +61,7 @@
   }
   onMount(() => {
     clientGet(id)
-      .then((c) => ((name = c.identity.full_name), (fileRef = c.identity.file_reference)))
+      .then((c) => ((name = c.identity.full_name), (fileRef = c.identity.file_reference), (notes = c.notes)))
       .catch(() => {})
     settingsGet()
       .then((s) => (outputDir = s.output_dir?.path ?? null))
@@ -111,6 +113,8 @@
     <button onclick={() => onEdit(id)}><Icon name="edit" />Modifier le profil</button>
   {/snippet}
 </PageHeader>
+
+<ImportNotes {notes} />
 
 {#if error}<p class="callout err">{error}</p>{/if}
 

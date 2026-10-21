@@ -1,7 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { clientDelete, clientGet, clientSave, errorMessage } from './api'
+  import { clientClearNotes, clientDelete, clientGet, clientSave, errorMessage } from './api'
   import Icon from './Icon.svelte'
+  import ImportNotes from './ImportNotes.svelte'
   import LanguageFields from './LanguageFields.svelte'
   import PageHeader from './PageHeader.svelte'
   import {
@@ -21,6 +22,7 @@
   let a: Applicant = $state(newApplicant())
   let clientId: number | null = $state(null)
   let problems: string[] = $state([])
+  let notes: string[] = $state([])
   let error: string | null = $state(null)
   let saved = $state(false)
   let confirmDelete = $state(false)
@@ -38,6 +40,7 @@
         .then((c) => {
           identity = c.identity
           a = c.profile
+          notes = c.notes
           baseline = snapshot()
         })
         .catch((e) => (error = errorMessage(e)))
@@ -80,6 +83,16 @@
     }
   }
 
+  async function clearNotes() {
+    if (clientId === null) return
+    try {
+      await clientClearNotes(clientId)
+      notes = []
+    } catch (e) {
+      error = errorMessage(e)
+    }
+  }
+
   async function remove() {
     if (clientId === null) return
     try {
@@ -107,6 +120,8 @@
     {#if clientId !== null}<button onclick={() => clientId !== null && onAssess(clientId)}><Icon name="scale" />Voir l’évaluation</button>{/if}
   {/snippet}
 </PageHeader>
+
+<ImportNotes {notes} onClear={clearNotes} />
 
 <div class="layout">
 <nav class="index" aria-label="Sections du formulaire">

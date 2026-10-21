@@ -305,6 +305,12 @@ pub fn export(v: &Vault, request: ExportRequest) -> Res<ExportFile> {
     let r = v
         .client_get(request.id)
         .ok_or_else(|| CommandError::new("not_found", "Client introuvable."))?;
+    if !r.notes.is_empty() {
+        return Err(CommandError::new(
+            "review_required",
+            "Profil importé du formulaire : complétez-le, puis cliquez « Tout est complété » dans le profil avant l’export.",
+        ));
+    }
     let a: Applicant = serde_json::from_str(&r.profile)
         .map_err(|_| CommandError::new("corrupt", "Profil illisible."))?;
     let report = build(&r.identity, &a, &assessment, time::today().as_str());
@@ -433,5 +439,18 @@ mod tests {
             .unwrap_or_else(|e| panic!("{}", e.message()));
         assert_eq!(f.name, "Evaluation-2026_041-2026-10-18.pdf");
         assert!(f.bytes.starts_with(b"%PDF"));
+
+        // An imported profile with open notes cannot be exported.
+        app.vault_mut()
+            .and_then(|v| Ok(v.client_set_notes(1, vec!["à compléter".into()])?))
+            .unwrap_or_else(|e| panic!("{}", e.message()));
+        let e = app
+            .export_report(req(&["D-003"]))
+            .err()
+            .unwrap_or_else(|| unreachable!());
+        assert!(e.message().contains("Tout est complété"));
+        app.call("client_clear_notes", &serde_json::json!({ "id": 1 }))
+            .unwrap_or_else(|e| panic!("{}", e.message()));
+        assert!(app.export_report(req(&["D-003"])).is_ok());
     }
 }

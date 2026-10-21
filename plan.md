@@ -58,7 +58,7 @@ The desktop app becomes a static web app at `audit.kallistesoft.ca`, with client
 
 ### Next steps
 1. **2026-11-03:** IRCC switches to the grid with the labour-market factor. When its calculator is updated, re-record the golden profiles marked `oracle: pending` and check that the watcher picked up the change.
-2. **Form import:** write the parser as soon as a sample export (fake data) arrives.
+2. ~~Form import~~ **done 2026-10-21** (`crates/form-import`): the Microsoft Forms export (quiz mode, 103 columns) becomes one partial client per response, with an « À compléter » list; export is refused until the lawyer clears it. The form asks for levels, not test scores: improving the form (scores per skill, education from a list, birth date field) would make imports complete. Tests use a synthetic export (`tests/fixtures/make_sample.py`); the real export holds real people's data and stays out of the repo.
 3. **M4 pilot:** compare with the lawyer's own analyses on low-risk real cases.
 4. **Independent security review** with `docs/security-review.md`.
 5. To decide: match imported forms to existing clients (email or file number) instead of always creating a new client.
