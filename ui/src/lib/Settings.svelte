@@ -3,12 +3,24 @@
   import Icon from './Icon.svelte'
   import PageHeader from './PageHeader.svelte'
   import {
-    errorMessage, folderAccess, settingsClear, settingsGet, settingsPick, type Folder, type FolderStatus, type Settings,
+    devEraseAll, devMode, errorMessage, folderAccess, settingsClear, settingsGet, settingsPick,
+    type Folder, type FolderStatus, type Settings,
   } from './api'
 
   let settings: Settings | null = $state(null)
   let error: string | null = $state(null)
   let busy = $state(false)
+  let confirmErase = $state(false)
+
+  async function eraseAll() {
+    busy = true
+    try {
+      await devEraseAll()
+    } catch (e) {
+      error = errorMessage(e)
+      busy = false
+    }
+  }
 
   async function act(f: () => Promise<Settings>) {
     error = null
@@ -87,6 +99,25 @@
   {/each}
 </div>
 
+{#if devMode}
+  <div class="card danger-zone">
+    <div class="card-title"><h3><span class="ico"><Icon name="trash" size={18} /></span>Version de démonstration</h3></div>
+    <p class="hint">
+      Efface toutes les données de l’application dans ce navigateur : clients, résultats de la veille, réglages et
+      dossiers choisis. Les fichiers de vos dossiers ne sont pas touchés. L’application repart d’un coffre de test vide.
+    </p>
+    <div class="actions">
+      {#if confirmErase}
+        <span class="hint">Effacer définitivement toutes les données ?</span>
+        <button class="danger" disabled={busy} onclick={eraseAll}><Icon name="trash" />{busy ? 'Effacement…' : 'Tout effacer'}</button>
+        <button class="ghost" disabled={busy} onclick={() => (confirmErase = false)}>Annuler</button>
+      {:else}
+        <button class="ghost" onclick={() => (confirmErase = true)}><Icon name="trash" />Effacer toutes les données…</button>
+      {/if}
+    </div>
+  </div>
+{/if}
+
 <style>
   .access {
     display: flex;
@@ -102,6 +133,9 @@
   }
   .folder {
     margin: 0;
+  }
+  .danger-zone {
+    margin-top: 1rem;
   }
   h3 {
     display: flex;

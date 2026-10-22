@@ -131,8 +131,22 @@ export async function folderExists(dir: FileSystemDirectoryHandle): Promise<bool
   }
 }
 
+const DEV_VAULT = 'lawyertool-dev.ltvault'
+
 /** Development only: the automatic test vault lives in the browser's private storage. */
 export async function devVaultHandle(): Promise<FileSystemFileHandle> {
   const root = await navigator.storage.getDirectory()
-  return root.getFileHandle('lawyertool-dev.ltvault', { create: true })
+  return root.getFileHandle(DEV_VAULT, { create: true })
+}
+
+/** Development only: erases this browser's private storage (test vault) and the remembered handles. */
+export async function eraseBrowserData(): Promise<void> {
+  const root = await navigator.storage.getDirectory()
+  for await (const entry of root.values()) await root.removeEntry(entry.name, { recursive: true })
+  await new Promise<void>((resolve, reject) => {
+    const r = indexedDB.deleteDatabase(DB)
+    r.onsuccess = () => resolve()
+    r.onerror = () => reject(r.error)
+    r.onblocked = () => resolve()
+  })
 }
