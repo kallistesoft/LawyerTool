@@ -4,7 +4,7 @@
 // Client data never leaves the computer: the only network request is the
 // public rules snapshot (watch/latest.json) from this site's own origin.
 import {
-  deleteHandle, devVaultHandle, ensurePermission, folderExists, getHandle, isAbort, permission, pickFolder,
+  deleteHandle, devVaultHandle, ensurePermission, eraseBrowserData, folderExists, getHandle, isAbort, permission, pickFolder,
   pickNewVault, pickVault, readFile, setHandle, writeFile, writeNew,
 } from './files'
 import type { Op, Reply } from './engine.worker'
@@ -171,6 +171,23 @@ export async function vaultLock(): Promise<void> {
 }
 
 export const onLocked = (f: () => void): Promise<UnlistenFn> => listen('locked', f)
+
+/** Dev / demo build (test vault, no passphrase). */
+export const devMode = DEV
+
+/**
+ * Dev / demo only: erases every client, setting and watcher result (the
+ * test vault in this browser) and the remembered folders, then reloads with
+ * an empty test vault. Files in the lawyer's folders are not touched.
+ */
+export async function devEraseAll(): Promise<void> {
+  if (!DEV) throw fail('forbidden', 'Réservé à la version de démonstration.')
+  await saving
+  await engine({ op: 'lock' })
+  vaultHandle = null
+  await eraseBrowserData()
+  location.reload()
+}
 
 // Auto-lock after 5 minutes without activity, or when the computer slept
 // (the clock jumped between two ticks). Never in the dev build.
