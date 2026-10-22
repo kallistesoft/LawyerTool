@@ -7,7 +7,7 @@ default-members = ["crates/applicant", "crates/rules-engine", "crates/grid-parse
 
 [workspace.package]
 edition = "2024"
-version = "0.1.19"
+version = "0.1.20"
 license = "UNLICENSED"
 publish = false
 
