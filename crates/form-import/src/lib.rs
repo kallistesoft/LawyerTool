@@ -10,12 +10,19 @@
 //!
 //! Columns are found by their question text, not their position, so a
 //! re-ordered form still imports; a file that is not this form is refused.
+//!
+//! Each response also carries an [`Estimate`]: the same profile completed
+//! with explicit assumptions so a preliminary CRS score can be calculated
+//! (`rules_engine::crs::estimate`). Rulings of 2026-10-22: languages use the
+//! cautious table ([`assumed_level`]); a "Oui" to the relative question
+//! counts as a sibling; the estimate is shown apart from the official score.
 
 mod table;
 
 use applicant::{
     Applicant, Credential, EducationLevel, EligibilityFacts, IsoDate, MaritalStatus, Spouse,
 };
+use rules_engine::crs::AssumedLevels;
 use sha2::{Digest, Sha256};
 
 pub use table::{read_csv, read_xlsx};
@@ -31,6 +38,251 @@ pub struct Response {
     pub applicant: Applicant,
     /// What the lawyer must complete or check (French).
     pub notes: Vec<String>,
+    pub estimate: Estimate,
+}
+
+/// The profile completed with assumptions, for a preliminary score only.
+#[derive(Debug, Clone, PartialEq)]
+pub struct Estimate {
+    pub applicant: Applicant,
+    pub levels: AssumedLevels,
+    /// Every assumption made, in French, quoting the client's answer.
+    pub assumptions: Vec<String>,
+    /// Answers that can stop an application on their own (criminality,
+    /// no usable language level), whatever the score.
+    pub stoppers: Vec<String>,
+    /// Answers the lawyer must examine before any verdict (health,
+    /// suspicion, Québec, job offer…).
+    pub checks: Vec<String>,
+    /// The client declared a Canadian job offer (its NOC is unknown).
+    pub job_offer_declared: bool,
+}
+
+/// CLB/NCLC level assumed for a self-declared language level, in all four
+/// skills: the cautious table ruled on 2026-10-22. `None` = no points.
+pub fn assumed_level(answer: &str) -> Option<u8> {
+    let n = norm(answer);
+    if n.starts_with("langue maternelle") {
+        Some(9)
+    } else if n.starts_with("bilingue") {
+        Some(8)
+    } else if n.starts_with("intermediaire") {
+        Some(6)
+    } else {
+        None
+    }
+}
+
+/// Highest diploma (free text) -> education level: the **lowest** level
+/// mentioned wins, so "bac+2, master en cours" counts as two years.
+pub fn assumed_education(answer: &str) -> Option<EducationLevel> {
+    use EducationLevel::*;
+    let n = norm(answer)
+        .replace(" + ", "+")
+        .replace(" +", "+")
+        .replace("+ ", "+");
+    let words: Vec<&str> = n
+        .split(|c: char| !(c.is_alphanumeric() || c == '+'))
+        .filter(|w| !w.is_empty())
+        .collect();
+    let has = |ws: &[&str]| words.iter().any(|w| ws.contains(w));
+    [
+        (
+            Secondary,
+            &[
+                "bac",
+                "baccalaureat",
+                "cap",
+                "bep",
+                "brevet",
+                "cess",
+                "bac+1",
+            ][..],
+        ),
+        (TwoYearPostSecondary, &["bts", "dut", "deug", "bac+2"][..]),
+        (
+            BachelorOrThreeYear,
+            &["licence", "bachelor", "bac+3", "bac+4"][..],
+        ),
+        (
+            MasterOrProfessional,
+            &[
+                "master",
+                "masters",
+                "maitrise",
+                "mba",
+                "bac+5",
+                "bac+6",
+                "ingenieur",
+            ][..],
+        ),
+        (Doctorate, &["doctorat", "phd", "bac+8"][..]),
+    ]
+    .into_iter()
+    .find(|(_, ws)| has(ws))
+    .map(|(level, _)| level)
+}
+
+/// Spouse's diploma (a choice in the form) -> education level (cautious:
+/// "4 années d'université et +" counts as three years or more, not master).
+pub fn assumed_spouse_education(answer: &str) -> EducationLevel {
+    use EducationLevel::*;
+    let n = norm(answer);
+    if n.contains("n'a pas le baccalaureat") {
+        LessThanSecondary
+    } else if n.contains("brevet professionnel") || n.contains("le baccalaureat") {
+        Secondary
+    } else if n.contains("bts") || n.starts_with("2 annees") {
+        TwoYearPostSecondary
+    } else if n.starts_with("3 annees") || n.starts_with("4 annees") {
+        BachelorOrThreeYear
+    } else {
+        LessThanSecondary
+    }
+}
+
+fn level_text(level: Option<u8>, scale: &str) -> String {
+    level.map_or_else(
+        || "aucun point".to_owned(),
+        |l| format!("{scale} {l} dans les 4 compétences"),
+    )
+}
+
+fn education_fr(e: EducationLevel) -> &'static str {
+    use EducationLevel::*;
+    match e {
+        LessThanSecondary => "moins que le secondaire",
+        Secondary => "diplôme d’études secondaires",
+        OneYearPostSecondary => "programme postsecondaire d’un an",
+        TwoYearPostSecondary => "programme postsecondaire de deux ans",
+        BachelorOrThreeYear => "baccalauréat ou programme de trois ans ou plus",
+        TwoOrMoreCredentials => "deux diplômes ou plus",
+        MasterOrProfessional => "maîtrise ou diplôme professionnel",
+        Doctorate => "doctorat",
+    }
+}
+
+/// The estimate for one response (`a` is its conservative profile).
+fn estimate_of(r: &Row, a: &Applicant) -> Estimate {
+    let mut e = a.clone();
+    let mut assumptions = vec![
+        "Estimation préalable d’après les réponses au formulaire : aucun résultat de test réel, ce n’est pas un pointage officiel.".to_owned(),
+    ];
+    let answer = |q| r.get(q).unwrap_or("non répondu");
+
+    let levels = AssumedLevels {
+        french: r.get(Q::French).and_then(assumed_level),
+        english: r.get(Q::English).and_then(assumed_level),
+        spouse_english: r
+            .get(Q::SpouseEnglish)
+            .and_then(assumed_level)
+            .filter(|_| e.spouse.is_some()),
+    };
+    assumptions.push(format!(
+        "Français {} → {} ; anglais {} → {} (table prudente du 2026-10-22).",
+        quote(answer(Q::French)),
+        level_text(levels.french, "NCLC"),
+        quote(answer(Q::English)),
+        level_text(levels.english, "NCLC/CLB").replace("NCLC/CLB", "CLB"),
+    ));
+
+    match r.get(Q::Education).and_then(assumed_education) {
+        Some(level) => {
+            e.education = level;
+            assumptions.push(format!(
+                "Scolarité {} → {} (le niveau le plus bas mentionné est retenu).",
+                quote(answer(Q::Education)),
+                education_fr(level)
+            ));
+        }
+        None => assumptions.push(format!(
+            "Scolarité {} non reconnue → {} (aucun point).",
+            quote(answer(Q::Education)),
+            education_fr(e.education)
+        )),
+    }
+
+    if let Some(s) = e.spouse.as_mut() {
+        let edu = assumed_spouse_education(answer(Q::SpouseEducation));
+        s.education = Some(edu);
+        assumptions.push(format!(
+            "Époux : scolarité {} → {} ; anglais {} → {}.",
+            quote(answer(Q::SpouseEducation)),
+            education_fr(edu),
+            quote(answer(Q::SpouseEnglish)),
+            level_text(levels.spouse_english, "CLB"),
+        ));
+    }
+
+    if e.eligibility.credential == Some(Credential::ForeignWithoutEca) {
+        // A missing evaluation is a step to take, not a show-stopper.
+        e.eligibility.credential = None;
+        assumptions.push("Évaluation des diplômes (EDE) à obtenir : requise pour le Programme des travailleurs qualifiés.".into());
+    }
+    if r.get(Q::Relative).is_some_and(is_yes) {
+        e.sibling_in_canada = true;
+        assumptions.push(
+            "Proche au Canada « Oui » compté comme frère ou sœur (15 points) : à confirmer.".into(),
+        );
+    }
+    if r.get(Q::JobOffer).is_some_and(|o| !is_no(o)) {
+        assumptions.push(
+            "Offre d’emploi : aucun point compté (code CNP et admissibilité inconnus).".into(),
+        );
+    }
+
+    let (mut stoppers, mut checks) = (Vec::new(), Vec::new());
+    if let Some(c) = r.get(Q::Criminal) {
+        let n = norm(c);
+        if n.starts_with("condamne") {
+            stoppers.push(format!(
+                "Antécédent judiciaire déclaré {} : interdiction de territoire pour criminalité possible (réhabilitation ou permis de séjour temporaire à étudier).",
+                quote(c)
+            ));
+        } else if n.starts_with("suspecte") {
+            checks.push(format!(
+                "Justice : {} : à examiner (interdiction de territoire possible).",
+                quote(c)
+            ));
+        }
+    }
+    if levels.french.is_none() && levels.english.is_none() {
+        stoppers.push(
+            "Aucun niveau de langue suffisant déclaré (débutant ou non répondu) : les programmes d’Entrée express exigent un test NCLC/CLB 5 à 7 au minimum."
+                .into(),
+        );
+    }
+    if let Some(h) = r.get(Q::Health)
+        && !is_no(h)
+    {
+        checks.push(format!(
+            "Santé : {} : examen médical requis ; fardeau excessif ou danger pour la santé publique à évaluer.",
+            quote(h)
+        ));
+    }
+    if let Some(p) = r.get(Q::Province) {
+        let n = norm(p);
+        if n.contains("quebec") || n.contains("montreal") {
+            checks.push(format!(
+                "Destination {} : le Québec sélectionne ses propres travailleurs (hors Entrée express).",
+                quote(p)
+            ));
+        }
+    }
+    if r.get(Q::JobOffer).is_some_and(|o| !is_no(o)) {
+        checks.push(format!(
+            "Offre d’emploi déclarée (poste : {}) : peut ouvrir d’autres voies ; à vérifier.",
+            quote(answer(Q::JobOfferPost))
+        ));
+    }
+    Estimate {
+        applicant: e,
+        levels,
+        assumptions,
+        stoppers,
+        checks,
+        job_offer_declared: r.get(Q::JobOffer).is_some_and(|o| !is_no(o)),
+    }
 }
 
 /// A row that could not become a client.
@@ -636,12 +888,14 @@ fn response(r: &Row, today: &IsoDate) -> Result<Response, String> {
     .iter()
     .map(|b| format!("{b:02x}"))
     .collect();
+    let estimate = estimate_of(r, &a);
     Ok(Response {
         key,
         full_name,
         email,
         applicant: a,
         notes,
+        estimate,
     })
 }
 
@@ -737,5 +991,54 @@ mod tests {
             norm("Combien\u{a0}d'ancienneté  a"),
             "combien d'anciennete a"
         );
+    }
+
+    #[test]
+    fn assumed_levels_and_education() {
+        use EducationLevel::*;
+        assert_eq!(assumed_level("Langue maternelle"), Some(9));
+        assert_eq!(assumed_level("Bilingue"), Some(8));
+        assert_eq!(assumed_level("Intermédiaire\u{a0}"), Some(6));
+        assert_eq!(assumed_level("Débutant"), None);
+        for (text, level) in [
+            ("Master", Some(MasterOrProfessional)),
+            ("Licence physique-chimie", Some(BachelorOrThreeYear)),
+            (
+                "Bachelor Marketing/communication",
+                Some(BachelorOrThreeYear),
+            ),
+            (
+                "Bac + 2 (DUT) - VAE niveau 7 (Master en cours) ",
+                Some(TwoYearPostSecondary),
+            ),
+            (
+                "Bac comptabilité et j’ai fait 2 ans BTS mais pas le diplôme ",
+                Some(Secondary),
+            ),
+            (
+                "Licence administration publique (bac+3)",
+                Some(BachelorOrThreeYear),
+            ),
+            ("CAP vente", Some(Secondary)),
+            ("Baccalauréat ", Some(Secondary)),
+            ("Doctorat en chimie", Some(Doctorate)),
+            ("Diplôme d’infirmière", None),
+        ] {
+            assert_eq!(assumed_education(text), level, "{text}");
+        }
+        assert_eq!(
+            assumed_spouse_education("Il/elle n'a pas le baccalauréat"),
+            LessThanSecondary
+        );
+        assert_eq!(
+            assumed_spouse_education("Un brevet professionnel"),
+            Secondary
+        );
+        assert_eq!(assumed_spouse_education("Un BTS"), TwoYearPostSecondary);
+        assert_eq!(
+            assumed_spouse_education("4 années d'université et +"),
+            BachelorOrThreeYear
+        );
+        assert_eq!(assumed_spouse_education("Autre"), LessThanSecondary);
     }
 }

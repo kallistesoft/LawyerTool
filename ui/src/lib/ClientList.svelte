@@ -3,7 +3,9 @@
   import { clientOverview, errorMessage } from './api'
   import Icon from './Icon.svelte'
   import Inbox from './Inbox.svelte'
-  import { localToday, PROGRAM, PROGRAM_SHORT, STATUS_LABEL, STATUS_TONE, type ClientOverview } from './model'
+  import {
+    localToday, PROGRAM, PROGRAM_SHORT, STATUS_LABEL, STATUS_TONE, VERDICT_LABEL, VERDICT_TONE, type ClientOverview,
+  } from './model'
   import PageHeader from './PageHeader.svelte'
 
   let { onOpen, onNew, onSettings }: { onOpen: (id: number) => void; onNew: () => void; onSettings: () => void } = $props()
@@ -108,22 +110,29 @@
               <td class="score-col">
                 {#if c.crs !== null}
                   <span class="score num">{c.crs}</span>
+                {:else if c.crs_estimate !== null}
+                  <span class="score num estimate" title="Score estimé d’après le formulaire (aucun test réel)">≈ {c.crs_estimate}</span>
                 {:else}
                   <span class="hint" title={c.crs_error ?? ''}>—</span>
                 {/if}
               </td>
               <td>
                 <div class="progs">
+                  {#if c.verdict && c.crs === null}
+                    <span class="badge {VERDICT_TONE[c.verdict]}" title="Pré-évaluation d’après le formulaire">Pré-évaluation : {VERDICT_LABEL[c.verdict]}</span>
+                  {:else}
                   {#each c.programs as [p, s] (p)}
                     <span class="badge {STATUS_TONE[s]}" title="{PROGRAM[p]} : {STATUS_LABEL[s]}">{PROGRAM_SHORT[p]}</span>
                   {/each}
+                  {/if}
                 </div>
               </td>
               <td>
                 <div class="progs">
                   {#if c.reviews > 0}<span class="badge warn"><Icon name="scale" size={12} />{c.reviews} révision{c.reviews > 1 ? 's' : ''}</span>{/if}
                   {#if c.problems > 0}<span class="badge err"><Icon name="alert" size={12} />Profil incomplet</span>{/if}
-                  {#if c.crs === null && c.problems === 0}<span class="badge err" title={c.crs_error ?? ''}>Score impossible</span>{/if}
+                  {#if c.crs === null && c.problems === 0 && c.crs_estimate === null}<span class="badge err" title={c.crs_error ?? ''}>Score impossible</span>{/if}
+                  {#if c.crs === null && c.crs_estimate !== null}<span class="badge info" title="Saisir les résultats de test pour le score officiel">Score officiel à établir</span>{/if}
                   {#if !needsAttention(c)}<span class="badge ok"><Icon name="check" size={12} />Prêt</span>{/if}
                 </div>
               </td>

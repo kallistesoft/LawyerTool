@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import { assess, clientGet, deidPreview, errorMessage, exportReport, settingsGet, type Redaction } from './api'
   import Icon from './Icon.svelte'
+  import EstimatePanel from './EstimatePanel.svelte'
   import ImportNotes from './ImportNotes.svelte'
   import {
     localToday, PROGRAM, STATUS_LABEL, STATUS_TONE,
@@ -118,6 +119,8 @@
 
 {#if error}<p class="callout err">{error}</p>{/if}
 
+{#if result?.estimate}<EstimatePanel estimate={result.estimate} />{/if}
+
 {#if result}
   <div class="hero">
     <!-- Score -->
@@ -136,7 +139,11 @@
         {/if}
       {:else if 'Err' in result.crs}
         <div class="big muted">—</div>
-        <p class="error">{result.crs.Err}</p>
+        {#if result.estimate}
+          <p class="hint">Score officiel à établir : saisissez les résultats de test réels (estimation ci-dessus).</p>
+        {:else}
+          <p class="error">{result.crs.Err}</p>
+        {/if}
         <button class="small" onclick={() => onEdit(id)}>Compléter le profil</button>
       {/if}
     </div>

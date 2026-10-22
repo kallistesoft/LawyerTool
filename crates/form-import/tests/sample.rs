@@ -100,6 +100,82 @@ fn every_respondent_becomes_a_partial_profile() {
 }
 
 #[test]
+fn every_respondent_gets_an_estimate_with_its_assumptions() {
+    use applicant::EducationLevel::*;
+    use rules_engine::crs::AssumedLevels;
+
+    let p = form_import::parse(SAMPLE, "xlsx", &today()).unwrap();
+    let [alix, camille, dominique] = [&p.responses[0], &p.responses[1], &p.responses[2]];
+
+    // Native French (NCLC 9), intermediate English (CLB 6), "Licence (bac+3)",
+    // relative "Oui" counted as a sibling (ruling 2026-10-22).
+    let e = &alix.estimate;
+    assert_eq!(
+        e.levels,
+        AssumedLevels {
+            french: Some(9),
+            english: Some(6),
+            spouse_english: None
+        }
+    );
+    assert_eq!(e.applicant.education, BachelorOrThreeYear);
+    assert!(e.applicant.sibling_in_canada);
+    assert!(
+        !alix.applicant.sibling_in_canada,
+        "the profile itself stays conservative"
+    );
+    assert!(e.assumptions.iter().any(|a| a.contains("15 points")));
+
+    // Married: spouse education from the list, beginner English = no points.
+    let e = &camille.estimate;
+    assert_eq!(e.levels.english, Some(8));
+    assert_eq!(e.levels.spouse_english, None);
+    assert_eq!(e.applicant.education, TwoYearPostSecondary);
+    assert_eq!(
+        e.applicant.spouse.as_ref().unwrap().education,
+        Some(BachelorOrThreeYear)
+    );
+    assert!(
+        e.applicant.validate().is_ok(),
+        "the estimate is complete enough to score"
+    );
+
+    let e = &dominique.estimate;
+    assert_eq!(
+        e.levels,
+        AssumedLevels {
+            french: Some(9),
+            english: None,
+            spouse_english: None
+        }
+    );
+    assert_eq!(e.applicant.education, MasterOrProfessional);
+    assert!(e.stoppers.is_empty());
+    assert!(e.checks.iter().any(|c| c.starts_with("Santé : « Diabète")));
+
+    // Québec in the destination: to examine; no stopper for anyone here.
+    assert!(
+        camille
+            .estimate
+            .checks
+            .iter()
+            .any(|c| c.contains("Québec sélectionne"))
+    );
+    assert!(alix.estimate.stoppers.is_empty() && alix.estimate.checks.is_empty());
+
+    // Each estimate scores on the current grid.
+    let mut g: rules_engine::grid::Grid =
+        serde_json::from_str(include_str!("../../rules-engine/grids/crs-2026-10-16.json")).unwrap();
+    rules_engine::rulings::apply(&mut g);
+    for r in &p.responses {
+        let s =
+            rules_engine::crs::estimate(&g, &r.estimate.applicant, &r.estimate.levels, &today())
+                .unwrap_or_else(|e| panic!("{}: {e}", r.full_name));
+        assert!(s.total > 200, "{}: {}", r.full_name, s.total);
+    }
+}
+
+#[test]
 fn other_files_are_refused_with_a_clear_message() {
     assert_eq!(
         form_import::parse(b"nom;prenom\nA;B\n", "csv", &today()).unwrap_err(),

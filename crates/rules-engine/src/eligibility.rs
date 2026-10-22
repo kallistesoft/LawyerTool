@@ -177,6 +177,33 @@ fn levels(grid: &Grid, t: &LanguageTest) -> Option<Clb> {
     to_clb(grid, t).ok().map(|(c, _)| c)
 }
 
+/// Language levels the program checks use: converted from test results
+/// ([`assess`]) or assumed from an intake form ([`estimate`]).
+struct Langs {
+    first: Result<Clb, Requirement>,
+    second: Option<Clb>,
+    /// Accompanying spouse's first official language.
+    spouse: Option<Clb>,
+}
+
+fn langs_from_tests(grid: &Grid, a: &Applicant, on: &IsoDate) -> Langs {
+    let valid = |t: &&LanguageTest| valid_on(t, on);
+    Langs {
+        first: first_language(grid, a, on),
+        second: a
+            .second_language
+            .as_ref()
+            .filter(valid)
+            .and_then(|t| levels(grid, t)),
+        spouse: a
+            .spouse
+            .as_ref()
+            .and_then(|s| s.language.as_ref())
+            .filter(valid)
+            .and_then(|t| levels(grid, t)),
+    }
+}
+
 /// First official language result, if valid on `on`.
 fn first_language(grid: &Grid, a: &Applicant, on: &IsoDate) -> Result<Clb, Requirement> {
     let Some(t) = &a.first_language else {
@@ -316,13 +343,13 @@ fn known(value: Option<bool>, points: u16) -> (u16, u16) {
 }
 
 fn fsw_points(
-    grid: &Grid,
     f: &Fsw,
     a: &Applicant,
     on: &IsoDate,
-    fol: Option<&Clb>,
+    l: &Langs,
     skilled_years: Option<u8>,
 ) -> FswPoints {
+    let fol = l.first.as_ref().ok();
     let mut lines: Vec<(&'static str, u16, u16)> = Vec::new();
     let both = |p: u16| (p, p);
 
@@ -338,11 +365,8 @@ fn fsw_points(
             .sum()
     });
     lines.push(("first official language", lang, lang));
-    let sol = a
-        .second_language
-        .as_ref()
-        .filter(|t| valid_on(t, on))
-        .and_then(|t| levels(grid, t))
+    let sol = l
+        .second
         .is_some_and(|c| c.all_at_least(f.second_language_min));
     let (lo, hi) = both(if sol { f.second_language.points } else { 0 });
     lines.push(("second official language", lo, hi));
@@ -414,11 +438,8 @@ fn fsw_points(
     let items = [
         known(
             spouse
-                .map(|s| {
-                    s.language
-                        .as_ref()
-                        .filter(|t| valid_on(t, on))
-                        .and_then(|t| levels(grid, t))
+                .map(|_| {
+                    l.spouse
                         .is_some_and(|c| c.all_at_least(ad.spouse_language_min))
                 })
                 .or(Some(false)), // no accompanying spouse
@@ -459,7 +480,7 @@ fn fsw_points(
     }
 }
 
-fn fsw(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult {
+fn fsw(p: &Programs, a: &Applicant, on: &IsoDate, l: &Langs) -> ProgramResult {
     let f = &p.fsw;
     let e = &a.eligibility;
     let mut reqs = Vec::new();
@@ -511,7 +532,7 @@ fn fsw(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
         reqs.push(duties());
     }
 
-    let fol = match first_language(grid, a, on) {
+    match l.first.clone() {
         Ok(c) if c.all_at_least(f.min_clb.value as u8) => {
             reqs.push(req(
                 "language",
@@ -522,7 +543,6 @@ fn fsw(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
                 ),
                 vec![f.min_clb.cite.clone()],
             ));
-            Some(c)
         }
         Ok(c) => {
             reqs.push(req(
@@ -535,13 +555,9 @@ fn fsw(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
                 ),
                 vec![f.min_clb.cite.clone()],
             ));
-            Some(c)
         }
-        Err(r) => {
-            reqs.push(r);
-            None
-        }
-    };
+        Err(r) => reqs.push(r),
+    }
 
     reqs.push(match (a.education, e.credential) {
         (EducationLevel::LessThanSecondary, _) => req(
@@ -570,7 +586,7 @@ fn fsw(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
         ),
     });
 
-    let points = fsw_points(grid, f, a, on, fol.as_ref(), skilled_years);
+    let points = fsw_points(f, a, on, l, skilled_years);
     let cites = vec![f.pass_mark.cite.clone()];
     reqs.push(if points.min >= points.pass_mark {
         req(
@@ -615,7 +631,7 @@ fn fsw(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
     }
 }
 
-fn cec(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult {
+fn cec(p: &Programs, a: &Applicant, on: &IsoDate, l: &Langs) -> ProgramResult {
     let c = &p.cec;
     let e = &a.eligibility;
     let mut reqs = Vec::new();
@@ -673,7 +689,7 @@ fn cec(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
         c.min_clb_teer_0_1.cite.clone(),
         c.min_clb_teer_2_3.cite.clone(),
     ];
-    reqs.push(match first_language(grid, a, on) {
+    reqs.push(match l.first.clone() {
         Err(r) => r,
         Ok(l) if l.all_at_least(hi) => req("language", Check::Met, format!("NCLC {hi} ou plus dans toutes les compétences"), cites),
         Ok(l) if l.all_at_least(lo) && teer23 >= min => {
@@ -697,7 +713,7 @@ fn cec(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
     }
 }
 
-fn fst(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult {
+fn fst(p: &Programs, a: &Applicant, on: &IsoDate, l: &Langs) -> ProgramResult {
     let t = &p.fst;
     let e = &a.eligibility;
     let mut reqs = Vec::new();
@@ -764,7 +780,7 @@ fn fst(grid: &Grid, p: &Programs, a: &Applicant, on: &IsoDate) -> ProgramResult 
         t.min_clb_speaking_listening.cite.clone(),
         t.min_clb_reading_writing.cite.clone(),
     ];
-    reqs.push(match first_language(grid, a, on) {
+    reqs.push(match l.first.clone() {
         Err(r) => r,
         Ok(l) if l.speaking >= sl && l.listening >= sl && l.reading >= rw && l.writing >= rw => {
             req(
@@ -801,14 +817,48 @@ pub fn assess(
     a: &Applicant,
     on: &IsoDate,
 ) -> Result<Vec<ProgramResult>, EligibilityError> {
+    assess_with(grid, a, on, &langs_from_tests(grid, a, on))
+}
+
+/// Program eligibility with language levels assumed from an intake form
+/// instead of test results (see `crs::estimate`): a preliminary screening,
+/// not a decision. The first official language is the higher level.
+pub fn estimate(
+    grid: &Grid,
+    a: &Applicant,
+    assumed: &crate::crs::AssumedLevels,
+    on: &IsoDate,
+) -> Result<Vec<ProgramResult>, EligibilityError> {
+    let (first, second) = match crate::crs::assumed_order(assumed) {
+        Some((first, second)) => (Ok(first.1), second.map(|s| s.1)),
+        None => (
+            Err(req(
+                "language",
+                Check::NotMet,
+                "aucun niveau de langue suffisant déclaré",
+                vec![],
+            )),
+            None,
+        ),
+    };
+    let l = Langs {
+        first,
+        second,
+        spouse: assumed.spouse_english.map(crate::crs::uniform),
+    };
+    assess_with(grid, a, on, &l)
+}
+
+fn assess_with(
+    grid: &Grid,
+    a: &Applicant,
+    on: &IsoDate,
+    l: &Langs,
+) -> Result<Vec<ProgramResult>, EligibilityError> {
     a.validate().map_err(EligibilityError::Invalid)?;
     let p = grid
         .programs
         .as_ref()
         .ok_or_else(|| EligibilityError::NoProgramRules(grid.id.clone()))?;
-    Ok(vec![
-        fsw(grid, p, a, on),
-        cec(grid, p, a, on),
-        fst(grid, p, a, on),
-    ])
+    Ok(vec![fsw(p, a, on, l), cec(p, a, on, l), fst(p, a, on, l)])
 }

@@ -246,16 +246,68 @@ fn clb(
     Ok(c)
 }
 
-/// Scores `a` against `grid` (already selected for `assessed_on` and with
-/// rulings applied).
-pub fn score(grid: &Grid, a: &Applicant, assessed_on: &IsoDate) -> Result<CrsResult, CrsError> {
+/// CLB/NCLC levels the scoring core works from: converted from test
+/// results ([`score`]) or assumed from an intake form ([`estimate`]).
+struct Levels {
+    first: (OfficialLanguage, Clb),
+    second: Option<(OfficialLanguage, Clb)>,
+    /// Spouse's first official language (counted only when scored with spouse).
+    spouse: Option<Clb>,
+    /// The second-language result is a PTE Core test (ruling D-004).
+    pte_second: bool,
+}
+
+/// Language levels assumed from an intake form's self-declared levels, the
+/// same level in all four skills; `None` = no usable level.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub struct AssumedLevels {
+    pub french: Option<u8>,
+    pub english: Option<u8>,
+    pub spouse_english: Option<u8>,
+}
+
+pub(crate) fn uniform(level: u8) -> Clb {
+    Clb {
+        speaking: level,
+        listening: level,
+        reading: level,
+        writing: level,
+    }
+}
+
+/// One official language and its levels.
+pub(crate) type LangLevels = (OfficialLanguage, Clb);
+
+/// First and second official language from assumed levels: the higher
+/// level first, French on a tie. `None` without any usable level.
+pub(crate) fn assumed_order(assumed: &AssumedLevels) -> Option<(LangLevels, Option<LangLevels>)> {
+    let fr = assumed
+        .french
+        .map(|l| (OfficialLanguage::French, uniform(l)));
+    let en = assumed
+        .english
+        .map(|l| (OfficialLanguage::English, uniform(l)));
+    match (fr, en) {
+        (Some(f), Some(e)) if e.1.min() > f.1.min() => Some((e, Some(f))),
+        (Some(f), e) => Some((f, e)),
+        (None, Some(e)) => Some((e, None)),
+        (None, None) => None,
+    }
+}
+
+fn check(grid: &Grid, a: &Applicant) -> Result<(), CrsError> {
     a.validate().map_err(CrsError::Invalid)?;
     let issues = grid.issues();
     if !issues.is_empty() {
         return Err(CrsError::GridIssues(grid.id.clone(), issues));
     }
-    let c = &grid.crs;
-    let ws = a.scored_with_spouse();
+    Ok(())
+}
+
+/// Scores `a` against `grid` (already selected for `assessed_on` and with
+/// rulings applied).
+pub fn score(grid: &Grid, a: &Applicant, assessed_on: &IsoDate) -> Result<CrsResult, CrsError> {
+    check(grid, a)?;
     let mut flags = Vec::new();
 
     let fol_test = a.first_language.as_ref().ok_or(CrsError::NoFirstLanguage)?;
@@ -277,6 +329,68 @@ pub fn score(grid: &Grid, a: &Applicant, assessed_on: &IsoDate) -> Result<CrsRes
     if fol_test.test == TestKind::TcfCanada && Skill::ALL.iter().any(|s| fol.get(*s) == 4) {
         divergence(&mut flags, "D-001");
     }
+    let spouse = match a.spouse.as_ref().and_then(|s| s.language.as_ref()) {
+        Some(t) if a.scored_with_spouse() => {
+            if !valid_on(t, assessed_on) {
+                flags.push(Flag::ExpiredLanguageTest {
+                    which: "spouse language",
+                });
+            }
+            Some(clb(grid, "spouse language", t, &mut flags)?)
+        }
+        _ => None,
+    };
+    let levels = Levels {
+        first: (fol_test.test.language(), fol),
+        second: a
+            .second_language
+            .as_ref()
+            .zip(sol)
+            .map(|(t, c)| (t.test.language(), c)),
+        spouse,
+        pte_second: a
+            .second_language
+            .as_ref()
+            .is_some_and(|t| t.test == TestKind::PteCore),
+    };
+    core(grid, a, &levels, assessed_on, flags)
+}
+
+/// Scores `a` with language levels assumed from an intake form instead of
+/// test results (the profile's own tests are ignored). For a preliminary
+/// estimate only: the official score needs real results. The first official
+/// language is the one with the higher level (French on a tie).
+pub fn estimate(
+    grid: &Grid,
+    a: &Applicant,
+    assumed: &AssumedLevels,
+    assessed_on: &IsoDate,
+) -> Result<CrsResult, CrsError> {
+    check(grid, a)?;
+    let (first, second) = assumed_order(assumed).ok_or(CrsError::NoFirstLanguage)?;
+    let levels = Levels {
+        first,
+        second,
+        spouse: assumed
+            .spouse_english
+            .filter(|_| a.scored_with_spouse())
+            .map(uniform),
+        pte_second: false,
+    };
+    core(grid, a, &levels, assessed_on, Vec::new())
+}
+
+fn core(
+    grid: &Grid,
+    a: &Applicant,
+    levels: &Levels,
+    assessed_on: &IsoDate,
+    mut flags: Vec<Flag>,
+) -> Result<CrsResult, CrsError> {
+    let c = &grid.crs;
+    let ws = a.scored_with_spouse();
+    let fol = levels.first.1;
+    let sol = levels.second.map(|(_, c)| c);
 
     // A. Core / human capital.
     let mut core = Section::default();
@@ -334,13 +448,7 @@ pub fn score(grid: &Grid, a: &Applicant, assessed_on: &IsoDate) -> Result<CrsRes
             .find(|r| r.key == edu)
             .ok_or(CrsError::Missing("spouse education row"))?;
         spouse.push("spouse education", r.points, vec![r.cite.clone()]);
-        if let Some(t) = &s.language {
-            if !valid_on(t, assessed_on) {
-                flags.push(Flag::ExpiredLanguageTest {
-                    which: "spouse language",
-                });
-            }
-            let levels = clb(grid, "spouse language", t, &mut flags)?;
+        if let Some(levels) = levels.spouse {
             let mut points = 0;
             let mut cites = Vec::new();
             for sk in Skill::ALL {
@@ -435,15 +543,10 @@ pub fn score(grid: &Grid, a: &Applicant, assessed_on: &IsoDate) -> Result<CrsRes
         );
     }
     let (mut french, mut english) = (None, None);
-    for (t, levels) in [
-        (Some(fol_test), Some(fol)),
-        (a.second_language.as_ref(), sol),
-    ] {
-        if let (Some(t), Some(levels)) = (t, levels) {
-            match t.test.language() {
-                OfficialLanguage::French => french = Some(levels),
-                OfficialLanguage::English => english = Some(levels),
-            }
+    for (lang, l) in [Some(levels.first), levels.second].into_iter().flatten() {
+        match lang {
+            OfficialLanguage::French => french = Some(l),
+            OfficialLanguage::English => english = Some(l),
         }
     }
     if french.is_some_and(|f| f.all_at_least(x.french_min_nclc)) {
@@ -455,11 +558,7 @@ pub fn score(grid: &Grid, a: &Applicant, assessed_on: &IsoDate) -> Result<CrsRes
         };
         additional.push("French language skills", r.points, vec![r.cite.clone()]);
         // D-004: the calculator gives 25 here when the English test is PTE Core.
-        let pte_second = a
-            .second_language
-            .as_ref()
-            .is_some_and(|t| t.test == TestKind::PteCore);
-        if strong && fol_test.test.language() == OfficialLanguage::French && pte_second {
+        if strong && levels.first.0 == OfficialLanguage::French && levels.pte_second {
             divergence(&mut flags, "D-004");
         }
     }

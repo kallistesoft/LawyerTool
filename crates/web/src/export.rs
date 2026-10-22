@@ -52,7 +52,7 @@ fn requirement_label(id: &str) -> &str {
     }
 }
 
-fn program_label(p: Program) -> &'static str {
+pub(crate) fn program_label(p: Program) -> &'static str {
     match p {
         Program::Fsw => "Programme des travailleurs qualifiés (fédéral)",
         Program::Cec => "Catégorie de l’expérience canadienne",
@@ -142,6 +142,10 @@ pub fn build(
             "BROUILLON — évaluation automatisée à valider par l’avocat. Ne constitue pas un avis juridique avant son approbation.".into(),
         ),
     ];
+
+    if let Some(e) = &a.estimate {
+        estimate_blocks(e, &mut blocks);
+    }
 
     match &a.crs {
         Ok(c) => {
@@ -238,6 +242,38 @@ pub fn build(
             env!("CARGO_PKG_VERSION")
         ),
     }
+}
+
+/// The preliminary verdict from the intake form (imported clients).
+fn estimate_blocks(e: &crate::estimate::Estimated, blocks: &mut Vec<Block>) {
+    use crate::estimate::{Kind, Verdict};
+    let verdict = match e.verdict {
+        Verdict::Favorable => "favorable",
+        Verdict::ToExamine => "à examiner",
+        Verdict::Blocking => "bloquant",
+    };
+    blocks.push(Block::Heading(format!(
+        "Pré-évaluation d’après le formulaire : {verdict}"
+    )));
+    if let Ok(c) = &e.crs {
+        blocks.push(Block::Paragraph(format!(
+            "Score SCG estimé : {} points ({} époux).",
+            c.total,
+            if c.with_spouse { "avec" } else { "sans" }
+        )));
+    }
+    for r in &e.reasons {
+        let tag = match r.kind {
+            Kind::Blocking => "Bloquant",
+            Kind::Check => "À examiner",
+            Kind::Positive => "Favorable",
+        };
+        blocks.push(Block::Paragraph(format!("{tag} : {}", r.text)));
+    }
+    blocks.push(Block::Small(format!(
+        "Hypothèses : {}",
+        e.assumptions.join(" ")
+    )));
 }
 
 fn requirements_table(p: &ProgramResult) -> Block {
@@ -385,6 +421,7 @@ mod tests {
             crs: rules_engine::crs::score(g, &a, &on).map_err(|e| e.to_string()),
             eligibility: rules_engine::eligibility::assess(g, &a, &on).map_err(|e| e.to_string()),
             draws: vec![],
+            estimate: None,
         };
         // This profile is French-first with TEF: D-003 must be reviewed before export.
         let crs = assessment.crs.as_ref().unwrap_or_else(|e| panic!("{e}"));
