@@ -169,6 +169,9 @@ pub fn import(v: &mut Vault, name: &str, bytes: &[u8]) -> Res<ImportResult> {
                     serde_json::to_string(&r.applicant).map_err(|_| CommandError::internal())?;
                 let id = v.client_save(None, &identity, &profile, &now)?;
                 v.client_set_notes(id, r.notes)?;
+                let estimate = serde_json::to_string(&crate::estimate::Stored::from(r.estimate))
+                    .map_err(|_| CommandError::internal())?;
+                v.client_set_estimate(id, Some(estimate))?;
                 v.import_record(&ImportRow {
                     fingerprint: key,
                     file_name: name.into(),
@@ -263,6 +266,25 @@ mod tests {
         assert_eq!(list.len(), 3);
         let c = v.client_get(list[0].id).unwrap();
         assert!(!c.notes.is_empty() && c.notes[0].contains("Importé du formulaire"));
+
+        // Each imported client carries its preliminary verdict.
+        let a = crate::clients::assess(&v, c.id, Some("2026-10-21".into())).unwrap();
+        assert!(a.crs.is_err(), "no official score without test results");
+        let e = a.estimate.as_ref().unwrap();
+        assert!(e.crs.as_ref().is_ok_and(|r| r.total > 200));
+        assert!(!e.reasons.is_empty() && !e.assumptions.is_empty());
+        let report = crate::export::build(
+            &c.identity,
+            &serde_json::from_str(&c.profile).unwrap(),
+            &a,
+            "2026-10-21",
+        );
+        assert!(
+            report
+                .blocks
+                .iter()
+                .any(|b| matches!(b, report::Block::Heading(h) if h.starts_with("Pré-évaluation")))
+        );
         assert!(c.identity.email.is_some() || c.identity.full_name == "Fictif Dominique");
 
         // The same file again: already imported.

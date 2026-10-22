@@ -66,13 +66,18 @@ pub struct ClientOverview {
     pub reviews: usize,
     /// Profile validation problems.
     pub problems: usize,
+    /// Form import: estimated CRS and preliminary verdict.
+    pub crs_estimate: Option<u16>,
+    pub verdict: Option<crate::estimate::Verdict>,
 }
 
 /// Key results for one stored profile on `on` (pure; no vault access).
 pub fn overview_of(
     c: ClientSummary,
     profile: &str,
+    estimate: Option<&str>,
     grids: &[Grid],
+    draws: &[DrawRow],
     on: &IsoDate,
 ) -> ClientOverview {
     let mut o = ClientOverview {
@@ -85,7 +90,14 @@ pub fn overview_of(
         programs: vec![],
         reviews: 0,
         problems: 0,
+        crs_estimate: None,
+        verdict: None,
     };
+    if let (Some(s), Some(grid)) = (crate::estimate::stored(estimate), in_force(grids, on)) {
+        let e = crate::estimate::evaluate(&s, grid, draws, on);
+        o.crs_estimate = e.crs.as_ref().ok().map(|r| r.total);
+        o.verdict = Some(e.verdict);
+    }
     let Ok(a) = serde_json::from_str::<Applicant>(profile) else {
         o.crs_error = Some("Profil illisible.".into());
         return o;
@@ -108,6 +120,9 @@ pub fn overview_of(
     o
 }
 
+/// Draws read to find the latest of each category (the feed has a few a month).
+const REFERENCE_DRAWS: usize = 60;
+
 fn date(on: Option<String>) -> Res<IsoDate> {
     match on {
         Some(d) => {
@@ -122,11 +137,14 @@ fn date(on: Option<String>) -> Res<IsoDate> {
 pub fn overview(v: &Vault, on: Option<String>) -> Res<Vec<ClientOverview>> {
     let on = date(on)?;
     let grids = crate::watch::all_grids(v)?;
+    let draws = v.draws_latest(REFERENCE_DRAWS);
     Ok(v.client_list()
         .into_iter()
         .map(|c| {
-            let profile = v.client_get(c.id).map(|r| r.profile).unwrap_or_default();
-            overview_of(c, &profile, &grids, &on)
+            let r = v.client_get(c.id);
+            let profile = r.as_ref().map(|r| r.profile.clone()).unwrap_or_default();
+            let estimate = r.and_then(|r| r.estimate);
+            overview_of(c, &profile, estimate.as_deref(), &grids, &draws, &on)
         })
         .collect())
 }
@@ -201,12 +219,17 @@ pub struct Assessment {
     pub eligibility: Result<Vec<ProgramResult>, String>,
     /// Latest official draws (context for the score; empty before the first watcher run).
     pub draws: Vec<DrawRow>,
+    /// Form import: preliminary verdict from the client's answers.
+    pub estimate: Option<crate::estimate::Estimated>,
 }
 
 /// Assesses a saved client on `on` (YYYY-MM-DD, default today).
 pub fn assess(v: &Vault, id: i64, on: Option<String>) -> Res<Assessment> {
     let mut a = assess_inner(v, id, on)?;
     if let Ok(c) = &mut a.crs {
+        localize(c);
+    }
+    if let Some(Ok(c)) = a.estimate.as_mut().map(|e| &mut e.crs) {
         localize(c);
     }
     Ok(a)
@@ -234,10 +257,10 @@ fn localize(c: &mut CrsResult) {
 
 pub fn assess_inner(v: &Vault, id: i64, on: Option<String>) -> Res<Assessment> {
     let on = date(on)?;
-    let profile = v
+    let record = v
         .client_get(id)
-        .ok_or_else(|| err("not_found", "Client introuvable."))?
-        .profile;
+        .ok_or_else(|| err("not_found", "Client introuvable."))?;
+    let profile = record.profile;
     let grids = crate::watch::all_grids(v)?;
     let draws = v.draws_latest(5);
     let a: Applicant =
@@ -249,14 +272,18 @@ pub fn assess_inner(v: &Vault, id: i64, on: Option<String>) -> Res<Assessment> {
             crs: Err("Aucune grille officielle pour cette date.".into()),
             eligibility: Err("Aucune grille officielle pour cette date.".into()),
             draws,
+            estimate: None,
         });
     };
+    let estimate = crate::estimate::stored(record.estimate.as_deref())
+        .map(|s| crate::estimate::evaluate(&s, grid, &v.draws_latest(REFERENCE_DRAWS), &on));
     Ok(Assessment {
         on: on.as_str().into(),
         grid_id: Some(grid.id.clone()),
         crs: rules_engine::crs::score(grid, &a, &on).map_err(|e| e.to_string()),
         eligibility: rules_engine::eligibility::assess(grid, &a, &on).map_err(|e| e.to_string()),
         draws,
+        estimate,
     })
 }
 
@@ -346,6 +373,7 @@ mod tests {
             crs: rules_engine::crs::score(g, &a, &on).map_err(|e| e.to_string()),
             eligibility: rules_engine::eligibility::assess(g, &a, &on).map_err(|e| e.to_string()),
             draws: vec![],
+            estimate: None,
         };
         let identity = vault_file::Identity {
             full_name: "Hélène Tremblay".into(),
@@ -404,7 +432,7 @@ mod tests {
             updated_at: "t".into(),
         };
         let full = include_str!("../tests/fixtures/ui-full-applicant.json");
-        let o = super::overview_of(row(1), full, grids, &on);
+        let o = super::overview_of(row(1), full, None, grids, &[], &on);
         assert!(o.crs.is_some_and(|t| t > 0) && o.crs_error.is_none());
         assert_eq!(o.programs.len(), 3);
         assert_eq!(o.problems, 0);
@@ -413,7 +441,7 @@ mod tests {
         let mut a: serde_json::Value = serde_json::from_str(full).unwrap_or_else(|e| panic!("{e}"));
         a["age"] = serde_json::json!(19);
         a["foreign_work_years"] = serde_json::json!(10);
-        let o = super::overview_of(row(2), &a.to_string(), grids, &on);
+        let o = super::overview_of(row(2), &a.to_string(), None, grids, &[], &on);
         assert!(o.problems > 0 && o.crs.is_none() && o.crs_error.is_some());
 
         // TCF at NCLC 4 relies on ruling D-001: one mandatory review.
@@ -423,10 +451,10 @@ mod tests {
             "speaking": 4, "listening": 331, "reading": 342, "writing": 4
         });
         a["second_language"] = serde_json::Value::Null;
-        let o = super::overview_of(row(3), &a.to_string(), grids, &on);
+        let o = super::overview_of(row(3), &a.to_string(), None, grids, &[], &on);
         assert!(o.reviews >= 1, "{o:?}");
 
-        let o = super::overview_of(row(4), "{", grids, &on);
+        let o = super::overview_of(row(4), "{", None, grids, &[], &on);
         assert_eq!(o.crs_error.as_deref(), Some("Profil illisible."));
     }
 }

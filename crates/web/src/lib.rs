@@ -12,6 +12,7 @@
 //! access, and the page only ever fetches public files from its own origin.
 
 mod clients;
+mod estimate;
 mod export;
 mod inbox;
 mod watch;

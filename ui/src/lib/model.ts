@@ -128,7 +128,23 @@ export interface Assessment {
   crs: Outcome<CrsResult>
   eligibility: Outcome<ProgramResult[]>
   draws: { number: string; date: string; name: string; invitations: number; min_crs: number }[]
+  /** Form import: preliminary verdict from the client's own answers. */
+  estimate: Estimated | null
 }
+export type Verdict = 'favorable' | 'to_examine' | 'blocking'
+export interface Estimated {
+  verdict: Verdict
+  reasons: { kind: 'blocking' | 'check' | 'positive'; text: string }[]
+  crs: Outcome<CrsResult>
+  eligibility: Outcome<ProgramResult[]>
+  assumptions: string[]
+}
+export const VERDICT_LABEL: Record<Verdict, string> = {
+  favorable: 'Favorable',
+  to_examine: 'À examiner',
+  blocking: 'Bloquant',
+}
+export const VERDICT_TONE: Record<Verdict, string> = { favorable: 'ok', to_examine: 'warn', blocking: 'err' }
 
 // --- labels (French UI) ---
 export const MARITAL: Record<MaritalStatus, string> = {
@@ -201,4 +217,7 @@ export interface ClientOverview {
   programs: [ProgramResult['program'], ProgramStatus][]
   reviews: number
   problems: number
+  /** Form import: estimated CRS and preliminary verdict. */
+  crs_estimate: number | null
+  verdict: Verdict | null
 }

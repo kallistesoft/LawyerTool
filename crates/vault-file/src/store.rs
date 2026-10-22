@@ -32,6 +32,10 @@ pub struct ClientRecord {
     /// until the lawyer clears it).
     #[serde(default)]
     pub notes: Vec<String>,
+    /// Preliminary-score inputs from a form import (JSON: completed profile,
+    /// assumed language levels, assumptions), if any.
+    #[serde(default)]
+    pub estimate: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -187,6 +191,7 @@ impl Store {
                     identity,
                     profile: profile.to_owned(),
                     notes: vec![],
+                    estimate: None,
                 });
                 Ok(id)
             }
@@ -212,6 +217,17 @@ impl Store {
             .find(|c| c.id == id)
             .ok_or(Error::Invalid("client introuvable"))?;
         c.notes = notes;
+        Ok(())
+    }
+
+    /// Sets a client's preliminary-score inputs (JSON), or removes them.
+    pub fn client_set_estimate(&mut self, id: i64, estimate: Option<String>) -> Result<(), Error> {
+        let c = self
+            .clients
+            .iter_mut()
+            .find(|c| c.id == id)
+            .ok_or(Error::Invalid("client introuvable"))?;
+        c.estimate = estimate;
         Ok(())
     }
 

@@ -8,12 +8,14 @@ publish.workspace = true
 
 [dependencies]
 applicant = { path = "../applicant" }
+rules-engine = { path = "../rules-engine" }
 miniz_oxide = "=0.9.1"
 quick-xml = "=0.42.0"
 sha2 = "=0.11.1"
 
 [dev-dependencies]
 proptest = "1"
+serde_json.workspace = true
 
 [lints]
 workspace = true
