@@ -3,6 +3,7 @@
   import { onWatchUpdated, vaultLock, watchStatus, type AppInfo } from './api'
   import AssessmentView from './AssessmentView.svelte'
   import ClientForm from './ClientForm.svelte'
+  import AuditHome from './AuditHome.svelte'
   import ClientList from './ClientList.svelte'
   import Icon from './Icon.svelte'
   import Settings from './Settings.svelte'
@@ -10,10 +11,18 @@
 
   let { info, dev }: { info: AppInfo | null; dev: boolean } = $props()
 
-  type View = { kind: 'list' } | { kind: 'edit'; id: number | null } | { kind: 'assess'; id: number } | { kind: 'watch' } | { kind: 'settings' }
-  let view = $state<View>({ kind: 'list' })
+  type View =
+    | { kind: 'home' }
+    | { kind: 'list' }
+    | { kind: 'edit'; id: number | null }
+    | { kind: 'assess'; id: number }
+    | { kind: 'watch' }
+    | { kind: 'settings' }
+  // Home: « Générer les audits ». The client list stays reachable from there.
+  let view = $state<View>({ kind: 'home' })
   const list = () => (view = { kind: 'list' })
-  const tab = $derived(view.kind === 'watch' || view.kind === 'settings' ? view.kind : 'clients')
+  const home = () => (view = { kind: 'home' })
+  const tab = $derived(view.kind === 'watch' || view.kind === 'settings' ? view.kind : 'home')
 
   // Badge on "Veille": changes waiting for approval, or rules not checked lately.
   let watchAlert = $state<'pending' | 'stale' | null>(null)
@@ -33,7 +42,7 @@
   })
 
   const nav = [
-    { key: 'clients', label: 'Clients', icon: 'clients', go: list },
+    { key: 'home', label: 'Audits', icon: 'download', go: home },
     { key: 'watch', label: 'Veille des règles', icon: 'rules', go: () => (view = { kind: 'watch' }) },
     { key: 'settings', label: 'Paramètres', icon: 'settings', go: () => (view = { kind: 'settings' }) },
   ] as const
@@ -77,6 +86,12 @@
       <WatchView />
     {:else if view.kind === 'settings'}
       <Settings />
+    {:else if view.kind === 'home'}
+      <AuditHome
+        onOpen={(id) => (view = { kind: 'edit', id })}
+        onSettings={() => (view = { kind: 'settings' })}
+        onClients={list}
+      />
     {:else if view.kind === 'list'}
       <ClientList
         onOpen={(id) => (view = { kind: 'assess', id })}
