@@ -441,13 +441,7 @@ fn synthesis(items: &mut Vec<Item>, f: &Facts, ctx: &Context) {
                 n.feer
             ))],
         ),
-        None => (
-            Tone::Green,
-            vec![
-                r("Métier qualifié ? "),
-                todo("CNP À DÉFINIR IMPÉRATIVEMENT"),
-            ],
-        ),
+        None => (Tone::Green, vec![r("Métier qualifié ?")]),
     };
     rows.push(row("Profession", eval, tone, impact));
 

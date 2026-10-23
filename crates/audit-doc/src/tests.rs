@@ -182,7 +182,7 @@ fn married_with_unknown_cnp_aiming_at_alberta() {
         "Après 35 ans, on perd des points pour l'Entrée express.",
         "ÉDE faite ou en cours",
         "⟦à valider⟧",
-        "⟦CNP À DÉFINIR IMPÉRATIVEMENT⟧",
+        "Métier qualifié ?",
         "Test réalisé",
         "Non renseigné",
         "pour 2 personnes pour la RP",
@@ -200,6 +200,7 @@ fn married_with_unknown_cnp_aiming_at_alberta() {
         assert!(t.contains(want), "missing {want:?}\n{t}");
     }
     for absent in [
+        "IMPÉRATIVEMENT",
         "📍 Au Québec",
         "Inscrivez-vous au PVT",
         "Test de français (NCLC 9+)",
