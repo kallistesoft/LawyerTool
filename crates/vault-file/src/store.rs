@@ -36,6 +36,9 @@ pub struct ClientRecord {
     /// assumed language levels, assumptions), if any.
     #[serde(default)]
     pub estimate: Option<String>,
+    /// Form answers and the lawyer's audit inputs (JSON), if imported.
+    #[serde(default)]
+    pub form: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -192,6 +195,7 @@ impl Store {
                     profile: profile.to_owned(),
                     notes: vec![],
                     estimate: None,
+                    form: None,
                 });
                 Ok(id)
             }
@@ -217,6 +221,17 @@ impl Store {
             .find(|c| c.id == id)
             .ok_or(Error::Invalid("client introuvable"))?;
         c.notes = notes;
+        Ok(())
+    }
+
+    /// Sets a client's form answers and audit inputs (JSON).
+    pub fn client_set_form(&mut self, id: i64, form: Option<String>) -> Result<(), Error> {
+        let c = self
+            .clients
+            .iter_mut()
+            .find(|c| c.id == id)
+            .ok_or(Error::Invalid("client introuvable"))?;
+        c.form = form;
         Ok(())
     }
 

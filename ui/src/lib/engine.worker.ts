@@ -13,6 +13,8 @@ export type Op =
   | { op: 'status' }
   | { op: 'export'; request: unknown }
   | { op: 'inbox_import'; name: string; bytes: Uint8Array }
+  // `client`, not `id`: the message's own `id` matches replies to requests.
+  | { op: 'audit'; client: number }
 
 export interface Reply {
   id: number
@@ -46,6 +48,10 @@ function run(e: Engine, m: Op): unknown {
     }
     case 'inbox_import':
       return JSON.parse(e.inbox_import(m.name, m.bytes))
+    case 'audit': {
+      const out = e.audit_docx(m.client)
+      return { ...JSON.parse(out.meta), bytes: out.bytes }
+    }
   }
 }
 

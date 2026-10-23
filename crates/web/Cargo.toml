@@ -17,6 +17,7 @@ report = { path = "../report" }
 audit = { path = "../audit" }
 vault-file = { path = "../vault-file" }
 form-import = { path = "../form-import" }
+audit-doc = { path = "../audit-doc" }
 rules-watcher = { path = "../rules-watcher", default-features = false }
 sha2 = "=0.11.1"
 zeroize = "=1.9.1"

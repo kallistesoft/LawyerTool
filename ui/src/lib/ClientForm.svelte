@@ -1,6 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { clientClearNotes, clientDelete, clientGet, clientSave, errorMessage } from './api'
+  import {
+    auditInputsGet, auditInputsSet, clientClearNotes, clientDelete, clientGet, clientSave, errorMessage,
+    type AuditInputs,
+  } from './api'
   import Icon from './Icon.svelte'
   import ImportNotes from './ImportNotes.svelte'
   import LanguageFields from './LanguageFields.svelte'
@@ -23,6 +26,14 @@
   let clientId: number | null = $state(null)
   let problems: string[] = $state([])
   let notes: string[] = $state([])
+  let audit: AuditInputs | null = $state(null)
+  const REGULATED = [
+    'n’est pas réglementée',
+    'est peut-être réglementée (CNP à préciser impérativement)',
+    'est réglementée au Canada',
+    'est réglementée en Alberta',
+    'est réglementée au Nouveau-Brunswick',
+  ]
   let error: string | null = $state(null)
   let saved = $state(false)
   let confirmDelete = $state(false)
@@ -41,6 +52,7 @@
           identity = c.identity
           a = c.profile
           notes = c.notes
+          auditInputsGet(c.id).then((i) => (audit = i)).catch(() => {})
           baseline = snapshot()
         })
         .catch((e) => (error = errorMessage(e)))
@@ -71,6 +83,7 @@
     try {
       const r = await clientSave(clientId, identity, a)
       clientId = r.id
+      if (audit) await auditInputsSet(r.id, audit.lawyer)
       problems = r.problems
       saved = true
       baseline = snapshot()
@@ -104,7 +117,7 @@
   }
 
   const sectionsNav = [
-    ['sec-identity', 'Identité'], ['sec-situation', 'Situation et études'], ['sec-spouse', 'Époux'],
+    ['sec-audit', 'Audit'], ['sec-identity', 'Identité'], ['sec-situation', 'Situation et études'], ['sec-spouse', 'Époux'],
     ['sec-languages', 'Langues'], ['sec-work', 'Expérience'], ['sec-other', 'Autres facteurs'],
     ['sec-eligibility', 'Admissibilité'],
   ] as const
@@ -126,11 +139,46 @@
 <div class="layout">
 <nav class="index" aria-label="Sections du formulaire">
   {#each sectionsNav as [anchor, label] (anchor)}
-    {#if anchor !== 'sec-spouse' || a.spouse}<a href={'#' + anchor}>{label}</a>{/if}
+    {#if (anchor !== 'sec-spouse' || a.spouse) && (anchor !== 'sec-audit' || audit)}<a href={'#' + anchor}>{label}</a>{/if}
   {/each}
 </nav>
 
 <form novalidate onsubmit={(e) => (e.preventDefault(), save())}>
+
+  {#if audit}
+    <fieldset id="sec-audit">
+      <legend>Audit <span class="hint">(document Word généré par « Générer les audits »)</span></legend>
+      <div class="row">
+        <label>
+          CNP du candidat{audit.job ? ` — ${audit.job}` : ''}
+          <input inputmode="numeric" maxlength="5" placeholder={audit.suggested_noc ?? '5 chiffres'}
+            bind:value={() => audit!.lawyer.noc ?? '', (v) => (audit!.lawyer.noc = v.trim() || null)} />
+        </label>
+        <label class="check"><input type="checkbox" bind:checked={audit.lawyer.noc_validated} /> Code validé</label>
+      </div>
+      {#if audit.married}
+        <div class="row">
+          <label>
+            CNP du conjoint{audit.spouse_job ? ` — ${audit.spouse_job}` : ''}
+            <input inputmode="numeric" maxlength="5" placeholder={audit.suggested_spouse_noc ?? '5 chiffres'}
+              bind:value={() => audit!.lawyer.spouse_noc ?? '', (v) => (audit!.lawyer.spouse_noc = v.trim() || null)} />
+          </label>
+          <label class="check"><input type="checkbox" bind:checked={audit.lawyer.spouse_noc_validated} /> Code validé</label>
+        </div>
+      {/if}
+      <label>
+        Métier réglementé : « Votre profession … »
+        <input list="regulated-options" placeholder="à vérifier (surligné dans l’audit)"
+          bind:value={() => audit!.lawyer.regulated ?? '', (v) => (audit!.lawyer.regulated = v.trim() || null)} />
+        <datalist id="regulated-options">{#each REGULATED as o (o)}<option value={o}></option>{/each}</datalist>
+      </label>
+      <label>
+        Paragraphe libre pour le bilan
+        <textarea rows="3" bind:value={() => audit!.lawyer.note ?? '', (v) => (audit!.lawyer.note = v.trim() ? v : null)}></textarea>
+      </label>
+      <p class="hint">Sans code validé, l’audit garde le code du client (ou un blanc) surligné en jaune. Le FEER découle du 2ᵉ chiffre du code.</p>
+    </fieldset>
+  {/if}
 
   <fieldset id="sec-identity">
     <legend>Identité <span class="hint">(jamais envoyée à Claude)</span></legend>

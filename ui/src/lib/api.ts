@@ -45,6 +45,11 @@ worker.onmessage = (ev: MessageEvent<Reply>) => {
   waiting.get(ev.data.id)?.(ev.data)
   waiting.delete(ev.data.id)
 }
+// A crashed engine must not leave the page waiting forever.
+worker.onerror = () => {
+  for (const [id, resolve] of waiting) resolve({ id, ok: false, value: fail('internal', 'Erreur interne du moteur : rechargez la page.') })
+  waiting.clear()
+}
 
 /** Vault writes, one at a time and in order. */
 let saving: Promise<void> = Promise.resolve()
@@ -320,7 +325,14 @@ export interface InboxFile {
   message: string | null
   client_id: number | null
 }
-export interface ImportResult { name: string; ok: boolean; client_id: number | null; message: string }
+export interface ImportResult {
+  name: string
+  ok: boolean
+  client_id: number | null
+  message: string
+  /** Every client of the file's responses, new or imported before. */
+  client_ids: number[]
+}
 
 const MAX_FILE = 10 * 1024 * 1024
 const MAX_ENTRIES = 500
@@ -354,6 +366,60 @@ export async function inboxList(): Promise<InboxFile[]> {
   return call<InboxFile[]>('inbox_status', { files })
 }
 
+// ---- Audits (Word) -----------------------------------------------------------
+
+/** What the lawyer sets before generating an audit (see crates/audit-doc). */
+export interface AuditLawyer {
+  noc: string | null
+  noc_validated: boolean
+  spouse_noc: string | null
+  spouse_noc_validated: boolean
+  regulated: string | null
+  note: string | null
+}
+export interface AuditInputs {
+  lawyer: AuditLawyer
+  suggested_noc: string | null
+  suggested_spouse_noc: string | null
+  married: boolean
+  job: string
+  spouse_job: string
+}
+/** `null` when the client was not imported from the form. */
+export const auditInputsGet = (id: number) => call<AuditInputs | null>('audit_inputs_get', { id })
+export const auditInputsSet = (id: number, lawyer: AuditLawyer) => call<void>('audit_inputs_set', { id, lawyer })
+
+export interface AuditResult { client_id: number; ok: boolean; file: string | null; message: string }
+
+/**
+ * « Générer les audits »: imports the form files of the input folder (new
+ * responses become clients), then writes one Word audit per response into
+ * the output folder (never overwriting: -2, -3…). Call on a click.
+ */
+export async function generateAudits(): Promise<AuditResult[]> {
+  const out = await getHandle<FileSystemDirectoryHandle>('output')
+  if (!out) throw fail('no_output_dir', 'Choisissez d’abord le dossier de sortie dans Paramètres.')
+  const input = await getHandle<FileSystemDirectoryHandle>('input')
+  if (input && !(await ensurePermission(input, 'read')))
+    throw fail('permission', 'L’accès au dossier des formulaires a été refusé.')
+  if (!(await ensurePermission(out, 'readwrite'))) throw fail('permission', 'L’accès au dossier de sortie a été refusé.')
+  if (!(await folderExists(out))) throw fail('output_dir_missing', 'Le dossier de sortie est introuvable : vérifiez Paramètres.')
+  const files = await inboxList()
+  const imported = await inboxImport(files.filter((f) => f.status !== 'too_large').map((f) => f.name))
+  const ids = [...new Set(imported.flatMap((r) => r.client_ids))]
+  const results: AuditResult[] = []
+  for (const id of ids) {
+    try {
+      const f = await engine<{ name: string; bytes: Uint8Array }>({ op: 'audit', client: id })
+      const file = await writeNew(out, f.name, f.bytes)
+      results.push({ client_id: id, ok: true, file, message: 'Audit enregistré.' })
+    } catch (e) {
+      results.push({ client_id: id, ok: false, file: null, message: errorMessage(e) })
+    }
+  }
+  return results
+}
+
 /** Imports the named files from the input folder (skipping those already imported). */
 export async function inboxImport(names: string[]): Promise<ImportResult[]> {
   const dir = await inputDir()
@@ -363,7 +429,7 @@ export async function inboxImport(names: string[]): Promise<ImportResult[]> {
     try {
       bytes = new Uint8Array(await (await (await dir.getFileHandle(name)).getFile()).arrayBuffer())
     } catch {
-      results.push({ name, ok: false, client_id: null, message: 'Fichier illisible.' })
+      results.push({ name, ok: false, client_id: null, message: 'Fichier illisible.', client_ids: [] })
       continue
     }
     results.push(await engine<ImportResult>({ op: 'inbox_import', name, bytes }, [bytes.buffer]))

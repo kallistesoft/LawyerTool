@@ -23,6 +23,7 @@ forbid applicant "${IO[@]}"
 forbid rules-engine "${IO[@]}"
 forbid grid-parser "${IO[@]}"
 forbid form-import "${IO[@]}" net vault vault-file
+forbid audit-doc "${IO[@]}" net vault vault-file
 forbid deid "${IO[@]}" net vault
 
 # Network and audit code never depend on client-data storage.
@@ -52,8 +53,8 @@ if cargo metadata --no-deps --format-version 1 | grep -q '"name":"rules-watcher"
   forbid rules-watcher vault deid
 fi
 
-if grep -rnE 'std::(fs|net|process)|std::env::var|File::open' crates/applicant/src crates/rules-engine/src crates/deid/src crates/form-import/src; then
-  echo "::error::applicant, rules-engine, deid and form-import must not do file, network, process or environment access"
+if grep -rnE 'std::(fs|net|process)|std::env::var|File::open' crates/applicant/src crates/rules-engine/src crates/deid/src crates/form-import/src crates/audit-doc/src; then
+  echo "::error::applicant, rules-engine, deid, form-import and audit-doc must not do file, network, process or environment access"
   fail=1
 fi
 

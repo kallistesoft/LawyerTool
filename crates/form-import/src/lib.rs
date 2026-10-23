@@ -39,6 +39,10 @@ pub struct Response {
     /// What the lawyer must complete or check (French).
     pub notes: Vec<String>,
     pub estimate: Estimate,
+    /// Every answer read, by [`Q::key`] (trimmed, non-empty only).
+    pub answers: std::collections::BTreeMap<String, String>,
+    /// Age computed or stated (as in the profile), if known.
+    pub age: Option<u8>,
 }
 
 /// The profile completed with assumptions, for a preliminary score only.
@@ -312,7 +316,7 @@ pub fn parse(bytes: &[u8], ext: &str, today: &IsoDate) -> Result<Parsed, String>
 }
 
 /// Lower case, plain spaces, no accents on the few letters the questions use.
-fn norm(s: &str) -> String {
+pub fn norm(s: &str) -> String {
     s.replace('œ', "oe")
         .chars()
         .map(|c| match c {
@@ -333,8 +337,8 @@ fn norm(s: &str) -> String {
 }
 
 /// The questions used, by a distinctive part of their (normalized) text.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum Q {
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Q {
     Id,
     Start,
     Name,
@@ -364,6 +368,53 @@ enum Q {
     English,
     Relative,
     Province,
+    Nationality,
+    Residence,
+    SpouseAge,
+    SpouseNationality,
+    Link,
+}
+
+impl Q {
+    /// Stable key of the question in [`Response::answers`] (stored in the vault).
+    pub fn key(self) -> &'static str {
+        match self {
+            Q::Id => "id",
+            Q::Start => "start",
+            Q::Name => "name",
+            Q::Age => "age",
+            Q::Status => "status",
+            Q::Email => "email",
+            Q::Marital => "marital",
+            Q::SpouseStatus => "spouse_status",
+            Q::SpouseEducation => "spouse_education",
+            Q::SpouseEnglish => "spouse_english",
+            Q::SpouseJob => "spouse_job",
+            Q::SpouseExperience => "spouse_experience",
+            Q::SpouseTest => "spouse_test",
+            Q::Criminal => "criminal",
+            Q::Health => "health",
+            Q::Job => "job",
+            Q::Experience => "experience",
+            Q::CanadianDiploma => "canadian_diploma",
+            Q::CanadianWork => "canadian_work",
+            Q::Education => "education",
+            Q::Eca => "eca",
+            Q::FrenchTest => "french_test",
+            Q::JobOffer => "job_offer",
+            Q::JobOfferPost => "job_offer_post",
+            Q::Funds => "funds",
+            Q::French => "french",
+            Q::English => "english",
+            Q::Relative => "relative",
+            Q::Province => "province",
+            Q::Nationality => "nationality",
+            Q::Residence => "residence",
+            Q::SpouseAge => "spouse_age",
+            Q::SpouseNationality => "spouse_nationality",
+            Q::Link => "link",
+        }
+    }
 }
 
 const QUESTIONS: &[(Q, &str)] = &[
@@ -429,6 +480,14 @@ const QUESTIONS: &[(Q, &str)] = &[
         "avez-vous un frere, une soeur, un parent ou un enfant majeur",
     ),
     (Q::Province, "quelle serait votre province de destination"),
+    (Q::Nationality, "quelle est votre nationalite"),
+    (Q::Residence, "quel est votre pays de residence actuel"),
+    (Q::SpouseAge, "quel est l'age de votre conjoint"),
+    (
+        Q::SpouseNationality,
+        "quelle est la nationalite de votre conjoint",
+    ),
+    (Q::Link, "quel est votre lien avec le canada"),
 ];
 
 /// Column of each question (answer columns only: "Points - " and
@@ -472,7 +531,7 @@ impl Row<'_> {
 }
 
 /// "Non", "Aucun", "Jamais…", "NON", "Nob" and the like.
-fn is_no(s: &str) -> bool {
+pub fn is_no(s: &str) -> bool {
     let n = norm(s);
     let first = n
         .split(|c: char| !c.is_alphanumeric())
@@ -487,12 +546,12 @@ fn is_no(s: &str) -> bool {
             .any(|p| n.starts_with(p))
 }
 
-fn is_yes(s: &str) -> bool {
+pub fn is_yes(s: &str) -> bool {
     matches!(norm(s).as_str(), "oui" | "yes")
 }
 
 /// Leading whole number in a short answer ("3 ans", "5 ans et plus" -> 5).
-fn leading_number(s: &str) -> Option<u8> {
+pub fn leading_number(s: &str) -> Option<u8> {
     let digits: String = s.trim().chars().take_while(char::is_ascii_digit).collect();
     digits.parse().ok()
 }
@@ -587,7 +646,7 @@ fn quote(s: &str) -> String {
 }
 
 /// "N personnes : J'ai au moins X $ CAD…" -> (N, X).
-fn funds(s: &str) -> Option<(u8, u32)> {
+pub fn funds(s: &str) -> Option<(u8, u32)> {
     let n = norm(s);
     let size = leading_number(&n)?;
     let after = n.split("au moins").nth(1)?;
@@ -601,7 +660,7 @@ fn funds(s: &str) -> Option<(u8, u32)> {
 }
 
 /// A five-digit NOC code mentioned in a free-text answer.
-fn noc_in(s: &str) -> Option<String> {
+pub fn noc_in(s: &str) -> Option<String> {
     s.split(|c: char| !c.is_ascii_digit())
         .find(|w| w.len() == 5)
         .map(str::to_owned)
@@ -889,6 +948,12 @@ fn response(r: &Row, today: &IsoDate) -> Result<Response, String> {
     .map(|b| format!("{b:02x}"))
     .collect();
     let estimate = estimate_of(r, &a);
+    let answers = r
+        .cols
+        .iter()
+        .filter_map(|(q, _)| r.get(*q).map(|v| (q.key().to_owned(), v.to_owned())))
+        .collect();
+    let age = (a.age > 0).then_some(a.age);
     Ok(Response {
         key,
         full_name,
@@ -896,6 +961,8 @@ fn response(r: &Row, today: &IsoDate) -> Result<Response, String> {
         applicant: a,
         notes,
         estimate,
+        answers,
+        age,
     })
 }
 

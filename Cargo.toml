@@ -1,9 +1,9 @@
 [workspace]
 resolver = "3"
-members = ["crates/applicant", "crates/rules-engine", "crates/grid-parser", "crates/oracle-tests", "crates/vault", "crates/audit", "crates/net", "crates/deid", "crates/report", "crates/rules-watcher", "crates/vault-file", "crates/web", "crates/form-import", "src-tauri"]
+members = ["crates/applicant", "crates/rules-engine", "crates/grid-parser", "crates/oracle-tests", "crates/vault", "crates/audit", "crates/net", "crates/deid", "crates/report", "crates/rules-watcher", "crates/vault-file", "crates/web", "crates/form-import", "crates/audit-doc", "src-tauri"]
 # The app shell embeds ui/dist at compile time; build it explicitly
 # (`npm --prefix ui run build && cargo build -p lawyertool`).
-default-members = ["crates/applicant", "crates/rules-engine", "crates/grid-parser", "crates/oracle-tests", "crates/vault", "crates/audit", "crates/net", "crates/deid", "crates/report", "crates/rules-watcher", "crates/vault-file", "crates/web", "crates/form-import"]
+default-members = ["crates/applicant", "crates/rules-engine", "crates/grid-parser", "crates/oracle-tests", "crates/vault", "crates/audit", "crates/net", "crates/deid", "crates/report", "crates/rules-watcher", "crates/vault-file", "crates/web", "crates/form-import", "crates/audit-doc"]
 
 [workspace.package]
 edition = "2024"
