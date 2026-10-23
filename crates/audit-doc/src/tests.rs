@@ -51,7 +51,7 @@ fn text(d: &Doc) -> String {
             Item::Para(p) => para(&mut out, p),
             Item::Banner { lines, .. } => runs(&mut out, lines),
             Item::Heading { text, .. } => out.push_str(&format!("# {}\n", text.to_uppercase())),
-            Item::Table { header, rows, .. } => {
+            Item::Table { header, rows, .. } | Item::Grid { header, rows, .. } => {
                 for row in header.iter().chain(rows) {
                     for c in row {
                         for p in &c.paras {
@@ -97,10 +97,16 @@ fn single_french_speaker_aiming_at_quebec() {
     f.lawyer.noc = Some("60010".into());
     f.lawyer.noc_validated = true;
     f.lawyer.regulated = Some("n’est pas réglementée".into());
-    let t = text(&build("TESTEUR Alix", &f, &ctx()));
+    let doc = build("TESTEUR Alix", &f, &ctx());
+    assert_eq!(
+        doc.footer.as_deref(),
+        Some("Poughon Immigration · Audit éclair d’éligibilité · TESTEUR ALIX")
+    );
+    let t = text(&doc);
     for want in [
-        "AUDIT ÉCLAIR D’ÉLIGIBILITÉ",
-        "Date de l’évaluation – 22 octobre 2026",
+        "Audit éclair d’éligibilité",
+        "TESTEUR ALIX",
+        "Évaluation du 22 octobre 2026",
         "32 ans — Célibataire",
         "Citoyenneté Française (Résidence : France)",
         "Atout Majeur (Mobilité Francophone C16)",
@@ -111,35 +117,33 @@ fn single_french_speaker_aiming_at_quebec() {
         "Au moins 30\u{202f}000 $ CAD d'économies pour 4",
         "Immigration complexe et longue",
         "Remarque préalable",
-        "📍 AU QUÉBEC",
-        "(20%)",
-        "ÉLEVÉ",
-        "(80%)",
+        "📍 Au Québec",
+        "20 %",
+        "Élevé",
+        "80 %",
         "~435 pts",
         "doit être amélioré hors Québec.",
-        "Nouveau Brunswick (NB)",
-        "📌 ÉTAPE 1",
-        "TEST DE FRANÇAIS",
+        "Nouveau-Brunswick (NB)",
+        "\n1\nTest de français (NCLC 9+) & test d’anglais (NCLC 5+)",
         "non opportun",
         "n’est pas réglementée",
-        "(mobilité francophone donc hors QUÉBEC)",
-        "📌 ÉTAPE 4",
-        "INSTALLATION &",
-        "FÉLICITATIONS : UN EXCELLENT POTENTIEL !",
+        "(mobilité francophone, donc hors Québec)",
+        "\n4\nInstallation & RP",
+        "Félicitations : un excellent potentiel !",
         "CNP 60010 (FEER 0)",
         "Inscrivez-vous au PVT",
         "Élargir vos horizons hors Québec",
-        "VOTRE CONSULTATION STRATÉGIQUE",
+        "Votre consultation stratégique (1 heure)",
         "Vanessa POUGHON – Avocate",
-        "ANNEXE",
+        "Annexe",
     ] {
         assert!(t.contains(want), "missing {want:?}\n{t}");
     }
     for absent in [
-        "CONJOINT",
+        "Audit sur-mesure",
         "Requérant + conjoint",
         "Après 35 ans",
-        "PRÉLIMINAIRE",
+        "Préliminaire",
         "⟦CNP",
         "Point à examiner",
     ] {
@@ -183,22 +187,22 @@ fn married_with_unknown_cnp_aiming_at_alberta() {
         "Non renseigné",
         "pour 2 personnes pour la RP",
         "doit être amélioré pour l'Alberta.",
-        "AUDIT SUR-MESURE & IMPACT STRATÉGIQUE DU CONJOINT",
-        "CONJOINT : 43 ans, française, il/elle n'a pas le baccalauréat, anglais débutant, chauffeur, ancienneté 5 ans et plus.",
-        "25%",
+        "Audit sur-mesure & impact stratégique du conjoint",
+        "43 ans · française · il/elle n'a pas le baccalauréat · anglais débutant · chauffeur · ancienneté 5 ans et plus.",
+        "25 %",
         "PAS UTILE",
         "Requérant + conjoint",
         "⟦[réglementée ou non : à vérifier selon la CNP]⟧",
-        "TEST D’ANGLAIS",
+        "Test d’anglais (NCLC 5+)",
         "Votre proche au Canada",
         "⟦CNP [à déterminer]⟧",
     ] {
         assert!(t.contains(want), "missing {want:?}\n{t}");
     }
     for absent in [
-        "📍 AU QUÉBEC",
+        "📍 Au Québec",
         "Inscrivez-vous au PVT",
-        "TEST DE FRANÇAIS\n",
+        "Test de français (NCLC 9+)",
     ] {
         assert!(!t.contains(absent), "unexpected {absent:?}");
     }
@@ -224,14 +228,14 @@ fn low_skilled_bilingual_young_single() {
     let t = text(&build("Dominique FICTIF", &f, &ctx()));
     for want in [
         "Métier peu qualifié (FEER 5) et non admissible à l'Entrée express",
-        "MODÉRÉ",
-        "(50%)",
+        "Modéré",
+        "50 %",
         "après de l’expérience dans un métier qualifié",
         "anglais bilingue est un très gros atout",
-        "PRÉLIMINAIRE",
-        "📌 ÉTAPE 1\n\nTEST DE FRANÇAIS",
-        "CRÉATION D'XP",
-        "DE L'EXPÉRIENCE À LA MOBILISATION",
+        "Préliminaire",
+        "\n1\nTest de français (NCLC 9+)",
+        "Création d’expérience & RP",
+        "De l'expérience à la mobilisation",
         "incroyable atout",
         "Non conforme",
         "⟦Point à examiner avant envoi (admissibilité) : ⟧⟦Santé : « Asthme sévère »⟧",
@@ -239,10 +243,10 @@ fn low_skilled_bilingual_young_single() {
         assert!(t.contains(want), "missing {want:?}\n{t}");
     }
     assert!(
-        !t.contains("Nouveau Brunswick (NB)"),
+        !t.contains("Nouveau-Brunswick (NB)"),
         "bilingual and NB not targeted"
     );
-    assert!(!t.contains("EXCELLENT POTENTIEL"));
+    assert!(!t.contains("excellent potentiel"));
 }
 
 #[test]
