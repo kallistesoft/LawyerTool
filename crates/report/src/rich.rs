@@ -217,6 +217,11 @@ pub enum Item {
     },
     /// Paragraphs inside a thin frame.
     Boxed(Vec<Para>),
+    /// A PNG at the full text width; `px` (width, height) sets its height.
+    Image {
+        png: &'static [u8],
+        px: (u32, u32),
+    },
     PageBreak,
 }
 
@@ -420,7 +425,19 @@ fn table_xml(
     out
 }
 
-fn item_xml(item: &Item, links: &mut Vec<String>) -> String {
+/// English Metric Units per twip.
+const EMU_PER_TWIP: u64 = 635;
+
+/// An inline picture; `n` numbers it (relationship `rIdI{n}`, `media/image{n}.png`).
+fn image_xml(n: usize, px: (u32, u32)) -> String {
+    let cx = u64::from(TEXT_WIDTH) * EMU_PER_TWIP;
+    let cy = cx * u64::from(px.1) / u64::from(px.0.max(1));
+    format!(
+        "<w:p><w:r><w:drawing><wp:inline distT=\"0\" distB=\"0\" distL=\"0\" distR=\"0\"><wp:extent cx=\"{cx}\" cy=\"{cy}\"/><wp:docPr id=\"{n}\" name=\"Image {n}\"/><wp:cNvGraphicFramePr><a:graphicFrameLocks xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\" noChangeAspect=\"1\"/></wp:cNvGraphicFramePr><a:graphic xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><a:graphicData uri=\"http://schemas.openxmlformats.org/drawingml/2006/picture\"><pic:pic xmlns:pic=\"http://schemas.openxmlformats.org/drawingml/2006/picture\"><pic:nvPicPr><pic:cNvPr id=\"{n}\" name=\"image{n}.png\"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed=\"rIdI{n}\"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x=\"0\" y=\"0\"/><a:ext cx=\"{cx}\" cy=\"{cy}\"/></a:xfrm><a:prstGeom prst=\"rect\"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>"
+    )
+}
+
+fn item_xml(item: &Item, links: &mut Vec<String>, images: &mut Vec<&'static [u8]>) -> String {
     match item {
         Item::Para(p) => para_xml(p, links),
         Item::Banner { lines, fill } => {
@@ -484,6 +501,10 @@ fn item_xml(item: &Item, links: &mut Vec<String>) -> String {
             let borders = format!("<w:top {b}/><w:left {b}/><w:bottom {b}/><w:right {b}/>");
             table_xml(&[1], None, &[vec![Cell::new(paras.clone())]], &borders, 0, links)
         }
+        Item::Image { png, px } => {
+            images.push(png);
+            image_xml(images.len(), *px)
+        }
         Item::PageBreak => "<w:p><w:r><w:br w:type=\"page\"/></w:r></w:p>".into(),
     }
 }
@@ -544,6 +565,7 @@ const CONTENT_TYPES: &str = r#"<?xml version="1.0" encoding="UTF-8" standalone="
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
 <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
 <Default Extension="xml" ContentType="application/xml"/>
+<Default Extension="png" ContentType="image/png"/>
 <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
 <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
 <Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/>
@@ -558,7 +580,12 @@ const RELS: &str = r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 /// Renders the document as a Word file.
 pub fn to_docx(d: &Doc) -> Vec<u8> {
     let mut links = Vec::new();
-    let body: String = d.items.iter().map(|i| item_xml(i, &mut links)).collect();
+    let mut images = Vec::new();
+    let body: String = d
+        .items
+        .iter()
+        .map(|i| item_xml(i, &mut links, &mut images))
+        .collect();
     let footer_ref = if d.footer.is_some() {
         "<w:footerReference w:type=\"default\" r:id=\"rIdF1\"/>"
     } else {
@@ -566,7 +593,7 @@ pub fn to_docx(d: &Doc) -> Vec<u8> {
     };
     let document = format!(
         r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>{body}<w:sectPr>{footer_ref}<w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="567" w:footer="510" w:gutter="0"/></w:sectPr></w:body></w:document>"#
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"><w:body>{body}<w:sectPr>{footer_ref}<w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="567" w:footer="510" w:gutter="0"/></w:sectPr></w:body></w:document>"#
     );
     let link_rels: String = links
         .iter()
@@ -579,13 +606,23 @@ pub fn to_docx(d: &Doc) -> Vec<u8> {
             )
         })
         .collect();
+    let image_rels: String = (1..=images.len())
+        .map(|n| {
+            format!(
+                "<Relationship Id=\"rIdI{n}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/image\" Target=\"media/image{n}.png\"/>"
+            )
+        })
+        .collect();
     let doc_rels = format!(
         r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings" Target="settings.xml"/><Relationship Id="rIdF1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/>{link_rels}
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings" Target="settings.xml"/><Relationship Id="rIdF1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/>{link_rels}{image_rels}
 </Relationships>"#
     );
-    zip(&[
+    let names: Vec<String> = (1..=images.len())
+        .map(|n| format!("word/media/image{n}.png"))
+        .collect();
+    let mut parts = vec![
         ("[Content_Types].xml", CONTENT_TYPES.as_bytes().to_vec()),
         ("_rels/.rels", RELS.as_bytes().to_vec()),
         ("word/_rels/document.xml.rels", doc_rels.into_bytes()),
@@ -599,10 +636,35 @@ pub fn to_docx(d: &Doc) -> Vec<u8> {
             "word/footer1.xml",
             footer_xml(d.footer.as_deref().unwrap_or("")).into_bytes(),
         ),
-    ])
+    ];
+    parts.extend(
+        names
+            .iter()
+            .map(String::as_str)
+            .zip(images.iter().map(|i| i.to_vec())),
+    );
+    zip(&parts)
 }
 
 // ---- HTML preview (approximate) ----------------------------------------------
+
+fn base64(data: &[u8]) -> String {
+    const A: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    let mut out = String::with_capacity(data.len().div_ceil(3) * 4);
+    for c in data.chunks(3) {
+        let n = (u32::from(c[0]) << 16)
+            | (u32::from(*c.get(1).unwrap_or(&0)) << 8)
+            | u32::from(*c.get(2).unwrap_or(&0));
+        for i in 0..4 {
+            if i <= c.len() {
+                out.push(char::from(A[((n >> (18 - 6 * i)) & 63) as usize]));
+            } else {
+                out.push('=');
+            }
+        }
+    }
+    out
+}
 
 fn html_esc(s: &str) -> String {
     esc(s).replace('\n', "<br>")
@@ -766,6 +828,10 @@ pub fn to_html(d: &Doc) -> String {
                 table_html(widths, header.as_ref(), rows, "", *gap, *lines)
             }
             Item::Boxed(ps) => table_html(&[1], None, &[vec![Cell::new(ps.clone())]], "border:0.75pt solid #404040;", 0, None),
+            Item::Image { png, .. } => format!(
+                "<p style=\"margin:0 0 4pt\"><img alt=\"\" style=\"width:100%\" src=\"data:image/png;base64,{}\"></p>",
+                base64(png)
+            ),
             Item::PageBreak => "<hr style=\"border:0;border-top:2px dashed #bbb;margin:24pt -20mm\">".into(),
         });
     }
@@ -824,6 +890,10 @@ mod tests {
                 Item::Para(
                     Para::new(vec![Run::new("lien").link("https://example.com/a?b&c")]).bullet(1),
                 ),
+                Item::Image {
+                    png: b"\x89PNG",
+                    px: (2, 1),
+                },
                 Item::PageBreak,
             ],
         }
@@ -848,6 +918,11 @@ mod tests {
             " PAGE ",
             "Pied de page",
             "w:ascii=\"Aptos\"",
+            "<wp:extent cx=\"6120130\" cy=\"3060065\"/>",
+            "<a:blip r:embed=\"rIdI1\"/>",
+            "Target=\"media/image1.png\"",
+            "word/media/image1.png",
+            "Extension=\"png\"",
             "<w:sz w:val=\"22\"/><w:szCs w:val=\"22\"/><w:lang",
             "<w:bottom w:val=\"single\" w:sz=\"4\" w:space=\"1\" w:color=\"auto\"/>",
         ] {
@@ -865,6 +940,7 @@ mod tests {
             "border-left:3pt solid #0F766E",
             "border-bottom:0.5pt solid currentColor",
             "font-size:11pt",
+            "data:image/png;base64,iVBORw==",
             "Pied de page",
             "✓",
         ] {

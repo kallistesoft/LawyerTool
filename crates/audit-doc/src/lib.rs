@@ -11,9 +11,10 @@
 //!
 //! Layout: a modern, web-like design (cover band, numbered sections with an
 //! accent bar, status badges, cards, a roadmap timeline, footer with page
-//! numbers). The client's name is written in capitals. Sizes, centred cover
-//! and the rule under section titles follow her corrected audit of 2026-10-23
-//! (body text 11 pt).
+//! numbers). Sizes, centred cover and the rule under section titles follow
+//! her corrected audit of 2026-10-23 (body text 11 pt); names, capitals,
+//! wording and the annex screenshot follow her audit « CHAPUIS » of the same
+//! day: « Prénom NOM » on the cover, « NOM PRÉNOM » in the footer.
 
 mod cnp;
 mod facts;
@@ -37,6 +38,9 @@ pub struct Context {
 
 /// Cutoff quoted when no French draw is known (her audits of 22 Oct).
 pub const DEFAULT_FRENCH_CUTOFF: u16 = 387;
+
+/// Public Guichet-Emplois search page, « EIMT » filter highlighted (annex).
+const GUICHET_EMPLOIS: &[u8] = include_bytes!("../assets/guichet-emplois.png");
 
 const FONT: &str = "Aptos";
 /// Body text size (half-points): 11 pt.
@@ -146,19 +150,38 @@ pub fn long_date(d: &IsoDate) -> String {
     format!("{day} {} {y}", months_fr(m))
 }
 
-/// `Audit_<NOM>.docx`. The form asks « nom et prénom », so the last name is
-/// the words written in capitals (« LE BAYEC Argentina »), else the first word.
-pub fn file_name(full_name: &str) -> String {
+/// Last name and given names. The form asks « nom et prénom », so the last
+/// name is the words written in capitals (« LE BAYEC Argentina »), else the
+/// first word.
+fn split_name(full_name: &str) -> (Vec<&str>, Vec<&str>) {
     let words: Vec<&str> = full_name.split_whitespace().collect();
     let is_caps = |w: &&str| {
         w.chars().filter(|c| c.is_alphabetic()).count() > 1 && w.chars().all(|c| !c.is_lowercase())
     };
-    let caps: Vec<&str> = words.iter().copied().filter(is_caps).collect();
-    let pick = if caps.is_empty() {
-        words.first().copied().unwrap_or("").to_owned()
+    let (last, given): (Vec<&str>, Vec<&str>) = words.iter().copied().partition(is_caps);
+    if last.is_empty() {
+        (
+            words.iter().take(1).copied().collect(),
+            words.iter().skip(1).copied().collect(),
+        )
     } else {
-        caps.join("-")
-    };
+        (last, given)
+    }
+}
+
+/// « Mallory CHAPUIS » (cover) and « CHAPUIS MALLORY » (footer).
+fn display_names(full_name: &str) -> (String, String) {
+    let (last, given) = split_name(full_name);
+    let last = last.join(" ").to_uppercase();
+    let given = given.join(" ");
+    let cover = format!("{given} {last}").trim().to_owned();
+    let footer = format!("{last} {}", given.to_uppercase()).trim().to_owned();
+    (cover, footer)
+}
+
+/// `Audit_<NOM>.docx`, the last name as in [`split_name`].
+pub fn file_name(full_name: &str) -> String {
+    let pick = split_name(full_name).0.join("-");
     let clean: String = pick
         .chars()
         .filter_map(|c| match c {
@@ -207,7 +230,7 @@ fn capitalize(s: &str) -> String {
 /// Builds the audit for one respondent.
 pub fn build(full_name: &str, form: &FormRecord, ctx: &Context) -> Doc {
     let f = Facts::of(form);
-    let name = full_name.trim().to_uppercase();
+    let (name, footer_name) = display_names(full_name);
     let mut d = Sections::default();
     cover(&mut d.items, &name, ctx);
     d.section("Synthèse du profil du candidat");
@@ -242,7 +265,7 @@ pub fn build(full_name: &str, form: &FormRecord, ctx: &Context) -> Doc {
     Doc {
         items: d.items,
         footer: Some(format!(
-            "Poughon Immigration · Audit éclair d’éligibilité · {name}"
+            "POUGHON Immigration · Audit éclair d’éligibilité · {footer_name}"
         )),
         font: Some(FONT),
         size: Some(BODY_SIZE),
@@ -426,14 +449,21 @@ fn synthesis(items: &mut Vec<Item>, f: &Facts, ctx: &Context) {
     if !seniority.is_empty() {
         eval.push(r(format!(", {seniority}")));
     }
-    eval.push(muted(" (CNP "));
-    eval.push(match &f.noc {
-        Some(n) if n.title.is_some() => muted(n.code.clone()),
-        Some(n) => todo(format!("{} introuvable dans la CNP 2021", n.code)),
-        None if !f.noc_choices.is_empty() => todo(format!("à choisir : {}", codes(&f.noc_choices))),
-        None => todo("à valider"),
-    });
-    eval.push(muted(")"));
+    match &f.noc {
+        // A known code reads as the profile itself, not as a note.
+        Some(n) if n.title.is_some() => eval.push(r(format!(" (CNP {})", n.code))),
+        n => {
+            eval.push(muted(" (CNP "));
+            eval.push(match n {
+                Some(n) => todo(format!("{} introuvable dans la CNP 2021", n.code)),
+                None if !f.noc_choices.is_empty() => {
+                    todo(format!("à choisir : {}", codes(&f.noc_choices)))
+                }
+                None => todo("à valider"),
+            });
+            eval.push(muted(")"));
+        }
+    }
     // The FEER of the CNP; without a chosen CNP, the FEERs of the proposed ones.
     let mut feers: Vec<u8> = match &f.noc {
         Some(n) => vec![n.feer],
@@ -446,10 +476,13 @@ fn synthesis(items: &mut Vec<Item>, f: &Facts, ctx: &Context) {
     feers.sort_unstable();
     feers.dedup();
     let (tone, impact) = match feers.as_slice() {
-        [0] => (Tone::Green, vec![r("Métier très qualifié (FEER 0)")]),
+        [feer] if *feer <= 1 => (
+            Tone::Green,
+            vec![r(format!("FEER {feer}, métier très qualifié"))],
+        ),
         [feer] if *feer <= 3 => (
             Tone::Green,
-            vec![r(format!("Métier qualifié (FEER {feer})"))],
+            vec![r(format!("FEER {feer}, métier qualifié"))],
         ),
         [feer] => (
             Tone::Amber,
@@ -738,22 +771,15 @@ fn spouse(items: &mut Vec<Item>, f: &Facts) {
     } else {
         f.a("job")
     };
-    let crit = |t: &str| Cell::runs(vec![b(t).color(INK)]);
+    let crit = |t: &str| Cell::runs(vec![b(t.to_uppercase()).color(INK)]);
     let mut rows = Vec::new();
     rows.push(match &f.noc {
         Some(n) if n.qualified() => vec![
             crit("Permis de travail ouvert (PTO)"),
+            Cell::runs(vec![b(job)]),
+            progress("Potentiel PTO", 100, Tone::Green, "DÉCISIF"),
             Cell::runs(vec![
-                b(format!("{job} : ")),
-                r(format!(
-                    "poste {}qualifié (FEER {}). Éligible code de dispense C16.",
-                    if n.feer == 0 { "très " } else { "" },
-                    n.feer
-                )),
-            ]),
-            progress("Potentiel PTO", 100, Tone::Green, "ACQUIS"),
-            Cell::runs(vec![
-                r("Votre métier donne droit à un "),
+                r(format!("Un métier FEER {} donne droit à un ", n.feer)),
                 b("Permis de Travail Ouvert pour le Conjoint"),
                 r("."),
             ]),
@@ -879,10 +905,15 @@ fn roadmap(items: &mut Vec<Item>, f: &Facts) {
             result: "Permis de travail ouvert de 2 ans".into(),
         });
     }
+    let test = if f.married {
+        "Test d’anglais pour les deux,"
+    } else {
+        "Test d’anglais"
+    };
     let english_action = match f.english {
-        Some(Level::Bilingual | Level::Native) => vec![b("Test d’anglais"), r(" opportun")],
-        Some(Level::Intermediate) => vec![b("Test d’anglais"), r(" opportun si niveau suffisant")],
-        _ => vec![b("Test d’anglais"), r(" non opportun")],
+        Some(Level::Bilingual | Level::Native) => vec![b(test), r(" opportun")],
+        Some(Level::Intermediate) => vec![b(test), r(" opportun si niveau suffisant")],
+        _ => vec![b(test), r(" non opportun")],
     };
     if f.french_test == FrenchTest::Done {
         steps.push(Step {
@@ -927,7 +958,7 @@ fn roadmap(items: &mut Vec<Item>, f: &Facts) {
         Some(t) if !t.trim().is_empty() => vec![b(t.trim().to_owned())],
         _ => vec![todo("[réglementée ou non : à vérifier selon la CNP]")],
     };
-    let mut eca = vec![
+    let eca = vec![
         bullet(vec![
             r("Lancement de "),
             b("l'ÉDE"),
@@ -943,12 +974,6 @@ fn roadmap(items: &mut Vec<Item>, f: &Facts) {
             .concat(),
         ),
     ];
-    if f.married {
-        eca.push(bullet(vec![
-            r("Profession du conjoint : "),
-            todo("[ordre professionnel à vérifier]"),
-        ]));
-    }
     steps.push(Step {
         title: "Évaluation des diplômes",
         actions: eca,
@@ -1038,7 +1063,7 @@ fn roadmap(items: &mut Vec<Item>, f: &Facts) {
             vec![
                 Cell::new(vec![
                     p(vec![b(number).color(TEAL)]).after(0),
-                    p(vec![b(s.title).color(INK)]),
+                    p(vec![b(s.title.to_uppercase()).color(INK)]),
                 ])
                 .top(),
                 Cell::new(detail).top(),
@@ -1116,12 +1141,7 @@ fn bilan(items: &mut Vec<Item>, f: &Facts) {
             ])
             .after(160),
         );
-        let mut atouts = Vec::new();
-        if f.noc.as_ref().is_some_and(|n| n.feer <= 1) {
-            atouts.push("votre profession très qualifiée");
-        } else {
-            atouts.push("votre profession");
-        }
+        let mut atouts = vec!["votre profession"];
         if f.age.is_some_and(|a| a <= 35) {
             atouts.push("votre âge");
         }
@@ -1197,36 +1217,44 @@ fn bilan(items: &mut Vec<Item>, f: &Facts) {
             v.push(r("."));
             Para::new(v).bullet(2)
         };
-    num(
-        items,
-        vec![
-            b("Valider précisément vos codes CNP (étape cruciale) : "),
-            r("le choix de votre classification nationale des professions (CNP) est "),
-            b("la pierre angulaire de tout votre dossier"),
-            r(". Selon la réalité exacte de vos tâches quotidiennes :"),
-        ],
-    );
-    items.push(Item::Para(noc_line(
-        "le candidat principal",
-        &f.noc,
-        &f.noc_choices,
-        f.a("job"),
-    )));
-    if f.married {
+    // Once the lawyer has set a qualified CNP, choosing it is no longer a
+    // priority; the French draws of Express Entry are (her CHAPUIS audit).
+    let cnp_set = f
+        .noc
+        .as_ref()
+        .is_some_and(|n| n.title.is_some() && n.qualified());
+    if !cnp_set {
+        num(
+            items,
+            vec![
+                b("Valider précisément vos codes CNP (étape cruciale) : "),
+                r("le choix de votre classification nationale des professions (CNP) est "),
+                b("la pierre angulaire de tout votre dossier"),
+                r(". Selon la réalité exacte de vos tâches quotidiennes :"),
+            ],
+        );
         items.push(Item::Para(noc_line(
-            "le conjoint",
-            &f.spouse_noc,
-            &f.spouse_noc_choices,
-            f.a("spouse_job"),
+            "le candidat principal",
+            &f.noc,
+            &f.noc_choices,
+            f.a("job"),
         )));
+        if f.married {
+            items.push(Item::Para(noc_line(
+                "le conjoint",
+                &f.spouse_noc,
+                &f.spouse_noc_choices,
+                f.a("spouse_job"),
+            )));
+        }
+        items.push(Item::Para(
+            p(vec![
+                b("Pourquoi c'est déterminant ?"),
+                r(" La CNP conditionne directement votre niveau de FEER, votre éligibilité à la Mobilité Francophone, le calcul de vos points dans Entrée Express et l'accès au Permis de Travail Ouvert pour le conjoint. Une mauvaise correspondance peut bloquer un dossier."),
+            ])
+            .justify(),
+        ));
     }
-    items.push(Item::Para(
-        p(vec![
-            b("Pourquoi c'est déterminant ?"),
-            r(" La CNP conditionne directement votre niveau de FEER, votre éligibilité à la Mobilité Francophone, le calcul de vos points dans Entrée Express et l'accès au Permis de Travail Ouvert pour le conjoint. Une mauvaise correspondance peut bloquer un dossier."),
-        ])
-        .justify(),
-    ));
     num(
         items,
         vec![
@@ -1257,6 +1285,19 @@ fn bilan(items: &mut Vec<Item>, f: &Facts) {
                     "dès la réouverture du bassin (vers mi-décembre), tentez votre chance{} afin de maximiser vos opportunités (tirage au sort offrant un permis de travail ouvert), sous réserve de votre nationalité.",
                     if both { " tous les deux" } else { "" }
                 )),
+            ],
+        );
+    }
+    if cnp_set && f.francophone() {
+        num(
+            items,
+            vec![
+                b(
+                    "Maximiser le volet Entrée Express (Sélection basée sur les catégories – Francophones) : ",
+                ),
+                r(
+                    "en atteignant un niveau NCLC 7+ en français (idéalement NCLC 9+), vous débloquez l'accès aux tirages ciblés pour les candidats francophones. Avec des seuils historiques très accessibles (situés généralement entre 380 et 435 points), vous devenez immédiatement extrêmement compétitifs dans le bassin fédéral sans attendre une offre d'emploi.",
+                ),
             ],
         );
     }
@@ -1346,8 +1387,7 @@ fn closing(d: &mut Sections) {
         b("Vanessa POUGHON"),
         muted(" – Avocate"),
     ])));
-    d.items
-        .push(Item::Para(p(vec![todo("[signature]")]).after(240)));
+    d.items.push(Item::Para(p(vec![]).after(240)));
     d.items.push(Item::PageBreak);
     d.section("Annexe");
     d.items.push(Item::Para(
@@ -1361,9 +1401,11 @@ fn closing(d: &mut Sections) {
         ])
         .justify(),
     ));
-    d.items.push(Item::Para(p(vec![todo(
-        "[capture d’écran du Guichet-Emplois]",
-    )])));
+    d.items.push(Item::Para(p(vec![])));
+    d.items.push(Item::Image {
+        png: GUICHET_EMPLOIS,
+        px: (987, 969),
+    });
 }
 
 #[cfg(test)]

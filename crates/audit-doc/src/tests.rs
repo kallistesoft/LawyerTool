@@ -64,6 +64,7 @@ fn text(d: &Doc) -> String {
             }
             Item::Boxed(ps) => ps.iter().for_each(|p| para(&mut out, p)),
             Item::PageBreak => out.push_str("---\n"),
+            Item::Image { .. } => out.push_str("[image]\n"),
         }
     }
     out
@@ -100,19 +101,19 @@ fn single_french_speaker_aiming_at_quebec() {
     let doc = build("TESTEUR Alix", &f, &ctx());
     assert_eq!(
         doc.footer.as_deref(),
-        Some("Poughon Immigration · Audit éclair d’éligibilité · TESTEUR ALIX")
+        Some("POUGHON Immigration · Audit éclair d’éligibilité · TESTEUR ALIX")
     );
     let t = text(&doc);
     for want in [
         "Audit éclair d’éligibilité",
-        "TESTEUR ALIX",
+        "\nAlix TESTEUR\n",
         "Évaluation du 22 octobre 2026",
         "32 ans — Célibataire",
         "Citoyenneté Française (Résidence : France)",
         "Atout Majeur (Mobilité Francophone C16)",
         "Licence (bac+3) (ÉDE pas encore faite)",
         "(CNP 60010)",
-        "Métier très qualifié (FEER 0)",
+        "FEER 0, métier très qualifié",
         "Français (Langue maternelle – Test officiel à passer) / Anglais (débutant)",
         "Au moins 30\u{202f}000 $ CAD d'économies pour 4",
         "Immigration complexe et longue",
@@ -124,13 +125,15 @@ fn single_french_speaker_aiming_at_quebec() {
         "~435 pts",
         "doit être amélioré hors Québec.",
         "Nouveau-Brunswick (NB)",
-        "\n1\nTest de français (NCLC 9+) & test d’anglais (NCLC 5+)",
+        "\n1\nTEST DE FRANÇAIS (NCLC 9+) & TEST D’ANGLAIS (NCLC 5+)",
+        "Test d’anglais non opportun",
         "non opportun",
         "n’est pas réglementée",
-        "(mobilité francophone, donc hors Québec)",
-        "\n4\nInstallation & RP",
+        "(MOBILITÉ FRANCOPHONE, DONC HORS QUÉBEC)",
+        "\n4\nINSTALLATION & RP",
         "Félicitations : un excellent potentiel !",
-        "CNP 60010 – Directeurs/directrices des ventes corporatives (FEER 0)",
+        "Maximiser le volet Entrée Express (Sélection basée sur les catégories – Francophones)",
+        "[image]",
         "Inscrivez-vous au PVT",
         "Élargir vos horizons hors Québec",
         "Votre consultation stratégique (1 heure)",
@@ -143,9 +146,12 @@ fn single_french_speaker_aiming_at_quebec() {
         "Audit sur-mesure",
         "Requérant + conjoint",
         "Après 35 ans",
-        "Préliminaire",
+        "PRÉLIMINAIRE",
         "⟦CNP",
         "Point à examiner",
+        // The CNP is set: choosing it is no longer a priority.
+        "Valider précisément vos codes CNP",
+        "[signature]",
     ] {
         assert!(!t.contains(absent), "unexpected {absent:?}");
     }
@@ -193,7 +199,8 @@ fn married_with_unknown_cnp_aiming_at_alberta() {
         "PAS UTILE",
         "Requérant + conjoint",
         "⟦[réglementée ou non : à vérifier selon la CNP]⟧",
-        "Test d’anglais (NCLC 5+)",
+        "TEST D’ANGLAIS (NCLC 5+)",
+        "Test d’anglais pour les deux, non opportun",
         "Votre proche au Canada",
         "⟦CNP [à déterminer]⟧",
     ] {
@@ -203,7 +210,9 @@ fn married_with_unknown_cnp_aiming_at_alberta() {
         "IMPÉRATIVEMENT",
         "📍 Au Québec",
         "Inscrivez-vous au PVT",
-        "Test de français (NCLC 9+)",
+        "TEST DE FRANÇAIS (NCLC 9+)",
+        "ordre professionnel",
+        "Maximiser le volet Entrée Express",
     ] {
         assert!(!t.contains(absent), "unexpected {absent:?}");
     }
@@ -233,9 +242,9 @@ fn low_skilled_bilingual_young_single() {
         "50 %",
         "après de l’expérience dans un métier qualifié",
         "anglais bilingue est un très gros atout",
-        "Préliminaire",
-        "\n1\nTest de français (NCLC 9+)",
-        "Création d’expérience & RP",
+        "PRÉLIMINAIRE · PVT",
+        "\n1\nTEST DE FRANÇAIS (NCLC 9+)",
+        "CRÉATION D’EXPÉRIENCE & RP",
         "De l'expérience à la mobilisation",
         "incroyable atout",
         "Non conforme",
@@ -293,7 +302,7 @@ fn profession_row_shows_the_feer_of_the_matching_cnp() {
     };
     assert_eq!(
         feer_of("Cuisinier").as_deref(),
-        Some("Métier qualifié (FEER 3)")
+        Some("FEER 3, métier qualifié")
     );
     // Several proposed codes: their FEERs, in yellow.
     let several = feer_of("Infirmière").unwrap();
@@ -333,7 +342,7 @@ fn layout_follows_her_corrected_audit() {
         find("Audit éclair d’éligibilité").align,
         report::rich::Align::Center
     );
-    assert_eq!(find("TESTEUR ALIX").align, report::rich::Align::Center);
+    assert_eq!(find("Alix TESTEUR").align, report::rich::Align::Center);
     assert_eq!(find("Synthèse du profil du candidat").rule, Some("auto"));
     let label = &find("Critère").runs[0];
     assert!(label.small_caps && label.size.is_none());
