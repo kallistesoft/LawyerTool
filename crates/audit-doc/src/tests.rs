@@ -302,3 +302,39 @@ fn profession_row_shows_the_feer_of_the_matching_cnp() {
         "{several}"
     );
 }
+
+/// Layout of her corrected audit (2026-10-23): 11 pt body, centred cover,
+/// a rule under each section title, labels at the body size.
+#[test]
+fn layout_follows_her_corrected_audit() {
+    let doc = build("TESTEUR Alix", &form(32, SINGLE_QC), &ctx());
+    assert_eq!(doc.size, Some(22));
+    let paras: Vec<&Para> = doc
+        .items
+        .iter()
+        .flat_map(|i| match i {
+            Item::Para(p) => vec![p],
+            Item::Grid { header, rows, .. } => header
+                .iter()
+                .chain(rows)
+                .flatten()
+                .flat_map(|c| &c.paras)
+                .collect(),
+            _ => vec![],
+        })
+        .collect();
+    let find = |t: &str| {
+        *paras
+            .iter()
+            .find(|p| p.runs.iter().any(|r| r.text == t))
+            .unwrap()
+    };
+    assert_eq!(
+        find("Audit éclair d’éligibilité").align,
+        report::rich::Align::Center
+    );
+    assert_eq!(find("TESTEUR ALIX").align, report::rich::Align::Center);
+    assert_eq!(find("Synthèse du profil du candidat").rule, Some("auto"));
+    let label = &find("Critère").runs[0];
+    assert!(label.small_caps && label.size.is_none());
+}

@@ -90,6 +90,8 @@ pub struct Para {
     pub keep_next: bool,
     /// Accent bar on the left: colour and width (eighths of a point).
     pub bar: Option<(&'static str, u16)>,
+    /// Thin rule under the paragraph: colour ("auto" for the text colour).
+    pub rule: Option<&'static str>,
 }
 
 impl Para {
@@ -138,6 +140,10 @@ impl Para {
     }
     pub fn bar(mut self, color: &'static str, width: u16) -> Self {
         self.bar = Some((color, width));
+        self
+    }
+    pub fn rule(mut self, color: &'static str) -> Self {
+        self.rule = Some(color);
         self
     }
 }
@@ -221,6 +227,8 @@ pub struct Doc {
     pub footer: Option<String>,
     /// Body font (default Calibri).
     pub font: Option<&'static str>,
+    /// Body text size in half-points (default 20, i.e. 10 pt).
+    pub size: Option<u16>,
 }
 
 /// Page text width at A4 with 2 cm margins (twips).
@@ -270,10 +278,19 @@ fn para_xml(p: &Para, links: &mut Vec<String>) -> String {
     if p.keep_next {
         ppr.push_str("<w:keepNext/>");
     }
-    if let Some((c, w)) = p.bar {
-        ppr.push_str(&format!(
-            "<w:pBdr><w:left w:val=\"single\" w:sz=\"{w}\" w:space=\"8\" w:color=\"{c}\"/></w:pBdr>"
-        ));
+    if p.bar.is_some() || p.rule.is_some() {
+        ppr.push_str("<w:pBdr>");
+        if let Some((c, w)) = p.bar {
+            ppr.push_str(&format!(
+                "<w:left w:val=\"single\" w:sz=\"{w}\" w:space=\"8\" w:color=\"{c}\"/>"
+            ));
+        }
+        if let Some(c) = p.rule {
+            ppr.push_str(&format!(
+                "<w:bottom w:val=\"single\" w:sz=\"4\" w:space=\"1\" w:color=\"{c}\"/>"
+            ));
+        }
+        ppr.push_str("</w:pBdr>");
     }
     if p.after.is_some() || p.before.is_some() {
         let before = p
@@ -471,11 +488,11 @@ fn item_xml(item: &Item, links: &mut Vec<String>) -> String {
     }
 }
 
-fn styles(font: &str) -> String {
+fn styles(font: &str, size: u16) -> String {
     format!(
         r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="{font}" w:hAnsi="{font}" w:cs="{font}" w:eastAsia="{font}"/><w:color w:val="1F2937"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:lang w:val="fr-CA"/></w:rPr></w:rPrDefault>
+<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="{font}" w:hAnsi="{font}" w:cs="{font}" w:eastAsia="{font}"/><w:color w:val="1F2937"/><w:sz w:val="{size}"/><w:szCs w:val="{size}"/><w:lang w:val="fr-CA"/></w:rPr></w:rPrDefault>
 <w:pPrDefault><w:pPr><w:spacing w:after="80" w:line="276" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>
 <w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style>
 <w:style w:type="paragraph" w:styleId="Footer"><w:name w:val="footer"/><w:basedOn w:val="Normal"/><w:pPr><w:spacing w:after="0"/></w:pPr><w:rPr><w:color w:val="6B7280"/><w:sz w:val="16"/></w:rPr></w:style>
@@ -575,7 +592,7 @@ pub fn to_docx(d: &Doc) -> Vec<u8> {
         ("word/document.xml", document.into_bytes()),
         (
             "word/styles.xml",
-            styles(d.font.unwrap_or("Calibri")).into_bytes(),
+            styles(d.font.unwrap_or("Calibri"), d.size.unwrap_or(20)).into_bytes(),
         ),
         ("word/settings.xml", SETTINGS.as_bytes().to_vec()),
         (
@@ -634,6 +651,14 @@ fn para_html(p: &Para) -> String {
             "border-left:{}pt solid #{c};padding-left:8pt;",
             f32::from(w) / 8.0
         ));
+    }
+    if let Some(c) = p.rule {
+        let c = if c == "auto" {
+            "currentColor".into()
+        } else {
+            format!("#{c}")
+        };
+        css.push_str(&format!("border-bottom:0.5pt solid {c};"));
     }
     css.push_str(match p.align {
         Align::Left => "",
@@ -716,6 +741,7 @@ fn table_html(
 /// breaks as separators), to check a layout without Word.
 pub fn to_html(d: &Doc) -> String {
     let font = d.font.unwrap_or("Calibri");
+    let size = f32::from(d.size.unwrap_or(20)) / 2.0;
     let mut body = String::new();
     for i in &d.items {
         body.push_str(&match i {
@@ -749,7 +775,7 @@ pub fn to_html(d: &Doc) -> String {
         .map(|f| format!("<p style=\"margin-top:24pt;border-top:0.5pt solid #E5E7EB;padding-top:6pt;color:#6B7280;font-size:8pt\">{} <span style=\"float:right\">page 1 / 1</span></p>", html_esc(f)))
         .unwrap_or_default();
     format!(
-        "<!doctype html><html lang=\"fr\"><head><meta charset=\"utf-8\"><style>body{{background:#e5e7eb;margin:0}}.page{{background:#fff;width:170mm;margin:12mm auto;padding:20mm;font-family:'{font}',Calibri,Arial,sans-serif;font-size:10pt;line-height:1.38;color:#1F2937;box-shadow:0 1px 4px rgba(0,0,0,.15)}}</style></head><body><div class=\"page\">{body}{footer}</div></body></html>"
+        "<!doctype html><html lang=\"fr\"><head><meta charset=\"utf-8\"><style>body{{background:#e5e7eb;margin:0}}.page{{background:#fff;width:170mm;margin:12mm auto;padding:20mm;font-family:'{font}',Calibri,Arial,sans-serif;font-size:{size}pt;line-height:1.38;color:#1F2937;box-shadow:0 1px 4px rgba(0,0,0,.15)}}</style></head><body><div class=\"page\">{body}{footer}</div></body></html>"
     )
 }
 
@@ -761,6 +787,7 @@ mod tests {
         Doc {
             footer: Some("Pied de page".into()),
             font: Some("Aptos"),
+            size: Some(22),
             items: vec![
                 Item::Banner {
                     lines: vec![Run::new("CABINET").bold().color("FFD000")],
@@ -786,7 +813,12 @@ mod tests {
                     lines: Some("E5E7EB"),
                     gap: 160,
                 },
-                Item::Para(Para::text("Titre").bar("0F766E", 24).before(200)),
+                Item::Para(
+                    Para::text("Titre")
+                        .bar("0F766E", 24)
+                        .rule("auto")
+                        .before(200),
+                ),
                 Item::Para(Para::text("fait").mark("✓", "0F766E")),
                 Item::Boxed(vec![Para::text("Remarque & <note>")]),
                 Item::Para(
@@ -816,6 +848,8 @@ mod tests {
             " PAGE ",
             "Pied de page",
             "w:ascii=\"Aptos\"",
+            "<w:sz w:val=\"22\"/><w:szCs w:val=\"22\"/><w:lang",
+            "<w:bottom w:val=\"single\" w:sz=\"4\" w:space=\"1\" w:color=\"auto\"/>",
         ] {
             assert!(text.contains(part), "{part}");
         }
@@ -829,6 +863,8 @@ mod tests {
             "SYNTHÈSE",
             "background:#ffff00",
             "border-left:3pt solid #0F766E",
+            "border-bottom:0.5pt solid currentColor",
+            "font-size:11pt",
             "Pied de page",
             "✓",
         ] {

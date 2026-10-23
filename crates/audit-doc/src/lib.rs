@@ -11,7 +11,9 @@
 //!
 //! Layout: a modern, web-like design (cover band, numbered sections with an
 //! accent bar, status badges, cards, a roadmap timeline, footer with page
-//! numbers). The client's name is written in capitals.
+//! numbers). The client's name is written in capitals. Sizes, centred cover
+//! and the rule under section titles follow her corrected audit of 2026-10-23
+//! (body text 11 pt).
 
 mod cnp;
 mod facts;
@@ -37,6 +39,8 @@ pub struct Context {
 pub const DEFAULT_FRENCH_CUTOFF: u16 = 387;
 
 const FONT: &str = "Aptos";
+/// Body text size (half-points): 11 pt.
+const BODY_SIZE: u16 = 22;
 // Palette.
 const NAVY: &str = "0E2A3B";
 const NAVY_SOFT: &str = "9FB3C8";
@@ -111,12 +115,7 @@ fn bullet(runs: Vec<Run>) -> Para {
 }
 
 fn label(t: &str) -> Run {
-    Run::new(t)
-        .bold()
-        .small_caps()
-        .color(MUTED)
-        .size(17)
-        .spacing(10)
+    Run::new(t).bold().small_caps().color(MUTED).spacing(10)
 }
 
 fn months_fr(m: u8) -> &'static str {
@@ -246,6 +245,7 @@ pub fn build(full_name: &str, form: &FormRecord, ctx: &Context) -> Doc {
             "Poughon Immigration · Audit éclair d’éligibilité · {name}"
         )),
         font: Some(FONT),
+        size: Some(BODY_SIZE),
     }
 }
 
@@ -265,6 +265,7 @@ impl Sections {
                 b(title).color(INK).size(28),
             ])
             .bar(TEAL, 24)
+            .rule("auto")
             .before(320)
             .after(180)
             .keep_next(),
@@ -291,30 +292,35 @@ fn cover(items: &mut Vec<Item>, name: &str, ctx: &Context) {
                 .size(22)
                 .spacing(40),
         ])
-        .before(200),
+        .before(200)
+        .center(),
         p(vec![
             r("Cabinet d’avocat · Membre du Barreau du Québec – n° 381467-0")
                 .color(NAVY_SOFT)
                 .size(16),
         ])
-        .after(520),
+        .after(520)
+        .center(),
         p(vec![
             b(format!("CANADA · IMMIGRATION {}", &ctx.today.as_str()[..4]))
                 .color(GOLD)
                 .size(18)
                 .spacing(30),
-        ]),
+        ])
+        .center(),
         p(vec![
             b("Audit éclair d’éligibilité").color("FFFFFF").size(52),
         ])
-        .after(120),
-        p(vec![b(name).color(GOLD).size(32).spacing(10)]),
+        .after(120)
+        .center(),
+        p(vec![b(name).color(GOLD).size(32).spacing(10)]).center(),
         p(vec![
             r(format!("Évaluation du {}", long_date(&ctx.today)))
                 .color(NAVY_SOFT)
                 .size(18),
         ])
-        .after(200),
+        .after(200)
+        .center(),
     ])
     .fill(NAVY);
     items.push(Item::Grid {
@@ -328,7 +334,7 @@ fn cover(items: &mut Vec<Item>, name: &str, ctx: &Context) {
 
 /// A synthesis row: label, profile, and the analysis as a status badge.
 fn row(label_text: &str, eval: Vec<Run>, tone: Tone, impact: Vec<Run>) -> Vec<Cell> {
-    let mut badge = vec![r("●  ").color(tone.ink()).size(16)];
+    let mut badge = vec![r("●  ").color(tone.ink())];
     badge.extend(impact.into_iter().map(|x| {
         if x.color.is_none() {
             x.color(tone.ink()).bold()
@@ -593,7 +599,7 @@ fn route(
 ) -> Vec<Cell> {
     vec![
         Cell::new(vec![
-            p(vec![label(title)]),
+            p(vec![label(title).size(17)]),
             p(vec![b(level).color(tone.ink()).size(32)]).after(0),
             p(vec![b(pct).color(tone.ink()).size(22)]),
             p(vec![muted(note).size(17)]),
@@ -1022,8 +1028,8 @@ fn roadmap(items: &mut Vec<Item>, f: &Facts) {
             let mut detail = s.actions;
             detail.push(
                 p(vec![
-                    muted(format!("👤 {}", s.who)).size(17),
-                    muted(format!("     ⏱ {}", s.delay)).size(17),
+                    muted(format!("👤 {}", s.who)),
+                    muted(format!("     ⏱ {}", s.delay)),
                 ])
                 .before(80)
                 .after(20),
@@ -1031,8 +1037,8 @@ fn roadmap(items: &mut Vec<Item>, f: &Facts) {
             detail.push(p(vec![b("→  ").color(TEAL), b(s.result).color(TEAL)]));
             vec![
                 Cell::new(vec![
-                    p(vec![b(number).color(TEAL).size(44)]).after(0),
-                    p(vec![b(s.title).color(INK).size(18)]),
+                    p(vec![b(number).color(TEAL)]).after(0),
+                    p(vec![b(s.title).color(INK)]),
                 ])
                 .top(),
                 Cell::new(detail).top(),
