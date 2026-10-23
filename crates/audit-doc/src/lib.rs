@@ -428,20 +428,46 @@ fn synthesis(items: &mut Vec<Item>, f: &Facts, ctx: &Context) {
         None => todo("à valider"),
     });
     eval.push(muted(")"));
-    let (tone, impact) = match &f.noc {
-        Some(n) if n.feer == 0 => (Tone::Green, vec![r("Métier très qualifié (FEER 0)")]),
-        Some(n) if n.qualified() => (
+    // The FEER of the CNP; without a chosen CNP, the FEERs of the proposed ones.
+    let mut feers: Vec<u8> = match &f.noc {
+        Some(n) => vec![n.feer],
+        None => f
+            .noc_choices
+            .iter()
+            .map(|c| c.code.as_bytes()[1] - b'0')
+            .collect(),
+    };
+    feers.sort_unstable();
+    feers.dedup();
+    let (tone, impact) = match feers.as_slice() {
+        [0] => (Tone::Green, vec![r("Métier très qualifié (FEER 0)")]),
+        [feer] if *feer <= 3 => (
             Tone::Green,
-            vec![r(format!("Métier qualifié (FEER {})", n.feer))],
+            vec![r(format!("Métier qualifié (FEER {feer})"))],
         ),
-        Some(n) => (
+        [feer] => (
             Tone::Amber,
             vec![r(format!(
-                "Métier peu qualifié (FEER {}) et non admissible à l'Entrée express",
-                n.feer
+                "Métier peu qualifié (FEER {feer}) et non admissible à l'Entrée express"
             ))],
         ),
-        None => (Tone::Green, vec![r("Métier qualifié ?")]),
+        [] => (Tone::Green, vec![todo("FEER à définir selon la CNP")]),
+        several => {
+            let list = several
+                .iter()
+                .map(u8::to_string)
+                .collect::<Vec<_>>()
+                .join(" ou ");
+            let tone = if several.iter().all(|x| *x <= 3) {
+                Tone::Green
+            } else {
+                Tone::Amber
+            };
+            (
+                tone,
+                vec![todo(format!("FEER {list} selon la CNP retenue"))],
+            )
+        }
     };
     rows.push(row("Profession", eval, tone, impact));
 
