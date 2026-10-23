@@ -182,7 +182,7 @@ fn married_with_unknown_cnp_aiming_at_alberta() {
         "Après 35 ans, on perd des points pour l'Entrée express.",
         "ÉDE faite ou en cours",
         "⟦à valider⟧",
-        "Métier qualifié ?",
+        "⟦FEER à définir selon la CNP⟧",
         "Test réalisé",
         "Non renseigné",
         "pour 2 personnes pour la RP",
@@ -281,4 +281,24 @@ fn names_dates_and_docx() {
     );
     let bytes = report::rich::to_docx(&build("TESTEUR Alix", &form(32, SINGLE_QC), &ctx()));
     assert!(bytes.starts_with(b"PK") && bytes.len() > 10_000);
+}
+
+#[test]
+fn profession_row_shows_the_feer_of_the_matching_cnp() {
+    let feer_of = |job: &str| {
+        let t = text(&build("A B", &form(30, &[("job", job)]), &ctx()));
+        t.lines()
+            .find(|l| l.contains("FEER"))
+            .map(|l| l.trim_start_matches(['|', '●', ' ']).to_owned())
+    };
+    assert_eq!(
+        feer_of("Cuisinier").as_deref(),
+        Some("Métier qualifié (FEER 3)")
+    );
+    // Several proposed codes: their FEERs, in yellow.
+    let several = feer_of("Infirmière").unwrap();
+    assert!(
+        several.starts_with("⟦FEER 1 ou ") && several.ends_with("selon la CNP retenue⟧"),
+        "{several}"
+    );
 }
