@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { errorMessage, folderAccess, inboxImport, inboxList, type ImportResult, type InboxFile } from './api'
+  import {
+    errorMessage, folderAccess, generateAudits, inboxImport, inboxList, type AuditResult, type ImportResult, type InboxFile,
+  } from './api'
   import Icon from './Icon.svelte'
 
   let { onOpen, onSettings, onCount, onImported }: {
@@ -11,6 +13,8 @@
   } = $props()
   let files: InboxFile[] = $state([])
   let results: ImportResult[] = $state([])
+  let audits: AuditResult[] = $state([])
+  let generating = $state(false)
   let error: string | null = $state(null)
   let noFolder = $state(false)
   let needsAccess = $state(false)
@@ -30,6 +34,22 @@
       if (code === 'no_input_dir') noFolder = true
       else if (code === 'needs_permission') needsAccess = true
       else error = errorMessage(e)
+    }
+  }
+
+  async function generate() {
+    generating = true
+    error = null
+    audits = []
+    open = true
+    try {
+      audits = await generateAudits()
+      await refresh()
+      onImported()
+    } catch (e) {
+      error = errorMessage(e)
+    } finally {
+      generating = false
     }
   }
 
@@ -82,6 +102,9 @@
     {:else}
       <div class="actions">
         <button class="ghost small" onclick={refresh} disabled={busy} title="Actualiser"><Icon name="refresh" size={14} /></button>
+        <button class="small" onclick={generate} disabled={busy || generating || files.length === 0} title="Un audit Word par réponse, dans le dossier de sortie">
+          <Icon name="download" size={14} />{generating ? 'Génération…' : 'Générer les audits'}
+        </button>
         <button class="primary small" onclick={analyse} disabled={busy || pending.length === 0}>
           {busy ? 'Analyse…' : `Analyser${pending.length ? ` (${pending.length})` : ''}`}
         </button>
@@ -118,6 +141,18 @@
         </table>
       </div>
     {/if}
+    {#if audits.length > 0}
+      <p class="hint audits-head">
+        {audits.filter((a) => a.ok).length} audit(s) enregistré(s) dans le dossier de sortie. Complétez les passages surlignés en jaune dans Word.
+      </p>
+      <ul class="results">
+        {#each audits as a (a.client_id)}
+          <li class={a.ok ? '' : 'error'}>
+            <button class="link" onclick={() => onOpen(a.client_id)}>{a.file ?? `Client ${a.client_id}`}</button> : {a.message}
+          </li>
+        {/each}
+      </ul>
+    {/if}
     {#if results.length > 0}
       <ul class="results">
         {#each results as r (r.name)}
@@ -145,6 +180,9 @@
   }
   .chev {
     color: var(--muted);
+  }
+  .audits-head {
+    margin: 0.6rem 0 0;
   }
   .results {
     margin: 0.5rem 0 0.2rem;

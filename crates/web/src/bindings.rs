@@ -133,6 +133,14 @@ impl Engine {
         })
     }
 
+    pub fn audit_docx(&self, id: u32) -> Result<ExportOut, JsValue> {
+        let f = self.app.audit_docx(i64::from(id)).map_err(js_err)?;
+        Ok(ExportOut {
+            meta: to_json(&f)?,
+            bytes: f.bytes,
+        })
+    }
+
     pub fn inbox_import(&mut self, name: &str, bytes: &[u8]) -> Result<String, JsValue> {
         let r = self.app.inbox_import(name, bytes).map_err(js_err)?;
         to_json(&r)

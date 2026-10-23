@@ -6,6 +6,7 @@
 mod docx;
 mod fonts;
 mod pdf;
+pub mod rich;
 mod zip;
 
 pub use docx::to_docx;

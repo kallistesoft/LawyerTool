@@ -107,6 +107,20 @@ pub struct ImportResult {
     pub ok: bool,
     pub client_id: Option<i64>,
     pub message: String,
+    /// Every client of the file's responses, new or imported before (for
+    /// « Générer les audits »).
+    pub client_ids: Vec<i64>,
+}
+
+/// The audit inputs stored with a client: the form answers (the lawyer's
+/// own inputs, set later, are kept when they exist).
+fn form_json(r: &form_import::Response, lawyer: audit_doc::Lawyer) -> Res<String> {
+    serde_json::to_string(&audit_doc::FormRecord {
+        answers: r.answers.clone(),
+        age: r.age,
+        lawyer,
+    })
+    .map_err(|_| CommandError::internal())
 }
 
 /// Key of one form response in the imports record (never a file fingerprint).
@@ -131,74 +145,84 @@ pub fn import(v: &mut Vault, name: &str, bytes: &[u8]) -> Res<ImportResult> {
             ok: false,
             client_id: None,
             message: "Fichier trop volumineux (10 Mo au plus).".into(),
+            client_ids: vec![],
         });
     }
     let fingerprint = fingerprint(bytes);
-    if let Some(r) = v
+    let file_known = v
         .import_get(&fingerprint)
-        .filter(|r| r.outcome == ImportOutcome::Imported)
-    {
-        return Ok(ImportResult {
-            name: name.into(),
-            ok: true,
-            client_id: r.client_id,
-            message: "Déjà importé.".into(),
-        });
-    }
+        .filter(|r| r.outcome == ImportOutcome::Imported);
     let ext = name
         .rsplit_once('.')
         .map(|(_, e)| e.to_ascii_lowercase())
         .unwrap_or_default();
     let now = time::now();
-    let (outcome, client_id, message) = match form_import::parse(bytes, &ext, &time::today()) {
-        Ok(parsed) => {
-            let (mut created, mut known) = (Vec::new(), 0);
-            for r in parsed.responses {
-                let key = response_key(&r.key);
-                if v.import_get(&key).is_some() {
-                    known += 1;
-                    continue;
+    let (outcome, client_id, message, client_ids) =
+        match form_import::parse(bytes, &ext, &time::today()) {
+            Ok(parsed) => {
+                let (mut created, mut known, mut ids) = (Vec::new(), 0, Vec::new());
+                for r in parsed.responses {
+                    let key = response_key(&r.key);
+                    if let Some(id) = v.import_get(&key).and_then(|row| row.client_id) {
+                        known += 1;
+                        // Clients imported before the audit existed get their answers now.
+                        if v.client_get(id).is_some_and(|c| c.form.is_none()) {
+                            v.client_set_form(
+                                id,
+                                Some(form_json(&r, audit_doc::Lawyer::default())?),
+                            )?;
+                        }
+                        ids.push(id);
+                        continue;
+                    }
+                    let form = form_json(&r, audit_doc::Lawyer::default())?;
+                    let identity = Identity {
+                        full_name: r.full_name,
+                        email: r.email,
+                        phone: None,
+                        file_reference: None,
+                    };
+                    let profile = serde_json::to_string(&r.applicant)
+                        .map_err(|_| CommandError::internal())?;
+                    let id = v.client_save(None, &identity, &profile, &now)?;
+                    v.client_set_notes(id, r.notes)?;
+                    let estimate =
+                        serde_json::to_string(&crate::estimate::Stored::from(r.estimate))
+                            .map_err(|_| CommandError::internal())?;
+                    v.client_set_estimate(id, Some(estimate))?;
+                    v.client_set_form(id, Some(form))?;
+                    ids.push(id);
+                    v.import_record(&ImportRow {
+                        fingerprint: key,
+                        file_name: name.into(),
+                        imported_at: now.clone(),
+                        client_id: Some(id),
+                        outcome: ImportOutcome::Imported,
+                        message: "Client créé.".into(),
+                    });
+                    created.push(id);
                 }
-                let identity = Identity {
-                    full_name: r.full_name,
-                    email: r.email,
-                    phone: None,
-                    file_reference: None,
+                let mut parts = vec![plural(created.len(), "client créé", "clients créés")];
+                if known > 0 {
+                    parts.push(plural(
+                        known,
+                        "réponse déjà importée",
+                        "réponses déjà importées",
+                    ));
+                }
+                for s in &parsed.skipped {
+                    parts.push(format!("ligne {} ignorée ({})", s.row, s.reason));
+                }
+                let message = if file_known.is_some() && created.is_empty() {
+                    "Déjà importé.".to_owned()
+                } else {
+                    format!("{} : profils partiels, à compléter.", parts.join(", "))
                 };
-                let profile =
-                    serde_json::to_string(&r.applicant).map_err(|_| CommandError::internal())?;
-                let id = v.client_save(None, &identity, &profile, &now)?;
-                v.client_set_notes(id, r.notes)?;
-                let estimate = serde_json::to_string(&crate::estimate::Stored::from(r.estimate))
-                    .map_err(|_| CommandError::internal())?;
-                v.client_set_estimate(id, Some(estimate))?;
-                v.import_record(&ImportRow {
-                    fingerprint: key,
-                    file_name: name.into(),
-                    imported_at: now.clone(),
-                    client_id: Some(id),
-                    outcome: ImportOutcome::Imported,
-                    message: "Client créé.".into(),
-                });
-                created.push(id);
+                let single = (created.len() == 1).then(|| created[0]);
+                (ImportOutcome::Imported, single, message, ids)
             }
-            let mut parts = vec![plural(created.len(), "client créé", "clients créés")];
-            if known > 0 {
-                parts.push(plural(
-                    known,
-                    "réponse déjà importée",
-                    "réponses déjà importées",
-                ));
-            }
-            for s in &parsed.skipped {
-                parts.push(format!("ligne {} ignorée ({})", s.row, s.reason));
-            }
-            let message = format!("{} : profils partiels, à compléter.", parts.join(", "));
-            let single = (created.len() == 1).then(|| created[0]);
-            (ImportOutcome::Imported, single, message)
-        }
-        Err(m) => (ImportOutcome::Failed, None, m),
-    };
+            Err(m) => (ImportOutcome::Failed, None, m, vec![]),
+        };
     v.import_record(&ImportRow {
         fingerprint,
         file_name: name.into(),
@@ -212,6 +236,7 @@ pub fn import(v: &mut Vault, name: &str, bytes: &[u8]) -> Res<ImportResult> {
         ok: outcome == ImportOutcome::Imported,
         client_id,
         message,
+        client_ids,
     })
 }
 

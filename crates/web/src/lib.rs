@@ -11,6 +11,7 @@
 //! Client data never leaves the lawyer's computer: this crate has no network
 //! access, and the page only ever fetches public files from its own origin.
 
+mod audit;
 mod clients;
 mod estimate;
 mod export;
@@ -242,6 +243,12 @@ impl App {
             "client_get" => out(clients::get(self.vault()?, arg(args, "id")?)?),
             "client_save" => out(clients::save(self.vault_mut()?, arg(args, "request")?)?),
             "client_delete" => out(self.vault_mut()?.client_delete(arg(args, "id")?)),
+            "audit_inputs_get" => out(audit::inputs(self.vault()?, arg(args, "id")?)?),
+            "audit_inputs_set" => {
+                let (id, lawyer) = (arg(args, "id")?, arg(args, "lawyer")?);
+                audit::set_inputs(self.vault_mut()?, id, lawyer)?;
+                out(())
+            }
             "client_clear_notes" => {
                 let id = arg(args, "id")?;
                 self.vault_mut()?.client_set_notes(id, vec![])?;
@@ -286,6 +293,11 @@ impl App {
     /// Renders the report (refused until every review flag is checked).
     pub fn export_report(&self, request: export::ExportRequest) -> Res<export::ExportFile> {
         export::export(self.vault()?, request)
+    }
+
+    /// Renders the eligibility audit (Word) of a client imported from the form.
+    pub fn audit_docx(&self, id: i64) -> Res<audit::AuditFile> {
+        audit::render(self.vault()?, id)
     }
 
     /// Imports one form file read from the input folder.

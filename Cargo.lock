@@ -157,6 +157,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "audit-doc"
+version = "0.1.21"
+dependencies = [
+ "applicant",
+ "form-import",
+ "report",
+ "rules-engine",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5013,6 +5025,7 @@ version = "0.1.21"
 dependencies = [
  "applicant",
  "audit",
+ "audit-doc",
  "deid",
  "form-import",
  "getrandom 0.4.3",
