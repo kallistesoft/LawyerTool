@@ -130,7 +130,7 @@ fn single_french_speaker_aiming_at_quebec() {
         "(mobilité francophone, donc hors Québec)",
         "\n4\nInstallation & RP",
         "Félicitations : un excellent potentiel !",
-        "CNP 60010 (FEER 0)",
+        "CNP 60010 – Directeurs/directrices des ventes corporatives (FEER 0)",
         "Inscrivez-vous au PVT",
         "Élargir vos horizons hors Québec",
         "Votre consultation stratégique (1 heure)",
