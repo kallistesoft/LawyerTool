@@ -13,6 +13,7 @@
 //! accent bar, status badges, cards, a roadmap timeline, footer with page
 //! numbers). The client's name is written in capitals.
 
+mod cnp;
 mod facts;
 
 use applicant::IsoDate;
@@ -88,6 +89,15 @@ fn muted(t: impl Into<String>) -> Run {
 }
 
 /// A blank or a value the lawyer must check (yellow highlight).
+/// « 63200 ou 62200 » for the synthesis table.
+fn codes(choices: &[facts::Choice]) -> String {
+    choices
+        .iter()
+        .map(|c| c.code)
+        .collect::<Vec<_>>()
+        .join(" ou ")
+}
+
 fn todo(t: impl Into<String>) -> Run {
     Run::new(t).bold().highlight()
 }
@@ -412,8 +422,9 @@ fn synthesis(items: &mut Vec<Item>, f: &Facts, ctx: &Context) {
     }
     eval.push(muted(" (CNP "));
     eval.push(match &f.noc {
-        Some(n) if n.validated => muted(n.code.clone()),
-        Some(n) => todo(format!("{} à valider", n.code)),
+        Some(n) if n.title.is_some() => muted(n.code.clone()),
+        Some(n) => todo(format!("{} introuvable dans la CNP 2021", n.code)),
+        None if !f.noc_choices.is_empty() => todo(format!("à choisir : {}", codes(&f.noc_choices))),
         None => todo("à valider"),
     });
     eval.push(muted(")"));
@@ -1119,24 +1130,47 @@ fn bilan(items: &mut Vec<Item>, f: &Facts) {
         let mark: &'static str = ["1", "2", "3", "4", "5", "6", "7"][(k - 1).min(6)];
         items.push(Item::Para(p(runs).mark(mark, TEAL).justify()));
     };
-    let noc_line = |who: &str, n: &Option<facts::Noc>, job: &str| -> Para {
-        let mut v = vec![
-            r(format!("Pour {who}")),
-            r(if job.is_empty() {
-                String::new()
-            } else {
-                format!(" ({job})")
-            }),
-            r(" : le rôle relève de la "),
-        ];
-        match n {
-            Some(n) if n.validated => v.push(b(format!("CNP {} (FEER {})", n.code, n.feer))),
-            Some(n) => v.push(todo(format!("CNP {} (FEER {}) à valider", n.code, n.feer))),
-            None => v.push(todo("CNP [à déterminer]")),
-        }
-        v.push(r("."));
-        Para::new(v).bullet(2)
-    };
+    let noc_line =
+        |who: &str, n: &Option<facts::Noc>, choices: &[facts::Choice], job: &str| -> Para {
+            let mut v = vec![
+                r(format!("Pour {who}")),
+                r(if job.is_empty() {
+                    String::new()
+                } else {
+                    format!(" ({job})")
+                }),
+                r(" : le rôle relève de la "),
+            ];
+            match n {
+                Some(facts::Noc {
+                    code,
+                    feer,
+                    title: Some(t),
+                    ..
+                }) => {
+                    v.push(b(format!("CNP {code} – {t} (FEER {feer})")));
+                }
+                Some(n) => v.push(todo(format!(
+                    "CNP {} introuvable dans la CNP 2021, à vérifier",
+                    n.code
+                ))),
+                None if !choices.is_empty() => {
+                    v.push(todo("CNP à choisir parmi : "));
+                    for (i, c) in choices.iter().enumerate() {
+                        let sep = if i + 1 < choices.len() { " ; " } else { "" };
+                        v.push(todo(format!(
+                            "{} – {} (FEER {}){sep}",
+                            c.code,
+                            c.title,
+                            &c.code[1..2]
+                        )));
+                    }
+                }
+                None => v.push(todo("CNP [à déterminer]")),
+            }
+            v.push(r("."));
+            Para::new(v).bullet(2)
+        };
     num(
         items,
         vec![
@@ -1149,12 +1183,14 @@ fn bilan(items: &mut Vec<Item>, f: &Facts) {
     items.push(Item::Para(noc_line(
         "le candidat principal",
         &f.noc,
+        &f.noc_choices,
         f.a("job"),
     )));
     if f.married {
         items.push(Item::Para(noc_line(
             "le conjoint",
             &f.spouse_noc,
+            &f.spouse_noc_choices,
             f.a("spouse_job"),
         )));
     }

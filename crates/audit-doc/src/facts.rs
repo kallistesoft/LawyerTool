@@ -3,6 +3,7 @@
 
 use std::collections::BTreeMap;
 
+use crate::cnp;
 use form_import::{funds, is_no, is_yes, leading_number, noc_in, norm};
 use serde::{Deserialize, Serialize};
 
@@ -82,11 +83,13 @@ pub enum FrenchTest {
     ToTake,
 }
 
-/// A CNP code with its FEER, and whether it is only the client's own code.
+/// A CNP code with its FEER, its official title (None: not in the CNP 2021
+/// list) and whether the lawyer validated it.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Noc {
     pub code: String,
     pub feer: u8,
+    pub title: Option<&'static str>,
     pub validated: bool,
 }
 
@@ -97,14 +100,45 @@ impl Noc {
         ok.then(|| Self {
             code: code.to_owned(),
             feer: code.as_bytes()[1] - b'0',
+            title: cnp::title(code),
             validated,
         })
+    }
+
+    /// The lawyer's code, else the code the client wrote, else the only CNP
+    /// whose title holds every word of the job. Several matches, or a
+    /// partial one: the choices instead, for review.
+    fn resolve(lawyer: Option<&str>, validated: bool, job: &str) -> (Option<Self>, Vec<Choice>) {
+        if let Some(n) =
+            Self::of(lawyer, validated).or_else(|| Self::of(noc_in(job).as_deref(), false))
+        {
+            return (Some(n), Vec::new());
+        }
+        match cnp::search(job) {
+            (found, true) if found.len() == 1 => (Self::of(Some(found[0].code), false), Vec::new()),
+            (many, _) => (
+                None,
+                many.iter()
+                    .map(|e| Choice {
+                        code: e.code,
+                        title: e.title,
+                    })
+                    .collect(),
+            ),
+        }
     }
 
     /// FEER 0 to 3: Express Entry and spouse's open work permit possible.
     pub fn qualified(&self) -> bool {
         self.feer <= 3
     }
+}
+
+/// A CNP proposed for review when the job title matches several codes.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Choice {
+    pub code: &'static str,
+    pub title: &'static str,
 }
 
 #[derive(Debug, Clone)]
@@ -129,6 +163,8 @@ pub struct Facts {
     pub relative: bool,
     pub noc: Option<Noc>,
     pub spouse_noc: Option<Noc>,
+    pub noc_choices: Vec<Choice>,
+    pub spouse_noc_choices: Vec<Choice>,
     pub lawyer: Lawyer,
 }
 
@@ -207,10 +243,13 @@ impl Facts {
         };
         let spouse_education = a("spouse_education");
         let lawyer = f.lawyer.clone();
-        let noc = Noc::of(lawyer.noc.as_deref(), lawyer.noc_validated)
-            .or_else(|| Noc::of(noc_in(a("job")).as_deref(), false));
-        let spouse_noc = Noc::of(lawyer.spouse_noc.as_deref(), lawyer.spouse_noc_validated)
-            .or_else(|| Noc::of(noc_in(a("spouse_job")).as_deref(), false));
+        let (noc, noc_choices) =
+            Noc::resolve(lawyer.noc.as_deref(), lawyer.noc_validated, a("job"));
+        let (spouse_noc, spouse_noc_choices) = Noc::resolve(
+            lawyer.spouse_noc.as_deref(),
+            lawyer.spouse_noc_validated,
+            a("spouse_job"),
+        );
         let diploma = norm(a("education"));
         Self {
             age: f.age,
@@ -236,6 +275,8 @@ impl Facts {
             relative: is_yes(a("relative")),
             noc,
             spouse_noc,
+            noc_choices,
+            spouse_noc_choices,
             lawyer,
             answers: f.answers.clone(),
         }
@@ -348,6 +389,7 @@ mod tests {
             Some(Noc {
                 code: "31301".into(),
                 feer: 1,
+                title: cnp::title("31301"),
                 validated: false
             })
         );
@@ -355,7 +397,16 @@ mod tests {
         r.lawyer.noc_validated = true;
         let f = Facts::of(&r);
         assert!(f.low_skilled() && f.noc.as_ref().is_some_and(|n| n.validated));
-        assert!(Facts::of(&record(&[("job", "Comptable")])).noc.is_none());
+        // No code written: the CNP whose title matches the job.
+        let f = Facts::of(&record(&[("job", "Cuisinier")]));
+        assert_eq!(
+            f.noc.map(|n| (n.code, n.title)),
+            Some(("63200".to_owned(), Some("Cuisiniers/cuisinières")))
+        );
+        // Several matches: none chosen, the choices are listed for review.
+        let f = Facts::of(&record(&[("job", "Infirmière")]));
+        assert!(f.noc.is_none() && f.noc_choices.len() > 1);
+        assert!(f.noc_choices.iter().any(|c| c.code == "31301"));
     }
 
     #[test]
