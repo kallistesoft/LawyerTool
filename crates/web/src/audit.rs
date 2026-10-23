@@ -176,8 +176,8 @@ mod tests {
         assert_eq!(f.name, "Audit_TESTEUR.docx");
         let xml = String::from_utf8_lossy(&f.bytes);
         for want in [
-            "TESTEUR Alix",
-            "FEUILLE DE ROUTE",
+            "TESTEUR ALIX",
+            "Feuille de route",
             "CNP 31301",
             "est réglementée au Canada",
         ] {
