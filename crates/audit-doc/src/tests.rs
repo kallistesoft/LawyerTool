@@ -393,3 +393,25 @@ fn spouse_table_and_roadmap_use_small_labels() {
     assert_eq!(run("1").color, Some("196B24"));
     assert_eq!(run("Potentiel PTO").size, None);
 }
+
+/// Her order of the priorities (PEINADOR audit): PVT, Québec, francophone
+/// mobility, Express Entry.
+#[test]
+fn priorities_follow_her_order() {
+    let mut f = form(
+        32,
+        &[
+            ("marital", "Marié ou en union de fait"),
+            ("spouse_age", "35 ans"),
+            ("french", "Langue maternelle"),
+            ("province", "Ontario ou Québec"),
+        ],
+    );
+    f.lawyer.noc = Some("41220".into());
+    f.lawyer.noc_validated = true;
+    let t = text(&build("PEINADOR Mélanie", &f, &ctx()));
+    let at = |s: &str| t.find(s).unwrap_or_else(|| panic!("missing {s:?}"));
+    assert!(at("Inscrivez-vous au PVT") < at("Élargir vos horizons hors Québec"));
+    assert!(at("Élargir vos horizons hors Québec") < at("Miser sur la Mobilité Francophone"));
+    assert!(at("Miser sur la Mobilité Francophone") < at("Maximiser le volet Entrée Express"));
+}

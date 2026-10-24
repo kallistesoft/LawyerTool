@@ -1261,26 +1261,7 @@ fn bilan(items: &mut Vec<Item>, f: &Facts) {
             .justify(),
         ));
     }
-    num(
-        items,
-        vec![
-            b("Miser sur la Mobilité Francophone (option n°1) : "),
-            r(
-                "c'est la voie la plus simple et rapide. En décrochant une offre d'emploi hors Québec dans une CNP qualifiée (FEER 0, 1, 2 ou 3), vous bénéficiez d'un permis de travail temporaire dispensé d'EIMT. Cela vous permettra de vous installer, de cumuler de l'expérience canadienne et d'enclencher votre Résidence Permanente (via Entrée Express ou des volets provinciaux comme celui du Nouveau-Brunswick).",
-            ),
-        ],
-    );
-    if f.funds == Funds::NotEnough {
-        num(
-            items,
-            vec![
-                b("Consolider votre autonomie financière : "),
-                r(
-                    "des fonds d’établissement disponibles et non grevés de dettes sont exigés pour la RP (attestation bancaire de 6 mois).",
-                ),
-            ],
-        );
-    }
+    // Her order (PEINADOR audit): PVT, Québec, francophone mobility, Express Entry.
     if f.under_36() {
         let both = f.married && f.spouse_age.is_some_and(|a| a <= 35);
         num(
@@ -1294,6 +1275,25 @@ fn bilan(items: &mut Vec<Item>, f: &Facts) {
             ],
         );
     }
+    if f.quebec {
+        num(
+            items,
+            vec![
+                b("Élargir vos horizons hors Québec : "),
+                r("au Québec, les règles actuelles d'immigration sont très restreintes et les délais sont particulièrement longs, même avec une offre d'emploi "),
+                r("(si vous tenez absolument au Québec, la piste du permis Jeunes Professionnels pourra être analysée).").italic(),
+            ],
+        );
+    }
+    num(
+        items,
+        vec![
+            b("Miser sur la Mobilité Francophone (option n°1) : "),
+            r(
+                "c'est la voie la plus simple et rapide. En décrochant une offre d'emploi hors Québec dans une CNP qualifiée (FEER 0, 1, 2 ou 3), vous bénéficiez d'un permis de travail temporaire dispensé d'EIMT. Cela vous permettra de vous installer, de cumuler de l'expérience canadienne et d'enclencher votre Résidence Permanente (via Entrée Express ou des volets provinciaux comme celui du Nouveau-Brunswick).",
+            ),
+        ],
+    );
     if cnp_set && f.francophone() {
         num(
             items,
@@ -1307,13 +1307,14 @@ fn bilan(items: &mut Vec<Item>, f: &Facts) {
             ],
         );
     }
-    if f.quebec {
+    if f.funds == Funds::NotEnough {
         num(
             items,
             vec![
-                b("Élargir vos horizons hors Québec : "),
-                r("au Québec, les règles actuelles d'immigration sont très restreintes et les délais sont particulièrement longs, même avec une offre d'emploi "),
-                r("(si vous tenez absolument au Québec, la piste du permis Jeunes Professionnels pourra être analysée).").italic(),
+                b("Consolider votre autonomie financière : "),
+                r(
+                    "des fonds d’établissement disponibles et non grevés de dettes sont exigés pour la RP (attestation bancaire de 6 mois).",
+                ),
             ],
         );
     }
