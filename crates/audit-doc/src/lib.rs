@@ -55,6 +55,10 @@ const MUTED: &str = "6B7280";
 const LINE: &str = "E5E7EB";
 const SOFT: &str = "F8FAFC";
 const CARD_BLUE: &str = "EEF4F8";
+/// Roadmap step numbers (her PEINADOR audit, 2026-10-23).
+const STEP_GREEN: &str = "196B24";
+/// Small labels of the spouse table and the roadmap (10 pt).
+const SMALL_LABEL: u16 = 20;
 
 /// Status badge: light tint and text colour.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -450,8 +454,10 @@ fn synthesis(items: &mut Vec<Item>, f: &Facts, ctx: &Context) {
         eval.push(r(format!(", {seniority}")));
     }
     match &f.noc {
-        // A known code reads as the profile itself, not as a note.
-        Some(n) if n.title.is_some() => eval.push(r(format!(" (CNP {})", n.code))),
+        // A known code is dark, its frame grey.
+        Some(n) if n.title.is_some() => {
+            eval.extend([muted(" (CNP "), r(n.code.clone()), muted(")")]);
+        }
         n => {
             eval.push(muted(" (CNP "));
             eval.push(match n {
@@ -726,14 +732,14 @@ fn feasibility(items: &mut Vec<Item>, f: &Facts, ctx: &Context) {
 fn progress(caption: &str, pct: u8, tone: Tone, word: &str) -> Cell {
     let filled = usize::from(pct) / 10;
     Cell::new(vec![
-        p(vec![muted(caption).size(16)]).after(20),
+        p(vec![muted(caption)]).after(20),
         p(vec![
-            r("━".repeat(filled)).color(TEAL).size(16),
-            r("━".repeat(10 - filled)).color("D7DEE6").size(16),
+            r("━".repeat(filled)).color(TEAL),
+            r("━".repeat(10 - filled)).color("D7DEE6"),
         ])
         .after(0),
-        p(vec![b(format!("{pct} %")).size(17)]).after(40),
-        p(vec![b(format!("●  {word}")).color(tone.ink()).size(17)]),
+        p(vec![b(format!("{pct} %"))]).after(40),
+        p(vec![b(format!("●  {word}")).color(tone.ink())]),
     ])
 }
 
@@ -771,7 +777,7 @@ fn spouse(items: &mut Vec<Item>, f: &Facts) {
     } else {
         f.a("job")
     };
-    let crit = |t: &str| Cell::runs(vec![b(t.to_uppercase()).color(INK)]);
+    let crit = |t: &str| Cell::runs(vec![label(&t.to_uppercase()).size(SMALL_LABEL)]);
     let mut rows = Vec::new();
     rows.push(match &f.noc {
         Some(n) if n.qualified() => vec![
@@ -865,10 +871,10 @@ fn spouse(items: &mut Vec<Item>, f: &Facts) {
     items.push(Item::Grid {
         widths: vec![20, 27, 23, 30],
         header: Some(vec![
-            Cell::runs(vec![label("Critère")]),
-            Cell::runs(vec![label("Situation du candidat")]),
-            Cell::runs(vec![label("Avancement & impact")]),
-            Cell::runs(vec![label("Analyse stratégique")]),
+            Cell::runs(vec![label("Critère").size(SMALL_LABEL)]),
+            Cell::runs(vec![label("Situation du candidat").size(SMALL_LABEL)]),
+            Cell::runs(vec![label("Avancement & impact").size(SMALL_LABEL)]),
+            Cell::runs(vec![label("Analyse stratégique").size(SMALL_LABEL)]),
         ]),
         rows,
         lines: Some(LINE),
@@ -1062,8 +1068,8 @@ fn roadmap(items: &mut Vec<Item>, f: &Facts) {
             detail.push(p(vec![b("→  ").color(TEAL), b(s.result).color(TEAL)]));
             vec![
                 Cell::new(vec![
-                    p(vec![b(number).color(TEAL)]).after(0),
-                    p(vec![b(s.title.to_uppercase()).color(INK)]),
+                    p(vec![label(&number).color(STEP_GREEN).size(SMALL_LABEL)]).after(0),
+                    p(vec![label(&s.title.to_uppercase()).size(SMALL_LABEL)]),
                 ])
                 .top(),
                 Cell::new(detail).top(),
@@ -1296,7 +1302,7 @@ fn bilan(items: &mut Vec<Item>, f: &Facts) {
                     "Maximiser le volet Entrée Express (Sélection basée sur les catégories – Francophones) : ",
                 ),
                 r(
-                    "en atteignant un niveau NCLC 7+ en français (idéalement NCLC 9+), vous débloquez l'accès aux tirages ciblés pour les candidats francophones. Avec des seuils historiques très accessibles (situés généralement entre 380 et 435 points), vous devenez immédiatement extrêmement compétitifs dans le bassin fédéral sans attendre une offre d'emploi.",
+                    "En atteignant un niveau NCLC 7+ en français (idéalement NCLC 9+), vous débloquez l'accès aux tirages ciblés pour les candidats francophones. Avec des seuils historiques très accessibles (situés généralement entre 380 et 435 points), vous devenez immédiatement extrêmement compétitifs dans le bassin fédéral sans attendre une offre d'emploi.",
                 ),
             ],
         );

@@ -347,3 +347,49 @@ fn layout_follows_her_corrected_audit() {
     let label = &find("Critère").runs[0];
     assert!(label.small_caps && label.size.is_none());
 }
+
+/// Her PEINADOR audit (2026-10-23): small grey labels in the spouse table
+/// and the roadmap, green step numbers, progress cells at the body size.
+#[test]
+fn spouse_table_and_roadmap_use_small_labels() {
+    let mut f = form(
+        32,
+        &[
+            ("marital", "Marié ou en union de fait"),
+            ("spouse_age", "35 ans"),
+            ("job", "Enseignante dans le secondaire"),
+            ("french", "Langue maternelle"),
+        ],
+    );
+    f.lawyer.noc = Some("41220".into());
+    f.lawyer.noc_validated = true;
+    let doc = build("PEINADOR Mélanie", &f, &ctx());
+    let runs: Vec<&Run> = doc
+        .items
+        .iter()
+        .flat_map(|i| match i {
+            Item::Grid { header, rows, .. } => header
+                .iter()
+                .chain(rows)
+                .flatten()
+                .flat_map(|c| &c.paras)
+                .flat_map(|p| &p.runs)
+                .collect(),
+            _ => vec![],
+        })
+        .collect();
+    let run = |t: &str| *runs.iter().find(|r| r.text == t).unwrap();
+    for t in [
+        "AUTONOMIE FINANCIÈRE",
+        "Situation du candidat",
+        "INSTALLATION & RP",
+    ] {
+        let r = run(t);
+        assert!(
+            r.small_caps && r.size == Some(20) && r.color == Some("6B7280"),
+            "{t}"
+        );
+    }
+    assert_eq!(run("1").color, Some("196B24"));
+    assert_eq!(run("Potentiel PTO").size, None);
+}
