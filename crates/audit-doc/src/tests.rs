@@ -201,6 +201,7 @@ fn married_with_unknown_cnp_aiming_at_alberta() {
         "⟦[réglementée ou non : à vérifier selon la CNP]⟧",
         "TEST D’ANGLAIS (NCLC 5+)",
         "Test d’anglais pour les deux, non opportun",
+        "⟦Il devra passer par la mobilité francophone individuellement.⟧",
         "Votre proche au Canada",
         "⟦CNP [à déterminer]⟧",
     ] {

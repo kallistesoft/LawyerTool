@@ -816,6 +816,10 @@ fn spouse(items: &mut Vec<Item>, f: &Facts) {
             ]),
         ],
     });
+    // Always written; the lawyer deletes it when it does not apply.
+    rows[0][3].paras.push(p(vec![
+        r("Il devra passer par la mobilité francophone individuellement.").highlight(),
+    ]));
     rows.push(vec![
         crit("Français du conjoint"),
         Cell::runs(if f.spouse_test {
