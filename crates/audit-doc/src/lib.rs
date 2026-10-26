@@ -1294,7 +1294,7 @@ fn bilan(items: &mut Vec<Item>, f: &Facts) {
         vec![
             b("Miser sur la Mobilité Francophone (option n°1) : "),
             r(
-                "c'est la voie la plus simple et rapide. En décrochant une offre d'emploi hors Québec dans une CNP qualifiée (FEER 0, 1, 2 ou 3), vous bénéficiez d'un permis de travail temporaire dispensé d'EIMT. Cela vous permettra de vous installer, de cumuler de l'expérience canadienne et d'enclencher votre Résidence Permanente (via Entrée Express ou des volets provinciaux comme celui du Nouveau-Brunswick).",
+                "c'est la voie la plus simple et rapide. En décrochant une offre d'emploi hors Québec dans une CNP de FEER 0, 1, 2, 3, 4 ou 5, vous bénéficiez d'un permis de travail temporaire dispensé d'EIMT. Cela vous permettra de vous installer, de cumuler de l'expérience canadienne et d'enclencher votre Résidence Permanente (via Entrée Express ou des volets provinciaux comme celui du Nouveau-Brunswick).",
             ),
         ],
     );
