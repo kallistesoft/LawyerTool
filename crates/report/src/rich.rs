@@ -228,7 +228,7 @@ pub enum Item {
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct Doc {
     pub items: Vec<Item>,
-    /// Text at the bottom of every page, followed by « page N / M ».
+    /// Text at the bottom of every page, followed by « Page N / M ».
     pub footer: Option<String>,
     /// Body font (default Calibri).
     pub font: Option<&'static str>,
@@ -550,7 +550,7 @@ fn footer_xml(text: &str) -> String {
         2000,
         "right",
         format!(
-            "<w:r><w:t xml:space=\"preserve\">page </w:t></w:r>{}<w:r><w:t xml:space=\"preserve\"> / </w:t></w:r>{}",
+            "<w:r><w:t xml:space=\"preserve\">Page </w:t></w:r>{}<w:r><w:t xml:space=\"preserve\"> / </w:t></w:r>{}",
             field("PAGE"),
             field("NUMPAGES")
         ),
@@ -838,7 +838,7 @@ pub fn to_html(d: &Doc) -> String {
     let footer = d
         .footer
         .as_deref()
-        .map(|f| format!("<p style=\"margin-top:24pt;border-top:0.5pt solid #E5E7EB;padding-top:6pt;color:#6B7280;font-size:8pt\">{} <span style=\"float:right\">page 1 / 1</span></p>", html_esc(f)))
+        .map(|f| format!("<p style=\"margin-top:24pt;border-top:0.5pt solid #E5E7EB;padding-top:6pt;color:#6B7280;font-size:8pt\">{} <span style=\"float:right\">Page 1 / 1</span></p>", html_esc(f)))
         .unwrap_or_default();
     format!(
         "<!doctype html><html lang=\"fr\"><head><meta charset=\"utf-8\"><style>body{{background:#e5e7eb;margin:0}}.page{{background:#fff;width:170mm;margin:12mm auto;padding:20mm;font-family:'{font}',Calibri,Arial,sans-serif;font-size:{size}pt;line-height:1.38;color:#1F2937;box-shadow:0 1px 4px rgba(0,0,0,.15)}}</style></head><body><div class=\"page\">{body}{footer}</div></body></html>"
@@ -916,6 +916,7 @@ mod tests {
             "<w:left w:val=\"single\" w:sz=\"24\" w:space=\"0\" w:color=\"0F766E\"/>",
             "compatibilityMode",
             " PAGE ",
+            ">Page </w:t>",
             "Pied de page",
             "w:ascii=\"Aptos\"",
             "<wp:extent cx=\"6120130\" cy=\"3060065\"/>",

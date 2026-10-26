@@ -415,4 +415,10 @@ fn priorities_follow_her_order() {
     assert!(at("Inscrivez-vous au PVT") < at("Élargir vos horizons hors Québec"));
     assert!(at("Élargir vos horizons hors Québec") < at("Miser sur la Mobilité Francophone"));
     assert!(at("Miser sur la Mobilité Francophone") < at("Maximiser le volet Entrée Express"));
+    assert!(
+        at("Maximiser le volet Entrée Express")
+            < at(
+                "⟦Votre profil est très prometteur pour la résidence permanente via l’Entrée express ! À vérifier de toute urgence, en rendez-vous si vous le souhaitez ! 😊⟧"
+            )
+    );
 }

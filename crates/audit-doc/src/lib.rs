@@ -1333,6 +1333,14 @@ fn bilan(items: &mut Vec<Item>, f: &Facts) {
             ],
         );
     }
+    // Always the last priority; the lawyer deletes it when it does not apply.
+    num(
+        items,
+        vec![
+            r("Votre profil est très prometteur pour la résidence permanente via l’Entrée express ! À vérifier de toute urgence, en rendez-vous si vous le souhaitez ! 😊")
+                .highlight(),
+        ],
+    );
     note(items, f);
 }
 
