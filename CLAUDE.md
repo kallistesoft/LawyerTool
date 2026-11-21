@@ -15,6 +15,24 @@ The user dropped the Mac/Windows app (no notarization, signing or updater) now t
 - **Tech stack kept:** Rust engine + Svelte UI. A full TypeScript rewrite and a PHP server app were rejected.
 - The Tauri shell (`src-tauri`, `crates/vault`, `crates/net` in the app, updater) stays until the web pilot works, then gets deleted. The "Decisions (final)" below are superseded where they mention the desktop, the keychain, installers or updates.
 
+## Working in this repo (2026-11-21)
+- **Dev:** `scripts/build-wasm.sh`, then `npm --prefix ui run dev` (automatic dev vault in OPFS; `?real` for the real flow).
+  UI checks: `npx vite --port 1420` in `ui/` + puppeteer-core in the scratchpad (never in the repo) calling `/src/lib/api.ts`.
+  Native pickers can't be driven headless: the owner clicks through those.
+- **Check:** `tools/check.sh` (= `scripts/ci-local.sh`: wasm + UI build and check, fmt, clippy `-D warnings`, tests,
+  dependency boundaries). Run it on its own and read its exit status; never pipe it into `tail` in an `&&` chain.
+  `.githooks/pre-push` runs it before every push (this repo sets `core.hooksPath=.githooks`). GitHub CI and
+  Release workflows are disabled; no Windows check exists, say so when it matters.
+- **Deploy:** `web.yml` builds and deploys https://audit.kallistesoft.ca on every push to `main` and daily (watcher
+  snapshot), in demo mode. Branches don't deploy.
+- **Branches and PRs:** feature branch, push right after every commit, PR against `main` (never stacked). The owner
+  merges; never `gh pr merge`, never `--admin`, never force-push. After a merge, `scripts/post-merge-bump.sh` bumps the version.
+- **Rules:** everything the user sees is in French. Divergences between official IRCC sources get the owner's
+  ruling (recorded in `crates/rules-engine/fixtures/crs/divergences.md`) and a blocking lawyer-review flag; never
+  pick silently. Real client data (~/Desktop/datatest, ~/Downloads/test data) never goes into the repo; fixtures
+  are synthetic. Claude API integration is deferred: everything must work without a key.
+- **To-dos:** `plan.md` (Roadmap / "Next steps"). Non-blocking choices go in `DECISIONS.md` with the default taken.
+
 ## Decisions (final)
 - **Stack:** Tauri (Rust backend + web frontend). Not Electron, not Compose Multiplatform.
 - **Standalone:** one double-click installer. No Python/Node/Java required on user machines. Stay in Rust for the backend (parse PDFs/Word/CSV with crates). No OCR in the MVP; if added later it must be a bundled sidecar.
