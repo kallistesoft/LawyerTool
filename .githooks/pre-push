@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# This repo sets core.hooksPath=.githooks (dev rebuild hooks), which hides the global hooks, so hand the push over
+# to the global pre-push hook (runs tools/check.sh, skips branch deletions). Bypass: git push --no-verify
+global="$HOME/.config/git/hooks/pre-push"
+if [ -x "$global" ]; then exec "$global" "$@"; fi
+exec "$(git rev-parse --show-toplevel)/tools/check.sh" >&2
