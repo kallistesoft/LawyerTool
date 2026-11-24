@@ -34,6 +34,13 @@
     }
   }
 
+  async function allow() {
+    await act(folderAccess)
+    if (needsPermission && !error) {
+      error = 'Le navigateur n’a pas donné l’accès. Cliquez « Changer… » et choisissez de nouveau le dossier.'
+    }
+  }
+
   onMount(() => act(settingsGet))
 
   const folders: { which: Folder; title: string; help: string }[] = [
@@ -68,7 +75,7 @@
 {#if needsPermission}
   <div class="callout warn access">
     <span>Le navigateur demande de confirmer l’accès aux dossiers à chaque nouvelle session.</span>
-    <button class="primary" disabled={busy} onclick={() => act(folderAccess)}><Icon name="folder" />Autoriser l’accès aux dossiers</button>
+    <button class="primary" disabled={busy} onclick={allow}><Icon name="folder" />Autoriser l’accès aux dossiers</button>
   </div>
 {/if}
 

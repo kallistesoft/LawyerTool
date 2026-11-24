@@ -253,10 +253,10 @@ async function folderStatus(which: Folder): Promise<FolderStatus | null> {
   return { path: h.name, exists, writable: which === 'output' && granted && exists, needs_permission: !granted }
 }
 
-export const settingsGet = async (): Promise<Settings> => ({
-  input_dir: await folderStatus('input'),
-  output_dir: await folderStatus('output'),
-})
+export async function settingsGet(): Promise<Settings> {
+  const [input_dir, output_dir] = await Promise.all([folderStatus('input'), folderStatus('output')])
+  return { input_dir, output_dir }
+}
 
 /** Opens the folder dialog and remembers the choice (unchanged if cancelled). */
 export async function settingsPick(which: Folder): Promise<Settings> {

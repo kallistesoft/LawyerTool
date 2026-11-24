@@ -36,15 +36,30 @@ export const deleteHandle = (k: HandleKey) => tx('readwrite', (s) => s.delete(k)
 export const supported = () =>
   typeof window !== 'undefined' && 'showOpenFilePicker' in window && 'showDirectoryPicker' in window
 
-/** Current permission, without prompting. */
+const TIMEOUT = Symbol('timeout')
+
+/**
+ * Chrome can leave a remembered handle hanging forever (seen on Chrome 158:
+ * `queryPermission` and reading the folder never settle). Every call on a
+ * stored handle goes through this, so the screens never wait on it.
+ */
+function within<T>(p: Promise<T> | undefined, ms: number): Promise<T | typeof TIMEOUT | undefined> {
+  if (!p) return Promise.resolve(undefined)
+  return Promise.race([p, new Promise<typeof TIMEOUT>((r) => setTimeout(() => r(TIMEOUT), ms))])
+}
+
+/** Current permission, without prompting. A handle that doesn't answer counts as « prompt ». */
 export async function permission(h: FileSystemHandle, mode: FileSystemPermissionMode): Promise<PermissionState> {
-  return (await h.queryPermission?.({ mode })) ?? 'granted'
+  const r = await within(h.queryPermission?.({ mode }), 3000)
+  return r === TIMEOUT ? 'prompt' : (r ?? 'granted')
 }
 
 /** Asks for access if needed (must run during a click). */
 export async function ensurePermission(h: FileSystemHandle, mode: FileSystemPermissionMode): Promise<boolean> {
-  if ((await permission(h, mode)) === 'granted') return true
-  return (await h.requestPermission?.({ mode })) === 'granted'
+  if (!h.requestPermission) return (await permission(h, mode)) === 'granted'
+  // Called straight away (no query first) so the click still counts; it answers « granted » without a
+  // prompt when access is already given. The timeout leaves time for the lawyer to answer the prompt.
+  return (await within(h.requestPermission?.({ mode }), 60000)) === 'granted'
 }
 
 export const isAbort = (e: unknown) => e instanceof DOMException && e.name === 'AbortError'
@@ -121,11 +136,10 @@ export async function writeNew(dir: FileSystemDirectoryHandle, name: string, byt
   throw new Error('no free file name')
 }
 
-/** Whether the folder can still be read (moved or deleted folders throw). */
+/** Whether the folder can still be read (moved or deleted folders throw, broken handles hang). */
 export async function folderExists(dir: FileSystemDirectoryHandle): Promise<boolean> {
   try {
-    await dir.values().next()
-    return true
+    return (await within(dir.values().next(), 3000)) !== TIMEOUT
   } catch {
     return false
   }
