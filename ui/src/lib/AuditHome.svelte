@@ -55,6 +55,8 @@
   async function allow() {
     await folderAccess().catch(() => {})
     await refresh()
+    // Still refused, or the browser no longer answers for a folder: choose it again in Paramètres.
+    if (needsAccess) onSettings()
   }
 </script>
 
