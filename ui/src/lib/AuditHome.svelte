@@ -33,6 +33,7 @@
   // Read through a function: TypeScript narrows `settings` to its initial null otherwise.
   const current = (): Settings | null => settings
   const canGenerate = $derived(!!current()?.input_dir && !!current()?.output_dir)
+  const stale = $derived(!!(current()?.input_dir?.stale || current()?.output_dir?.stale))
   const needsAccess = $derived(!!(current()?.input_dir?.needs_permission || current()?.output_dir?.needs_permission))
   const written = $derived(results.filter((r) => r.ok))
 
@@ -53,10 +54,11 @@
   }
 
   async function allow() {
+    const repick = stale
     await folderAccess().catch(() => {})
     await refresh()
-    // Still refused, or the browser no longer answers for a folder: choose it again in Paramètres.
-    if (needsAccess) onSettings()
+    // Access refused: Paramètres explains. A folder still to choose again: this button stays for the next one.
+    if (needsAccess && !repick) onSettings()
   }
 </script>
 
@@ -90,7 +92,7 @@
   </div>
 
   {#if needsAccess}
-    <button class="cta" onclick={allow}><Icon name="lock" size={20} />Autoriser l’accès aux dossiers</button>
+    <button class="cta" onclick={allow}><Icon name="lock" size={20} />{stale ? 'Choisir de nouveau les dossiers…' : 'Autoriser l’accès aux dossiers'}</button>
   {:else}
     <button class="cta" onclick={generate} disabled={busy || !canGenerate}>
       {#if busy}

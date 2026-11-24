@@ -35,8 +35,9 @@
   }
 
   async function allow() {
+    const repick = stale
     await act(folderAccess)
-    if (needsPermission && !error) {
+    if (needsPermission && !stale && !repick && !error) {
       error = 'Le navigateur n’a pas donné l’accès. Cliquez « Changer… » et choisissez de nouveau le dossier.'
     }
   }
@@ -60,8 +61,10 @@
     settings ? (which === 'input' ? settings.input_dir : settings.output_dir) : null
 
   const needsPermission = $derived(!!(statusOf('input')?.needs_permission || statusOf('output')?.needs_permission))
+  const stale = $derived(!!(statusOf('input')?.stale || statusOf('output')?.stale))
 
   function problem(which: Folder, s: FolderStatus): string | null {
+    if (s.stale) return 'À choisir de nouveau'
     if (s.needs_permission) return 'Accès à confirmer'
     if (!s.exists) return 'Dossier introuvable.'
     if (which === 'output' && !s.writable) return 'Écriture impossible dans ce dossier.'
@@ -74,8 +77,13 @@
 {#if error}<p class="callout err">{error}</p>{/if}
 {#if needsPermission}
   <div class="callout warn access">
-    <span>Le navigateur demande de confirmer l’accès aux dossiers à chaque nouvelle session.</span>
-    <button class="primary" disabled={busy} onclick={allow}><Icon name="folder" />Autoriser l’accès aux dossiers</button>
+    {#if stale}
+      <span>Le navigateur ne retrouve plus un dossier : choisissez-le de nouveau (le même dossier convient).</span>
+      <button class="primary" disabled={busy} onclick={allow}><Icon name="folder" />Choisir de nouveau…</button>
+    {:else}
+      <span>Le navigateur demande de confirmer l’accès aux dossiers à chaque nouvelle session.</span>
+      <button class="primary" disabled={busy} onclick={allow}><Icon name="folder" />Autoriser l’accès aux dossiers</button>
+    {/if}
   </div>
 {/if}
 

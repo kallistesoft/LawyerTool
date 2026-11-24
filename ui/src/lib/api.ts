@@ -240,6 +240,8 @@ export interface FolderStatus {
   writable: boolean
   /** The browser needs the lawyer to confirm access again (new session). */
   needs_permission: boolean
+  /** The browser no longer answers for this folder: it must be chosen again (implies needs_permission). */
+  stale: boolean
 }
 export interface Settings { input_dir: FolderStatus | null; output_dir: FolderStatus | null }
 export type Folder = 'input' | 'output'
@@ -248,10 +250,19 @@ async function folderStatus(which: Folder): Promise<FolderStatus | null> {
   const h = await getHandle<FileSystemDirectoryHandle>(which)
   if (!h) return null
   const mode = which === 'output' ? 'readwrite' : 'read'
-  const granted = (await permission(h, mode)) === 'granted'
+  const state = await permission(h, mode)
+  const granted = state === 'granted'
   const exists = granted ? await folderExists(h) : true
-  return { path: h.name, exists, writable: which === 'output' && granted && exists, needs_permission: !granted }
+  if (state === 'stale') staleFolders.add(which)
+  else staleFolders.delete(which)
+  return {
+    path: h.name, exists, writable: which === 'output' && granted && exists,
+    needs_permission: !granted, stale: state === 'stale',
+  }
 }
+
+/** Folders whose handle stopped answering at the last check (see `permission`). */
+const staleFolders = new Set<Folder>()
 
 export async function settingsGet(): Promise<Settings> {
   const [input_dir, output_dir] = await Promise.all([folderStatus('input'), folderStatus('output')])
@@ -270,8 +281,18 @@ export async function settingsClear(which: Folder): Promise<Settings> {
   return settingsGet()
 }
 
-/** Asks the browser for access to both folders again (call on a click). */
+/**
+ * Asks the browser for access to both folders again (call on a click). A folder the browser no longer
+ * answers for opens the folder dialog instead (one per click: the dialog uses up the click), first,
+ * while the click still counts.
+ */
 export async function folderAccess(): Promise<Settings> {
+  const dead = (['input', 'output'] as const).find((w) => staleFolders.has(w))
+  if (dead) {
+    const h = await pickFolder(dead)
+    if (h) await setHandle(dead, h)
+    return settingsGet()
+  }
   for (const which of ['input', 'output'] as const) {
     const h = await getHandle<FileSystemDirectoryHandle>(which)
     if (h) await ensurePermission(h, which === 'output' ? 'readwrite' : 'read')
