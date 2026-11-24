@@ -48,10 +48,13 @@ function within<T>(p: Promise<T> | undefined, ms: number): Promise<T | typeof TI
   return Promise.race([p, new Promise<typeof TIMEOUT>((r) => setTimeout(() => r(TIMEOUT), ms))])
 }
 
-/** Current permission, without prompting. A handle that doesn't answer counts as « prompt ». */
-export async function permission(h: FileSystemHandle, mode: FileSystemPermissionMode): Promise<PermissionState> {
+/**
+ * Current permission, without prompting. « stale »: the handle doesn't answer at all; asking for access
+ * doesn't answer either (no prompt shows), so the folder has to be chosen again.
+ */
+export async function permission(h: FileSystemHandle, mode: FileSystemPermissionMode): Promise<PermissionState | 'stale'> {
   const r = await within(h.queryPermission?.({ mode }), 3000)
-  return r === TIMEOUT ? 'prompt' : (r ?? 'granted')
+  return r === TIMEOUT ? 'stale' : (r ?? 'granted')
 }
 
 /** Asks for access if needed (must run during a click). */
